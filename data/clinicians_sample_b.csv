@@ -1,4 +1,9 @@
-id,name,credential,practice_type,email,do_not_contact,notes
-b001,Yusuf Adeyemi,MD,inpatient psychiatry,yadeyemi@example.com,,"Hospital-based. Skeptical that an ambient scribe handles interruptions."
-b002,Nora Kilbride,LMFT,family therapy practice,nkilbride@example.com,,"Two-clinician practice. Does her own billing on Sundays."
-b003,Hana Petrov,PhD,neuropsych assessment,hpetrov@example.com,,"Long assessment reports, not session notes. Different workflow entirely."
+id,name,email,mobile,do_not_contact
+b001,Yusuf Adeyemi,yadeyemi@gmail.com,+1-312-555-0164,0
+b002,Nora Kilbride,nora@kilbridefamilytherapy.com,+1-207-555-0139,0
+b003,Hana Petrov,hpetrov@neuropsychassociates.com,+1-503-555-0182,0
+b004,Curtis Nwosu,cnwosu@outlook.com,+1-404-555-0117,0
+b005,Imogen Radcliffe,iradcliffe@kp.org,+1-916-555-0195,0
+b006,Felix Aurand,felix@aurandcounseling.com,+1-608-555-0148,1
+b007,Sunita Bhatt,sbhatt@cornell.edu,+1-607-555-0126,0
+b008,Marco Villanueva,marco@villanuevapsych.com,+1-505-555-0173,0
