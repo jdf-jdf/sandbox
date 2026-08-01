@@ -75,16 +75,39 @@ replied "I'm leaving the health system in January." Flip the flag in
 
 ## Where the one to two human hours a month go
 
-`REVIEW_QUEUE.md` is rewritten every run and ordered so the time goes to
-judgment, not triage. Suppressions that are **finished** (a researched
-verdict the machine acted on) never appear; only ones **waiting on a person**
-do — 1 of 15 on this sample. Domain research amortises (300 employers is 300
-searches, once); person research runs only where the domain verdict was a
-guess. The human's hour: overrule a verdict they know is wrong, settle the
-`unclear` domains, read the flagged-but-sent copy, and once a month, ten
-minutes on `BRAND_REVIEW.md` — the site-diff `tools/brand_check.py` writes so
-the prompt never quietly drifts back to describing a product JotPsych stopped
-selling.
+**Not on reviewing what it wrote.** Keeping that cheap is the point of the
+queue, not the use of the hour. `REVIEW_QUEUE.md` is rewritten every run and
+ordered so finished suppressions never appear; only ones **waiting on a
+person** do — 1 of 15 on this sample. Domain research amortises (300 employers
+is 300 searches, once); person research runs only where the domain verdict was
+a guess. Clearing that queue is ten minutes.
+
+The rest of the hour goes to the three things the machine cannot do for
+itself.
+
+**Tell it where the warm funnel is.** The machine can research a domain and
+rank a list. It cannot know that we just put an SDR in Portland, that a
+partner introduced us to a twelve-clinician group, or that someone opened four
+emails last quarter and never replied. That intelligence sits in the CRM and
+in people's heads, and it is worth more than anything the open web will tell
+us. Getting it in is a column on the intake CSV and a line in `config.py` —
+which is the whole reason the input is a file the machine did not author.
+
+**Argue about positioning with GTM, out loud.** What the machine says is
+downstream of what we have decided we are. `BRAND_BRIEF`, `APPROVED_CLAIMS`
+and `SEGMENT_BRIEF` are human-authored files: they are where a conversation
+about story and register turns into something executed identically across
+4,000 clinicians. An hour of that beats an hour of proofreading, because it
+changes every future send rather than one.
+
+**Run it, and read what came back.** The loop only improves if a person reads
+the output and writes the rule. `fabricated_relationship` exists because
+someone read a draft that had invented a conversation. No amount of planning
+produced that rule; reading a dozen drafts did.
+
+Once a month, ten of those minutes go to `BRAND_REVIEW.md` — the site-diff
+`tools/brand_check.py` writes, so the prompt never quietly drifts back to
+describing a product JotPsych stopped selling.
 
 ## What week two looks like
 
