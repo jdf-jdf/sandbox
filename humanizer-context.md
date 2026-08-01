@@ -1,7 +1,8 @@
 # Brand context for the humanizer skill
 
 The skill auto-loads this file from the project root and treats it as an
-extension of the chosen `--voice`. Edit it tomorrow once you see the brief.
+extension of the chosen `--voice`. Its patterns are the source of several of
+the AI-tell rules in `config.REFUSAL_RULES`.
 
 ## Who we're writing to
 
