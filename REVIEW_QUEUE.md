@@ -1,8 +1,8 @@
 # Review queue
 
-_Generated 2026-08-01T20:33:04+00:00 by the last run. Overwritten every run._
+_Generated 2026-08-01T20:43:28+00:00 by the last run. Overwritten every run._
 
-**4 item(s) need a human.** Estimated time: 12 minutes.
+**3 item(s) need a human.** Estimated time: 9 minutes.
 
 ## 1. Blocked before sending — decide keep or kill
 
@@ -29,7 +29,6 @@ _Listed for the audit trail, not for your afternoon._
 
 - Line 24: malformed email: 'wfry@'
 - Line 25: missing required field(s): name
-- Line 26: missing required field(s): mobile
 
 ---
 

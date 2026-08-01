@@ -431,8 +431,9 @@ a blank reply. We hold a mobile number for them, ending {mobile_last4}.
   back at a clinician who spends their day on confidentiality reads as
   surveillance. "Still the best number, ending {mobile_last4}?" is the most
   specific you are allowed to be.
-- If {mobile_last4} is empty, skip the digits and just ask whether a call is
-  easier than email.
+- If {mobile_last4} reads NONE-ON-FILE then we do not have a number at all.
+  Write no digits and no reference to digits: no "ending", no "the number we
+  have". Just ask whether a call is easier than email and how to reach them.
 - Ask. Do not assume. Never say you will call, only that you would like to.
 
 Rules:
@@ -507,6 +508,15 @@ REFUSAL_RULES = [
     # with false positives is a gate people switch off.
     ("phone_number", "Full phone number printed in the body",
      r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b", "block"),
+
+    # The other half of the same feature. When no number is on file the model
+    # kept the sentence shape and dropped the digits, producing "is the number
+    # ending still best". Blocks "ending" unless four digits follow it. This
+    # will occasionally catch an innocent "a session ending at five", and that
+    # trade is fine: the cost is one review-queue line, and the cost of the
+    # other error is visibly broken copy in front of a lapsed customer.
+    ("dangling_last4", "Refers to digits it never printed",
+     r"\bending\b(?!\s+\d{4}\b)", "block"),
 
     # --- Mechanical failures. ---
     ("unfilled_template", "Unfilled placeholder made it into the output",

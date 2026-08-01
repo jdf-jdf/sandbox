@@ -1,19 +1,16 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Aisha Mbeki
-Reply-To: joannadflores+2eab20b28152@gmail.com
+Reply-To: joannadflores+88616f3452d5@gmail.com
 
 Aisha,
 
-You used JotPsych at Northloop and then stopped, and I don't know why. That's the part I'd like to hear.
+You used JotPsych at Northloop and then stopped, and I don't know why. That's the part I'd like to hear rather than guess at.
 
-I'm not going to guess. The reasons people give tend to be specific: the coding support didn't hold up against their payer mix, the notes needed too much cleanup after a 15-minute med check, or their clinicians just didn't pick it up and the rollout quietly died. Any of those is useful to us, and none of them fits neatly into an email reply.
+If it was coding, that's worth saying plainly: E/M level and ICD-10 support against your actual payer mix is where most of the med-management complaints land, and it's also where an undercoded 15-minute follow-up quietly costs you. If it was something else, adoption across your clinicians, note portability, the editing time after a visit, I'd rather know that than pitch at the wrong problem.
 
-Ten minutes on the phone would tell me more than anything I could write here.
+Would you be open to a short call? I'll work around your schedule. Still the best number, ending 0139?
 
-Still the best number, ending 0139? Happy to work around your schedule.
+Dan
 
-Daniel
-JotPsych
-
-If you want to pick it back up: https://jotpsych.com/welcome-back/2eab20b28152
+If you want to pick it back up: https://jotpsych.com/welcome-back/88616f3452d5
 

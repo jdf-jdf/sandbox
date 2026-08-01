@@ -47,16 +47,17 @@ get wrong that a rule could get right is a rule.
 ## The numbers it reports
 
 Run `./evidence.sh --send` for a clean three-run sequence. The numbers below
-are from one full live pass with `SUPPRESS_INSTITUTIONAL = False`.
+are from one such sequence with `SUPPRESS_INSTITUTIONAL = False`: run 1 live,
+runs 2 and 3 dry.
 
 | | |
 |---|---|
-| read → sent | 33 → 29 |
-| suppressed, with a stated reason | 1 |
+| read → sent, per run | 33 → 27 |
+| suppressed, with a stated reason | 3 |
 | rejected at intake (bad data) | 3 |
 | refusal rules in the gate | 19 |
 | blocked by the gate on that pass | **0** |
-| clinicians who came back | 5 of 27 written to (18.5%) |
+| clinicians who came back | 5 of 28 written to (17.9%) |
 | returns the machine could not attribute | 1 |
 | median days to return | 4 |
 
