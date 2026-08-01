@@ -3,10 +3,15 @@ Subject: [machine] draft for Naomi Bergstrom, MD, PhD
 
 Dr. Bergstrom,
 
-You used JotPsych for a while and then stopped, and I'd rather hear the reason from you than guess at it. My rough guess is the templates: a research protocol has fields a standard med-management note doesn't, and rewriting structure after every visit costs more time than it saves.
+You stopped using JotPsych at some point, and I'd rather hear the reason from you than guess at it.
 
-Two things are different now. Templates are editable field by field, so a protocol note can hold the sections you actually need. And notes surface E/M and ICD-10 suggestions you review before signing, which matters more if you're also thinking about what your clinicians would adopt.
+If it was the templates, that's worth telling me. A caseload that runs alongside research protocol work doesn't fit a stock med-management note, and forcing structured research fields into a template built for E/M coding is its own kind of documentation drag.
 
-If the reason you left was something else entirely, tell me and I'll stop guessing.
+But I don't want to assume. If it was pricing, or the note quality on short visits, or something about rolling it out to anyone else in the practice, that's more useful to know.
 
-Sam
+One line back is plenty. If the answer is that it's not coming back, that's fine too.
+
+Jo Flores
+JotPsych
+jotpsych.com
+

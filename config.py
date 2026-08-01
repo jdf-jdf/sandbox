@@ -279,7 +279,9 @@ Rules:
   "What we know" above, it did not happen. No "you asked for", "as we
   discussed", "per your request", "following up on our call". That they once
   used the product is the only shared history you have.
-- Plain sign-off. No "Best regards, The JotPsych Team".
+- Do not sign off at all. No "Best regards", no name, no company. End on your
+  last sentence. The sender's name is appended after you, and anything you add
+  becomes a second person signing the same email.
 
 Write like a person, not a language model:
 - No em dashes. Use a comma, a colon, parentheses, or two sentences.
@@ -389,6 +391,22 @@ MAX_WORDS = 140
 # 5. OUTBOUND
 # ---------------------------------------------------------------------------
 SUBJECT_TEMPLATE = "[machine] draft for {name}, {credential}"
+
+# --- signature: who the email is actually from ------------------------------
+# One sender, named in code. The prompt used to say "plain sign-off" and leave
+# the rest to the model, which invented a different human every run: Ravi,
+# Marcus, Maya, Ellen. A recipient who forwards two of these sees two people
+# claiming the same mailbox, and for a clinical audience that reads as a
+# mail-merge at best. So the name is a constant here and the prompt is told
+# not to sign off at all. See machine/signature.py.
+#
+# Composed rather than templated on purpose: a {placeholder} in this string
+# would look to the gate exactly like a draft the model failed to fill in.
+SENDER_NAME = "Jo Flores"
+SENDER_COMPANY = "JotPsych"
+SENDER_SITE = "jotpsych.com"
+
+SIGNATURE = "\n".join((SENDER_NAME, SENDER_COMPANY, SENDER_SITE))
 
 # "file" always runs and needs no credentials.
 # "smtp" is the real outbound action. Both run when --send is passed;

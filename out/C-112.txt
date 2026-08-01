@@ -3,11 +3,15 @@ Subject: [machine] draft for Aisha Mbeki, PMHNP
 
 Aisha,
 
-You stopped using JotPsych, and the note we have on file says supervisor review was the gap. That was a real hole: if you can't see a clinician's note before it goes out, you're either reading everything after the fact or trusting the coding on 20-minute med checks you didn't sit in on.
+You left JotPsych over something specific: there was no way for you to review and sign off on your clinicians' notes before they went out. In a three-person practice where you carry the liability for everyone's coding, that is a real gap, not a nice-to-have.
 
-We've built review workflow since then. Before I describe it, I'd rather hear whether that was actually the reason you left, or just the part that made it into our records. If something else drove it, that's more useful to me.
+We built supervisor review since. Notes route to you, you can see the E/M level suggested and the supporting elements, and edit before anything is finalized.
 
-Either way, happy to send what changed and let you decide.
+I'd rather hear it from you than guess, though. Was the review workflow the whole reason, or was something else going on with the med-management notes (30 minutes of cleanup after a full panel day)?
 
-Ravi
+Happy to show you what changed if it's worth your time.
+
+Jo Flores
 JotPsych
+jotpsych.com
+

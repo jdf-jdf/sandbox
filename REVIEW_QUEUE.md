@@ -1,17 +1,12 @@
 # Review queue
 
-_Generated 2026-08-01T19:45:32+00:00 by the last run. Overwritten every run._
+_Generated 2026-08-01T20:17:51+00:00 by the last run. Overwritten every run._
 
-**4 item(s) need a human.** Estimated time: 12 minutes.
+**3 item(s) need a human.** Estimated time: 9 minutes.
 
 ## 1. Blocked before sending — decide keep or kill
 
-### Simon Halloway — line 32
-- **Tripped:** `compliance_overclaim`
-  - Vague or unearned security/compliance claim — matched `completely private`
-- **Draft:** `quarantine/C-131.txt`
-- **Do:** read the draft. If the rule was right, nothing to do — the phrase is already banned for the next run. If it was a false positive, loosen that pattern in `config.REFUSAL_RULES`.
-
+_Nothing blocked this run._
 
 ## 2. Sent, but worth a look
 
@@ -26,7 +21,7 @@ _Nothing flagged this run._
 - **Rachel Feinberg** (line 17) — suppressed: med.cornell.edu is a health system or medical organization, so nobody there can buy an EHR add-on. The touch is wasted and the send is noise. (Search shows the cornell.edu medical subdomains belong to Weill Cornell Medicine, a private medical school of Cornell University affiliated with NewYork-Presbyterian/Weill Cornell Medical Center, and med.cornell.edu is its faculty/staff email domain — an academic medical center, not the undergraduate university.)
 - **Lucia Moreno** (line 19) — suppressed: mayoclinic.org is a health system or medical organization, so nobody there can buy an EHR add-on. The touch is wasted and the send is noise. (mayoclinic.org is the official web domain of Mayo Clinic, described in sources as a nonprofit American academic medical center for integrated health care, education and research, with campuses in Rochester MN, Jacksonville FL, and Phoenix/Scottsdale AZ and tens of thousands of employed physicians and staff. Anyone at this address is an institutional employee, not an independent buyer.)
 - **Devon Pruitt** (line 20) — suppressed: northsidecommunityhealth.org is a health system or medical organization, so nobody there can buy an EHR add-on. The touch is wasted and the send is noise. (The exact domain never appeared in search results, so I could not confirm the specific registrant; however, every organization operating under the name "Northside Community Health Center" that searches surfaced is a nonprofit community health center / FQHC offering primary and behavioral health care, not a university or a private group practice. Clinicians at any of these are institutional employees on an employer-selected system.)
-- **Ingrid Halvorsen** (line 21) — suppressed: umich.edu returned verdict 'unclear', which is not in config.DOMAIN_VERDICT_SETTINGS.
+- **Ingrid Halvorsen** (line 21) — suppressed: umich.edu came back 'unclear', which is not a verdict this machine acts on. Decide it by hand in data/domain_verdicts.json. (research said: umich.edu is the root domain of the University of Michigan, a public research university, but email-format data shows University of Michigan Medical School personnel also use First.Last@umich.edu / flast@umich.edu addresses while Michigan Medicine's clinical enterprise uses the separate med.umich.edu subdomain — so a @umich.edu address could be a campus student/trainee or a salaried academic medical center employee.)
 - **Omar Haddad** (line 22) — suppressed: ucsf.edu is a health system or medical organization, so nobody there can buy an EHR add-on. The touch is wasted and the send is noise. (UCSF's own materials describe it as a university exclusively focused on health, with graduate-level health professions education, biomedical research, and patient care through its top-ranked hospitals; it has no undergraduate programs, so ucsf.edu is the root domain of an academic medical center rather than a general university campus. Clinicians, faculty, and staff at this address are institutional employees of UCSF/UCSF Health.)
 - **Beatriz Salgado** (line 23) — suppressed: peacehealth.org is a health system or medical organization, so nobody there can buy an EHR add-on. The touch is wasted and the send is noise. (peacehealth.org is the corporate domain of PeaceHealth, a nonprofit Catholic health system headquartered in Vancouver, Washington, operating medical centers, critical access hospitals and clinics across Washington, Oregon and Alaska. Clinicians at this address are institutional employees, not independent purchasers.)
 - **Caleb Ruiz** (line 34) — suppressed: could not classify credential 'Psychology Doctoral Intern' -- we send nothing rather than send generic

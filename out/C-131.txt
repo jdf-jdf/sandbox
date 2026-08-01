@@ -1,14 +1,15 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Simon Halloway, LPC
 
-Simon,
+Simon, you stopped using JotPsych over security, and that is a fair place to stop.
 
-You stopped using JotPsych over security, and that was a fair place to draw the line. I don't want to guess at the rest of it, so: what specifically would you need to see? A BAA, our retention and deletion policy, where audio goes and how long it lives, subprocessor list, what happens to your notes if you leave. I can send documentation rather than assurances.
+I would rather not guess at what specifically worried you. Was it where recordings live and for how long, what happens to notes if you ever left, subprocessors, or something about how the audio moves at all? If you tell me which, I will send the actual answer, including our BAA and retention settings, and say plainly where the limits are rather than talk around them.
 
-If there was more to it than security, I'd rather hear that too.
+If it does not hold up, that is a reasonable no. But you are the one deciding this for your clinicians too, not just yourself, and an hour of narrative notes after the last session is still an hour.
 
-The evening backlog of narrative notes across your clinicians doesn't get smaller on its own, but neither does the risk if the answers aren't good enough. Happy to be told they aren't.
+What was the sticking point?
 
-Reply here and I'll send whatever's useful.
+Jo Flores
+JotPsych
+jotpsych.com
 
-Dan

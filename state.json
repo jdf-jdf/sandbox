@@ -6,18 +6,50 @@
       "intake_rejected": 3,
       "suppressed": 11,
       "generated": 19,
-      "blocked": 1,
-      "flagged": 0,
-      "sent": 18,
-      "live": true,
+      "blocked": 2,
+      "flagged": 1,
+      "sent": 17,
+      "live": false,
       "run": 1,
-      "at": "2026-08-01T19:45:32+00:00"
+      "at": "2026-08-01T20:14:25+00:00"
+    },
+    {
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 11,
+      "generated": 19,
+      "blocked": 1,
+      "flagged": 1,
+      "sent": 18,
+      "live": false,
+      "run": 2,
+      "at": "2026-08-01T20:16:08+00:00"
+    },
+    {
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 11,
+      "generated": 19,
+      "blocked": 0,
+      "flagged": 0,
+      "sent": 19,
+      "live": false,
+      "run": 3,
+      "at": "2026-08-01T20:17:51+00:00"
     }
   ],
   "offending_phrases": {
-    "completely private": 1
+    "clinical judgment": 1,
+    "completely private": 1,
+    "90% reduction": 1,
+    "30 hours a month": 1
   },
   "rule_hits": {
-    "compliance_overclaim": 1
+    "clinical_claim": 1,
+    "compliance_overclaim": 1,
+    "fabricated_stat": 1,
+    "unsourced_quantity": 1
   }
 }

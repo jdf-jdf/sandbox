@@ -3,13 +3,15 @@ Subject: [machine] draft for Hana Kobayashi, LPC
 
 Hana,
 
-You tried JotPsych during a trial and didn't stay. I'd genuinely like to know why, whether it was the privacy questions you raised about audio storage or something else entirely.
+You tried JotPsych during a trial and didn't stay. I'd like to know why, if you're open to saying.
 
-On the storage question, the short version: audio is encrypted, and you can set it to be deleted as soon as the note is drafted, so nothing sits on a server afterward. Happy to send the full detail if it's useful.
+I know privacy came up while you were testing it, including where audio lives. That's a fair thing to want a straight answer on, and I'm happy to give you one: audio is encrypted, and you can set it to delete right after the note is drafted, so nothing sits on a server afterward.
 
-If the issue was the notes themselves reading flat, or the price for a solo practice, that's worth hearing too. One line back is plenty.
+But I don't want to assume that was the reason. It might have been the notes themselves, or the price, or that it just didn't fit how you write.
 
-And if you've solved your evening documentation another way, say so and I'll stop writing.
+If you have a sentence to spare, reply with it. That's genuinely all I'm asking for.
 
-Daniel
+Jo Flores
 JotPsych
+jotpsych.com
+

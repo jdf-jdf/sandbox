@@ -1,15 +1,15 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Kenji Tanaka, LMFT
 
-Kenji,
+Kenji, you stopped using JotPsych around the time the mobile app changed, and I'd rather hear from you than guess at why.
 
-You stopped using JotPsych around the time we changed the mobile app, and I'd rather hear from you than guess at why.
+If you're recording on a phone between home visits, the app is the whole product. Anything clunky there (recording in a car, spotty signal, a session that ends and the note doesn't save) is a reason to quit, and a fair one.
 
-If you're recording on a phone between home visits, the app is the whole product. Whatever broke for you (the recording flow, reliability in the car, something else entirely), I want the specifics.
+The mobile side has been reworked since. But I don't want to pitch you a fix for a problem you may not have had.
 
-The mobile side has been rebuilt since then, but I'm not going to ask you to test that on faith. Tell me what went wrong and I'll tell you honestly whether it's fixed or still on a list somewhere.
+What made you stop? One line is plenty, and if the answer is that notes are going fine without it, that's useful too.
 
-Two sentences is plenty. Reply here.
-
-Maya
+Jo Flores
 JotPsych
+jotpsych.com
+

@@ -19,7 +19,8 @@ import os
 import sys
 
 import config
-from machine import decide, generate, intake, qc, review, send, state as state_mod
+from machine import (decide, generate, intake, qc, review, send, signature,
+                     state as state_mod)
 
 
 def load_dotenv(path=".env"):
@@ -70,6 +71,18 @@ def main():
         print(f"\n! {e}\n")
         return 1
 
+    # The signature reaches inboxes without passing the per-draft gate, so it
+    # is held to the same rules here instead. Once, before anything is sent.
+    sig_violations = signature.check()
+    if any(v["severity"] == "block" for v in sig_violations):
+        print("\n! config.SIGNATURE trips the refusal rules:")
+        for v in sig_violations:
+            print(f"    {v['severity']:<5} {v['rule']}: {v['evidence']!r}")
+        print("  Fix the signature in config.py. Nothing was sent.\n")
+        return 1
+    for v in sig_violations:
+        print(f"[signature] flag {v['rule']}: {v['evidence']!r}")
+
     quarantined, flagged, suppressed, sent_ok = [], [], [], []
     all_violations = []
 
@@ -108,6 +121,11 @@ def main():
                   f"which is not a column in {args.input}. Row has: {sorted(row)}")
             return 1
         to = os.environ.get("SEND_TO") or row[config.ADDRESS_FIELD]
+
+        # Signed after the gate, and last: the signature is the bottom of the
+        # email. Anything else stamped on post-gate goes above this line.
+        text = signature.stamp(text)
+
         results = []
         for s in senders:
             try:

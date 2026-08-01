@@ -1,12 +1,7 @@
-Simon,
+Simon, when you stopped using JotPsych, security was the sticking point. You said you'd only come back if we could tell you it was completely private and fully compliant.
 
-You stopped using JotPsych over security, and said you'd only come back if we could tell you it's completely private and fully compliant. Fair condition.
+I'd rather not guess at what would satisfy you. Different practice owners mean different things: BAA terms, where audio lives and for how long, whether recordings are retained at all, subprocessor lists, what happens to notes if a clinician leaves your practice.
 
-I'd rather not guess at which part concerned you. Retention windows? Where audio lives, and for how long? Whether anything is used for model training? What happens to notes if your practice leaves? The answers differ, and I don't want to send you a generic assurance page.
+If you tell me which of those matter to you, I'll send straight answers, including the ones that aren't what you want to hear.
 
-Tell me what you'd need documented and I'll send exactly that, including our BAA and subprocessor list. If it doesn't clear your bar, that's a straight answer too.
-
-Either way, I hope your evenings are shorter than they were.
-
-Dana
-JotPsych
+And if the answer is that no vendor is getting near your sessions, that's a reasonable position and I'll leave you alone.

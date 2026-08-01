@@ -3,13 +3,15 @@ Subject: [machine] draft for Amara Osei, PMHNP
 
 Amara,
 
-You tried JotPsych in November 2024 and stopped after about three weeks. The note we have from that trial says the editor fought you on med-management templates, which is a real problem when a visit is fifteen minutes and the note has to carry an E/M level that holds up.
+You tried JotPsych for about three weeks back in November and stopped. The note the editor fought you on med-management templates, which is a fair reason to walk.
 
-Templates work differently now: you can set your own structure for med checks and it stays put instead of reverting.
+The editor has been rebuilt since then. You can set your own templates for a 15-minute follow-up, and the E/M and ICD-10 suggestions sit next to the note for you to accept or change, not baked in. Nothing gets coded without you.
 
-I'd rather hear it from you than guess. Was the template friction the whole reason, or was something else going on (price, accuracy, the time it took to fix a note afterward)?
+I'd rather hear from you than guess, though. Was the template friction the whole story, or was something else pushing you back to typing notes after your last patient?
 
-A sentence back is plenty. Happy to send current pricing if that's the piece that matters.
+Happy to reopen your account for a couple of weeks at no cost if you want to see the difference.
 
-Daniel
+Jo Flores
 JotPsych
+jotpsych.com
+

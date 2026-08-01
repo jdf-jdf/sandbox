@@ -52,8 +52,7 @@ def _fallback(row, decision):
         f"[FALLBACK TEMPLATE -- LLM unavailable at generation time]\n\n"
         f"Documentation is the part of the work that follows you home. "
         f"JotPsych writes the note from the session so the evening is yours.\n\n"
-        f"What we have on file: {detail or '(nothing)'}\n\n"
-        f"-- \n"
+        f"What we have on file: {detail or '(nothing)'}\n"
     )
 
 
