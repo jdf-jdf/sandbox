@@ -26,19 +26,16 @@ It runs on a schedule. Nobody presses anything.
 The export is three columns: a name, an email address, and a mobile number.
 That is all a signup ever gave us.
 
-A second sample is included so the outputs visibly change. Same three columns,
-different people:
+Nothing in that tells you whether someone prescribes medication or runs
+fifty-minute therapy sessions, whether they own their practice or answer to a
+hospital, or whether they are in any position to buy. A win-back email that
+does not know which of those is true is a mail merge, and this audience can
+spot one at a glance.
 
 So the machine's first real act is to go and find out. It researches the
 employer behind each email address, then researches the individual person where
 the employer's answer is not enough on its own. Both answers get saved, so the
 same question is never paid for twice.
-
-That one reads 8 and sends 6. The two it declines show both halves of the
-decision layer: `felix@aurandcounseling.com` is a do-not-contact flag, which is
-finished, and `sbhatt@cornell.edu` is a person the domain pass could only call
-`trainee`, which is work. Everything in `out/`, `quarantine/`,
-`logs/rejects.log`, `REVIEW_QUEUE.md` and `state.json` differs on the next run.
 
 ## The marketing call we made
 
