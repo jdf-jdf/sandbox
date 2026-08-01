@@ -97,6 +97,9 @@ def draft(row, decision, learned_constraints, attempts=3):
         "segment_brief": config.SEGMENT_BRIEF.get(decision["segment"], ""),
         "setting": decision.get("setting", ""),
         "setting_brief": config.SETTING_BRIEF.get(decision.get("setting"), ""),
+        # Not per-row: the product line-up is the same for everyone. It lives in
+        # config so shipping a new line changes every email the next run writes.
+        "product_lines": config.PRODUCT_LINES_BLOCK,
         "learned_constraints": constraint_block,
     })
 
