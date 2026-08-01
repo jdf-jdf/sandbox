@@ -1,8 +1,8 @@
 # Review queue
 
-_Generated 2026-08-01T20:47:23+00:00 by the last run. Overwritten every run._
+_Generated 2026-08-01T20:43:28+00:00 by the last run. Overwritten every run._
 
-**5 item(s) need a human.** Estimated time: 15 minutes.
+**3 item(s) need a human.** Estimated time: 9 minutes.
 
 ## 1. Blocked before sending — decide keep or kill
 
@@ -10,7 +10,7 @@ _Nothing blocked this run._
 
 ## 2. Sent, but worth a look
 
-- **Elena Sokolova** — `not_just_but` — sent anyway, see `out/C-110.txt`
+_Nothing flagged this run._
 
 ## 3. Not contacted, waiting on you
 
@@ -29,7 +29,6 @@ _Listed for the audit trail, not for your afternoon._
 
 - Line 24: malformed email: 'wfry@'
 - Line 25: missing required field(s): name
-- Line 26: missing required field(s): mobile
 
 ---
 

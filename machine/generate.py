@@ -88,8 +88,12 @@ def draft(row, decision, learned_constraints, attempts=3):
     # Derived, not carried: the last four digits of the mobile, so copy can
     # name the number a reply would come from without printing the whole thing
     # in an email that may be forwarded.
+    # The absent case is a WORD, not an empty string. Interpolating "" turned
+    # the prompt's own example into "the number ending ?", and the model
+    # dutifully copied the broken shape into the email. A placeholder that
+    # cannot be mistaken for a value cannot be echoed as one.
     digits = "".join(c for c in str(row.get(config.MOBILE_FIELD, "")) if c.isdigit())
-    fields["mobile_last4"] = digits[-4:] if len(digits) >= 4 else ""
+    fields["mobile_last4"] = digits[-4:] if len(digits) >= 4 else "NONE-ON-FILE"
 
     fields.update({
         "segment": decision["segment"],
