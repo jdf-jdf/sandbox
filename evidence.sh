@@ -22,6 +22,18 @@ for i in 1 2 3; do
 done
 
 echo
+echo "########## the gate, on copy built to trip it ##########"
+# The three runs above are the machine on its own list, and on a good day the
+# model writes nothing worth blocking: 81 drafts, zero rejections, which is
+# the outcome you want and a terrible demonstration. The gate cannot be shown
+# working by output that never needed stopping.
+#
+# So the fixtures go through the same gate, the same rules and the same
+# quarantine. These are a demonstration and not a judgement on the drafts
+# above; they carry D- ids in logs/rejects.log, where every real row is a C-.
+$PY tools/gate_demo.py
+
+echo
 echo "########## what the gate stopped ##########"
 if [ -s logs/rejects.log ]; then
   cat logs/rejects.log
