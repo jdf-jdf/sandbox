@@ -176,7 +176,7 @@ def main():
                                       reply_to=attribution.reply_to(tok)))
             except Exception as e:  # noqa: BLE001
                 results.append(f"{s.name} FAILED: {e}")
-        attribution.record(row, decision, run_no, tok, results)
+        attribution.record(row, decision, run_no, tok, results, live=args.send)
         sent_ok.append(row)
         flag = " (flagged)" if violations else ""
         print(f"[send]     {label:<24} OK    {'; '.join(results)}{flag} [{source}]")

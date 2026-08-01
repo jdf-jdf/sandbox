@@ -2,18 +2,17 @@ To: joannadflores@gmail.com
 Subject: [machine] draft for Amara Osei
 Reply-To: joannadflores+e3d03035d513@gmail.com
 
-Amara,
+Amara, you used JotPsych for notes at some point and then stopped, and I don't know why. That's the actual reason I'm writing.
 
-You used JotPsych at some point and then stopped, and I don't know why. That's the part I'd like to hear.
+The one thing that's changed since: the note now runs into the billing. The same system that writes the chart checks the claim against payer rules before it goes out, and works the denial when it comes back. For a solo practice with no biller, that's the part I'd want a prescriber to know about, especially where a thin note turns into a downcode on a 99214.
 
-I'm asking because the version you used may not be the one that exists now, particularly around E/M level support and getting ICD-10 and CPT onto the note before it leaves your hands. But I'd rather not guess at what didn't work for you. In a solo practice the math is yours alone, and if the notes still take an hour after the last patient, nothing else matters.
+But I'd rather hear what didn't work the first time than pitch you on the second.
 
-Fifteen minutes on the phone would tell me more than an email thread will.
-
-Still the best number, ending 0142? I'll work around your schedule.
-
-Ravi
-JotPsych
+Would a short call be easier than email? Still the best number, ending 0142, and I'll work around your schedule.
 
 If you want to pick it back up: https://jotpsych.com/welcome-back/e3d03035d513
+
+Jo Flores
+JotPsych
+jotpsych.com
 

@@ -77,7 +77,7 @@ def match(signals, ledger):
     token: somebody who texts the number back is identified by the number
     they texted from, which is why the export's third column earns its place.
     """
-    by_token = {e["token"]: e for e in ledger}
+    by_token = {(e["token"] or "").strip().lower(): e for e in ledger}
     by_mobile = {}
     for e in ledger:                       # newest send per number wins
         if e.get("mobile"):
@@ -87,7 +87,7 @@ def match(signals, ledger):
     for sig in signals:
         entry = None
         if sig.get("token"):
-            entry = attribution.resolve_token(sig["token"]) or by_token.get(sig["token"])
+            entry = by_token.get((sig["token"] or "").strip().lower())
         if entry is None and sig.get("from_mobile"):
             entry = by_mobile.get(sig["from_mobile"])
         if entry is None:
@@ -100,13 +100,15 @@ def match(signals, ledger):
     return matched, orphans
 
 
-def report(ledger, matched, orphans):
+def report(ledger, matched, orphans, dry=0):
     sends = len(ledger)
     people = len({e["id"] for e in ledger})
     returned = {m["send"]["id"] for m in matched}
 
     print("\n=== IMPACT ===")
     print(f"  sends              {sends} across {people} clinician(s)")
+    if dry:
+        print(f"  (excluded          {dry} dry-run row(s): drafted, never emailed)")
     print(f"  signals in         {len(matched) + len(orphans)}")
     print(f"  resolved to a send {len(matched)}")
     print(f"  clinicians back    {len(returned)}"
@@ -152,10 +154,21 @@ def main():
     ap.add_argument("--inbound", default=DEFAULT_INBOUND)
     args = ap.parse_args()
 
-    ledger = attribution.load_ledger()
+    # A dry run is recorded too, and a dry run is not a send. Filtered here
+    # rather than inside report() so that matching cannot resolve an inbound
+    # signal to an email that never left the building -- a click on a link
+    # nobody was ever given is a bug in the collector, not a return.
+    everything = attribution.load_ledger()
+    ledger = [e for e in everything if attribution.was_live(e)]
     if not ledger:
-        print(f"\nNo sends recorded in {config.ATTRIBUTION_LEDGER_PATH}. "
-              f"Run the machine first.\n")
+        if everything:
+            print(f"\n{len(everything)} row(s) in {config.ATTRIBUTION_LEDGER_PATH}, "
+                  f"but every one of them is a dry run. Nothing has actually "
+                  f"been emailed, so there is nothing that could come back.\n"
+                  f"Run `python run.py --send` first.\n")
+        else:
+            print(f"\nNo sends recorded in {config.ATTRIBUTION_LEDGER_PATH}. "
+                  f"Run the machine first.\n")
         return 1
 
     signals = load_inbound(args.inbound)
@@ -165,7 +178,7 @@ def main():
         return 0
 
     matched, orphans = match(signals, ledger)
-    report(ledger, matched, orphans)
+    report(ledger, matched, orphans, dry=len(everything) - len(ledger))
     return 0
 
 

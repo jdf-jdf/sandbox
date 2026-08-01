@@ -82,9 +82,15 @@ def stamp(text, tok):
     return f"{text.rstrip()}\n\n{config.ATTRIBUTION_FOOTER.format(link=link(tok))}\n"
 
 
-def record(row, decision, run_no, tok, channel_results, path=None):
+def record(row, decision, run_no, tok, channel_results, path=None, live=False):
     """Append one line to the ledger. One JSON object per line, so the file
-    can be tailed, grepped, and appended to concurrently without a parser."""
+    can be tailed, grepped, and appended to concurrently without a parser.
+
+    `live` is the difference between "this reached an inbox" and "this is what
+    a dry run would have sent". Both belong in the ledger -- a dry run leaving
+    no trace of what it promised is worse -- but only one of them is a send,
+    and conflating them overstates every outcome number downstream.
+    """
     path = path or config.ATTRIBUTION_LEDGER_PATH
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     entry = {
@@ -94,6 +100,7 @@ def record(row, decision, run_no, tok, channel_results, path=None):
         "address": row.get(config.ADDRESS_FIELD, ""),
         "mobile": row.get("mobile", ""),
         "run": run_no,
+        "live": bool(live),
         "sent_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "segment": decision.get("segment", ""),
         "setting": decision.get("setting", ""),
@@ -118,6 +125,19 @@ def load_ledger(path=None):
             if line:
                 out.append(json.loads(line))
     return out
+
+
+def was_live(entry):
+    """True if this ledger line represents an email that actually went out.
+
+    Lines written before the flag existed do not carry it. Rather than reading
+    an old ledger as all-dry (which would report zero sends and zero returns
+    for work that demonstrably happened), those fall back to the channel
+    results: an entry the SMTP sender touched says "emailed ...".
+    """
+    if "live" in entry:
+        return bool(entry["live"])
+    return any("emailed" in str(c) for c in entry.get("channels", []))
 
 
 def resolve_token(tok, path=None):

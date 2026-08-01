@@ -2,17 +2,17 @@ To: joannadflores@gmail.com
 Subject: [machine] draft for Daniel Whitfield
 Reply-To: joannadflores+51671d7856cf@gmail.com
 
-Daniel,
+Daniel, you used JotPsych for a while and then stopped, and I don't know why. That's the part I'd like to hear.
 
-You tried JotPsych at some point and stopped, and I don't know why. I'd rather ask than guess.
+What I can tell you is what changed since. JotPsych isn't only writing the note now: the same system checks the claim against payer rules before it goes out, and works the denial when one comes back. For a clinician with no biller and no admin, that's the piece that wasn't there when you were.
 
-If it was the writing itself, that the notes came back sounding generic, or not like how you document, that's the feedback I most want. Same if it was price, or privacy, or just that it added a step instead of removing one.
+But I'd rather not guess at what didn't work. Whether it was the way the notes read, the price, or something smaller, that's useful to us either way.
 
-The part I care about is whether your progress notes are still getting written after the last session of the day, or at nine at night on the couch.
-
-Would you be open to a short call? I'll work around your schedule. Still the best number, ending 0118?
-
-Thanks for reading,
+Still the best number, ending 0118? Happy to work around your schedule.
 
 If you want to pick it back up: https://jotpsych.com/welcome-back/51671d7856cf
+
+Jo Flores
+JotPsych
+jotpsych.com
 

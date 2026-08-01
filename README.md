@@ -237,9 +237,9 @@ The identifier is derived rather than stored, which means it can be rebuilt
 from the original list if the record is ever lost, and it gives nothing away if
 it turns up in a public URL.
 
-On the last run, five clinicians came back out of the twenty-seven written to,
-which is 18.5%. Two clicked, two replied, and one sent a text. The median gap
-was four days, and the range ran from one day to nineteen.
+On the last run, three clinicians came back out of the ten written to, which
+is 30%. One clicked, one replied, and one sent a text. The median gap was
+three days, and the range ran from two days to eighteen.
 
 One more came back and could not be traced, because they went straight to the
 pricing page without touching anything we could recognise. That number is
@@ -254,24 +254,23 @@ export and nothing else changes.
 
 ## What the last run actually did
 
-From a sample list of 33 clinicians:
+From a sample list of 15 clinicians:
 
 | | |
 |---|---|
-| Rows read | 33 |
-| Rejected before spending anything, because the data was bad | 3 |
+| Rows read | 15 |
+| Rejected before spending anything, because the data was bad | 2 |
 | Deliberately not contacted, each with a stated reason | 3 |
-| Written to | 27 |
+| Written to | 10 |
 | Stopped by the safety checks | 0 |
-| Left needing a human afterwards | 4 items, about 12 minutes |
-| Came back | 5, plus 1 we could not trace |
+| Left needing a human afterwards | 3 items, about 9 minutes |
+| Came back | 3, plus 1 we could not trace |
 
 The three not contacted were the person who asked not to be, the Cornell
 professor the research identified as faculty rather than a trainee, and the
 Michigan address the research could not settle. Each of those says so, in
-writing. The three rejected rows were a malformed email address, a missing name
-and a missing mobile number, each reported with its line number so the data can
-be fixed.
+writing. The two rejected rows were a malformed email address and a missing
+name, each reported with its line number so the data can be fixed.
 
 Run it on a different list and every one of those numbers changes.
 
@@ -283,13 +282,32 @@ judgment rather than triage.
 Decisions that are **finished** never appear in the work section. "We looked it
 up, and Mayo Clinic employees cannot buy" is a closed question, listed only for
 the audit trail. Decisions that are **waiting on a person** are the whole list,
-and there are four of them right now.
+and there is one of them right now.
 
 The hour goes to three things: overruling a researched answer that someone
 knows is wrong, settling the addresses the research could not, and reading the
 copy that sent but got flagged. Everything else is a lookup against work
 already done, which is what keeps the budget intact as the list grows from
-thirty-three people to thousands.
+fifteen people to thousands.
+
+## Keeping the voice current
+
+The daily loop learns what not to write. It cannot notice when it is
+describing the wrong company, and that failure already happened here: the
+prompt called JotPsych "an ambient AI scribe" long after JotPsych became a
+full EHR with billing attached, so every email pitched the exact product this
+list had already left, fluently and in good voice. The safety checks could
+not catch it, because they have an opinion about how we sound, not about
+whether we are still describing the right company.
+
+So once a month, ahead of that day's run, a separate check re-reads
+jotpsych.com, compares it against what it saw last time, asks marketing what
+is coming that is not on the site yet, and writes a short work order. Ten
+minutes, and only when something actually moved. It deliberately never edits
+the prompt itself: a machine that rewrote its own brand voice from a scraped
+page is one bad read away from mailing thousands of people something nobody
+approved. This is the one place in the system where a human staying in the
+loop is the feature, not the overhead.
 
 ## What is real and what is sketched
 
@@ -297,7 +315,8 @@ thirty-three people to thousands.
 the routing, the decisions not to send, the writing, the safety checks, the
 quarantine of blocked copy, real email over a live connection, the tracking
 identifiers and their ledger, the returns report, the review queue, the
-metrics, the learning loop, and the schedule.
+metrics, the learning loop, the schedule, and the monthly check that keeps the
+brand voice from going stale.
 
 **Sketched, and marked as such:** the three collectors that would feed real
 click, reply and text signals into the returns report; the person-level
@@ -409,3 +428,10 @@ time-saved claims that carry no percent sign.
 relationship the machine had invented from nothing. That became its own rule.
 It is the loop this whole repository is arguing for: run it, read what came
 out, and write the rule.
+
+**The monthly brand check exists because the machine had already failed this
+way once.** Partway through the build, the prompt was still describing
+JotPsych as an ambient scribe, a year or more after JotPsych stopped being
+one. Nothing inside the machine had noticed, because nothing inside the
+machine was looking. The fix was not a better prompt, it was a second loop
+whose only job is to keep looking.
