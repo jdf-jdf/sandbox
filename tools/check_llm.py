@@ -29,13 +29,20 @@ except ImportError:
 
 try:
     client = anthropic.Anthropic()
+    # Mirrors the real call in machine/generate.py on purpose -- a preflight
+    # that exercises a different code path isn't a preflight.
     r = client.messages.create(
         model=config.MODEL,
-        max_tokens=32,
+        max_tokens=200,
+        thinking={"type": "adaptive"},
+        output_config={"effort": config.EFFORT},
         messages=[{"role": "user", "content": "Reply with exactly: ok"}],
     )
-    print(f"OK  model={config.MODEL}  reply={r.content[0].text.strip()!r}")
+    text = next((b.text for b in r.content if b.type == "text"), "")
+    print(f"OK  model={config.MODEL}  effort={config.EFFORT}  reply={text.strip()!r}")
+    print(f"    tokens: in={r.usage.input_tokens} out={r.usage.output_tokens}")
 except Exception as e:  # noqa: BLE001
     print(f"FAIL: {type(e).__name__}: {e}")
-    print("      Check: model id in config.MODEL, and that the account has credit.")
+    print("      Common causes: no credit on the account (add at")
+    print("      platform.claude.com -> Billing), or a bad model id in config.MODEL.")
     sys.exit(1)

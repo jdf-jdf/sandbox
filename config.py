@@ -47,8 +47,18 @@ SUPPRESS_UNKNOWN_SEGMENT = True  # we'd rather send nothing than send generic
 # ---------------------------------------------------------------------------
 # 3. GENERATION
 # ---------------------------------------------------------------------------
-MODEL = "claude-sonnet-5"
-MAX_TOKENS = 700
+MODEL = "claude-opus-5"
+
+# Opus 5 thinks by default, and MAX_TOKENS caps thinking + response text
+# TOGETHER. 700 was fine for a no-thinking model; with thinking on it can be
+# eaten entirely by reasoning, leaving a truncated or empty email. Hence the
+# headroom -- a 120-word email needs ~200 of these; the rest is slack.
+MAX_TOKENS = 2000
+
+# Drafting a short email is not a reasoning problem. "low" keeps thinking
+# (and cost) down without disabling it -- disabled thinking on Opus 5 has its
+# own failure modes. Raise to "medium" if the drafts read thin.
+EFFORT = "low"
 
 # Per-segment framing. This is where your READ lives on the positive side —
 # what you actually think these two audiences care about.
@@ -86,6 +96,16 @@ Rules:
 - Never invent statistics, outcomes, or testimonials.
 - Never reference or invent any patient, case, or session content.
 - Plain sign-off. No "Best regards, The JotPsych Team".
+
+Write like a person, not a language model:
+- No em dashes. Use a comma, a colon, parentheses, or two sentences.
+- Vary sentence length. Uniform rhythm is the clearest tell.
+- No participle clauses tacked onto the end ("..., ensuring accuracy").
+- Never say a thing "stands as", "serves as", or "underscores" anything.
+- Banned: delve, leverage, robust, seamless, landscape, realm, unlock.
+- Don't open by explaining the state of healthcare. Open with them.
+- Say one specific thing about their actual day. Vagueness reads as a mail
+  merge, because it is one.
 
 {learned_constraints}
 
@@ -131,6 +151,31 @@ REFUSAL_RULES = [
 
     ("fabricated_stat", "Numeric claim the machine cannot source",
      r"\b\d{1,3}(\.\d+)?%\s*(of|more|less|fewer|increase|reduction|improvement)", "block"),
+
+    # --- AI tells, from the humanizer skill's pattern catalog. ---
+    # The ethics rules above catch output that is WRONG. These catch output
+    # that is RIGHT but reads like a machine wrote it -- which for a cold
+    # outreach email is its own kind of failure.
+    ("em_dash", "Em dash (absolute rule from the humanizer skill)",
+     r"—", "block"),
+
+    # NOTE: \s+ rather than literal spaces throughout. Emails wrap, and a
+    # pattern with a hard space silently misses the phrase every time it
+    # happens to straddle a line break.
+    ("significance_inflation", "Puffs up importance instead of saying what the thing does (humanizer P1)",
+     r"\b(stands\s+as|serves\s+as\s+a|testament\s+to|pivotal|underscor\w+|plays?\s+a\s+(?:vital|crucial|key)\s+role|in\s+today'?s(?:\s+\w+){0,3}\s+(?:landscape|world|environment))\b", "block"),
+
+    ("ai_vocab", "Vocabulary that reads as LLM-generated",
+     r"\b(delv\w+|leverag\w+|robust|tapestry|myriad|realm|navigate\s+the|landscape\s+of)\b", "block"),
+
+    ("ing_tail", "Participle clause tacked on to fake depth (humanizer P3)",
+     r",\s+(?:highlighting|underscoring|emphasizing|reflecting|ensuring|fostering|showcasing|contributing to)\b", "flag"),
+
+    ("hedging", "Filler that delays the point (humanizer P22-P30)",
+     r"\b(it'?s\s+worth\s+noting|it'?s\s+important\s+to\s+note|that\s+said,|when\s+it\s+comes\s+to)\b", "flag"),
+
+    ("not_just_but", "The 'not just X, but Y' construction",
+     r"\bnot\s+just\s+[\w\s]{1,40},?\s*(?:but|it'?s)\b", "flag"),
 
     # --- Softer signals: send, but tell the human to look. ---
     ("too_long", "Over length budget", None, "flag"),          # checked in code

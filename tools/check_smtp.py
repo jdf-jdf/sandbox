@@ -8,6 +8,7 @@ Gmail app passwords are the single most common way to lose 40 minutes on
 the day. Find out now, not at 1:15 tomorrow.
 """
 import os
+import socket
 import ssl
 import smtplib
 import sys
@@ -45,10 +46,19 @@ try:
         s.send_message(msg)
     print(f"SENT -> {to}. Go check the inbox now; don't assume.")
 except smtplib.SMTPAuthenticationError:
-    print("FAIL: Gmail rejected the login.")
+    print("FAIL (CREDENTIAL): Gmail rejected the login.")
     print("      Almost always: you used your Google password, not an APP password.")
-    print("      myaccount.google.com -> Security -> 2-Step Verification -> App passwords")
+    print("      Also revoked automatically if you changed your Google password.")
+    print("      myaccount.google.com/apppasswords")
     sys.exit(1)
+except (OSError, socket.timeout) as e:
+    # Errno 97 / timeouts mean the network never reached Gmail. The password
+    # is untested, not wrong. Common in locked-down containers and on
+    # corporate wifi that blocks port 587 outbound.
+    print(f"FAIL (NETWORK): could not reach smtp.gmail.com:587 -- {type(e).__name__}: {e}")
+    print("      This says nothing about your credential; the connection never got there.")
+    print("      Try a different network, or tether to your phone.")
+    sys.exit(2)
 except Exception as e:  # noqa: BLE001
     print(f"FAIL: {type(e).__name__}: {e}")
     sys.exit(1)

@@ -1,6 +1,9 @@
-2026-08-01T04:41:00+00:00	BLOCKED	id=c003	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
-2026-08-01T04:41:00+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
-2026-08-01T04:41:00+00:00	BLOCKED	id=c005	name=Alicia Fontaine	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
-2026-08-01T04:41:00+00:00	BLOCKED	id=c003	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
-2026-08-01T04:41:00+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
-2026-08-01T04:41:00+00:00	BLOCKED	id=c005	name=Alicia Fontaine	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
+2026-08-01T05:45:16+00:00	BLOCKED	id=c003	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
+2026-08-01T05:45:16+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
+2026-08-01T05:45:16+00:00	BLOCKED	id=c005	name=Alicia Fontaine	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
+2026-08-01T05:45:28+00:00	BLOCKED	id=c003	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
+2026-08-01T05:45:28+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
+2026-08-01T05:45:28+00:00	BLOCKED	id=c005	name=Alicia Fontaine	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
+2026-08-01T05:59:55+00:00	BLOCKED	id=c003	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
+2026-08-01T05:59:55+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
+2026-08-01T05:59:55+00:00	BLOCKED	id=c005	name=Alicia Fontaine	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
