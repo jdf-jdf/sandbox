@@ -35,7 +35,7 @@ what makes three columns into a segmented list.
 | Layer | This machine |
 |---|---|
 | Intake it did not author | `data/lapsed_clinicians.csv` — the real export shape: id, name, email, mobile |
-| Decision it makes alone | Two-axis routing (segment × setting), two researched caches, six suppression paths, no LLM |
+| Decision it makes alone | Two-axis routing (segment × setting), two researched caches, deterministic suppression, no LLM |
 | Action that leaves the process | A multipart email in a real inbox, tokenised for attribution |
 | Trigger that is not a person | `crontab.txt` → `run.sh`, weekdays 08:00 |
 
@@ -46,21 +46,22 @@ get wrong that a rule could get right is a rule.
 
 ## The numbers it reports
 
-Run `./evidence.sh --send` for a clean three-run sequence.
+Run `./evidence.sh --send` for a clean three-run sequence. The numbers below
+are from one full live pass with `SUPPRESS_INSTITUTIONAL = False`.
 
 | | |
 |---|---|
-| read → sent, per run | 33 → 18 |
-| suppressed, with a stated reason | 12 |
+| read → sent | 33 → 29 |
+| suppressed, with a stated reason | 1 |
 | rejected at intake (bad data) | 3 |
 | refusal rules in the gate | 19 |
-| blocked by the gate across three live runs | **0** |
-| clinicians who came back | 5 of 24 written to (20.8%) |
+| blocked by the gate on that pass | **0** |
+| clinicians who came back | 5 of 27 written to (18.5%) |
 | returns the machine could not attribute | 1 |
-| median days to return | 6 |
+| median days to return | 4 |
 
-**That zero is the honest number and it needs saying.** Across three live
-runs of 18 sends, the gate blocked nothing, and even `data/gate_test.csv` (six
+**That zero is the honest number and it needs saying.** Across four live runs
+during the build, the gate blocked nothing, and even `data/gate_test.csv` (six
 rows built to bait statistics, hype, PHI and invented rapport) came back clean.
 The reason is that `config.PROMPT` forbids those failures up front, so the
 model largely does not commit them. That is the right outcome for the product
@@ -90,6 +91,27 @@ own throat-clearing.
 
 The unattributable return is in that table on purpose. It is the honest
 measure of whether the plumbing holds, and it will never be zero.
+
+## The one call worth arguing about
+
+`SUPPRESS_INSTITUTIONAL = False`. Clinicians at a health system address
+(`kp.org`, `mayoclinic.org`, `med.cornell.edu`) **do** get written to, in the
+`institutional` register.
+
+The case for suppressing them is strong and the code still supports it as one
+line: they cannot buy, their employer chose their EHR, and the send is waste.
+The case for writing anyway is that "cannot buy today" is exactly the premise
+this brief rejects. A salaried psychiatrist at a health system is one job move
+from a private practice, and the whole point of a win-back list is staying
+alive with people whose timing has not turned yet. Suppressing them optimises
+this quarter's send-to-reply ratio by permanently discarding the segment with
+the longest fuse.
+
+What makes it safe to write to them is that the register changes: they are
+routed to `institutional`, not pitched a purchase they cannot authorise.
+
+Flip it in `config.py` and rerun to see the other answer. That is what the
+machine is for.
 
 ## What it refuses to send
 
@@ -129,9 +151,10 @@ where you want the work done.
 ## Where the one to two hours a month go
 
 `REVIEW_QUEUE.md` is ordered so the hour is spent on judgment, never on
-triage. Suppressions that are **finished** ("researched, and Mayo Clinic
-employees cannot buy") never appear. Only suppressions that are **waiting on a
-person** do, flagged `needs_review`.
+triage. Suppressions that are **finished** (do-not-contact honoured; a
+researched verdict the machine acts on) never appear. Only suppressions that
+are **waiting on a person** do, flagged `needs_review`. On the sample that is
+one row out of 33.
 
 That distinction is what makes the budget hold at scale. Domain research
 amortises: 4,000 clinicians at 300 employers is 300 searches once and zero

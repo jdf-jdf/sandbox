@@ -2,13 +2,13 @@ To: joannadflores@gmail.com
 Subject: [machine] draft for Naomi Bergstrom
 Reply-To: joannadflores+5b401f91d5aa@gmail.com
 
-Dr. Bergstrom, you used JotPsych at some point and then stopped, and I don't know why. I'd rather hear it than guess.
+Dr. Bergstrom, you tried JotPsych at some point and stopped, and I'd like to know why rather than guess.
 
-If it was the coding side, that's the part we've put the most work into: E/M level support and ICD-10/CPT that you can check against your own payer mix before the note goes out, rather than finding out at the remit. If it was something else entirely, that's more useful for me to know.
+Most of what we've changed since is aimed at the part of med management that costs money: E/M level support against the documentation actually in the note, and ICD-10 and CPT that hold up if a payer asks questions later. Whether that's what you needed is a different question, and one I can't answer from here.
 
-I'm also curious what you'd need to see before putting it in front of anyone else in the practice, since that's a different decision than using it yourself.
+If the reason you left was something we still haven't fixed, that's worth ten minutes of my time to hear.
 
-Fifteen minutes, whenever suits you. Still the best number, ending 0142?
+Is the mobile ending 0142 still the best number? Happy to work around your schedule, including early or between patients.
 
 If you want to pick it back up: https://jotpsych.com/welcome-back/5b401f91d5aa
 

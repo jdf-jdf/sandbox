@@ -1,6 +1,6 @@
 # Review queue
 
-_Generated 2026-08-01T20:32:18+00:00 by the last run. Overwritten every run._
+_Generated 2026-08-01T20:47:23+00:00 by the last run. Overwritten every run._
 
 **5 item(s) need a human.** Estimated time: 15 minutes.
 
@@ -10,14 +10,13 @@ _Nothing blocked this run._
 
 ## 2. Sent, but worth a look
 
-_Nothing flagged this run._
+- **Elena Sokolova** — `not_just_but` — sent anyway, see `out/C-110.txt`
 
 ## 3. Not contacted, waiting on you
 
 _The machine stopped rather than guess. Each of these needs a person to decide, and stays here until someone does._
 
 - **Ingrid Halvorsen** (line 21, `ihalvorsen@umich.edu`) — suppressed pending review: umich.edu came back 'unclear', which is not a verdict this machine acts on. Decide it by hand in data/domain_verdicts.json. (research said: umich.edu is the root domain of the University of Michigan, a public research university, but email-format data shows University of Michigan Medical School personnel also use First.Last@umich.edu / flast@umich.edu addresses while Michigan Medicine's clinical enterprise uses the separate med.umich.edu subdomain — so a @umich.edu address could be a campus student/trainee or a salaried academic medical center employee.)
-- **Caleb Ruiz** (line 34, `caleb.ruiz@gmail.com`) — suppressed pending review: could not classify credential '' -- we send nothing rather than send generic. If this credential should route somewhere, add it to config.SEGMENT_RULES.
 
 ## 4. Not contacted, settled — no action needed
 
