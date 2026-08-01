@@ -1,18 +1,19 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Marcus Feld
-Reply-To: joannadflores+92b5449bb75b@gmail.com
+Reply-To: joannadflores+5d056d4bb807@gmail.com
 
 Dr. Feld,
 
-You used JotPsych at some point and then stopped, and I don't know why. That's the part I'd actually like to hear.
+You used JotPsych as a scribe at some point and stopped, and I don't know why. That's the thing I'd actually like to hear.
 
-I'm asking because the reason matters differently for a practice owner. If it didn't hold up across a day of 15-minute med checks, that's one problem. If your clinicians wouldn't adopt it, or the E/M level it landed on didn't match what you'd have coded yourself, that's a different one. I'd rather hear which than guess.
+Worth saying once: it isn't only a note-taker now. The chart, the claim, payer enrollment and e-prescribing sit in one place, which matters if you're currently signing separate invoices for a scribe, an EHR, a biller and credentialing that never quite line up. JotAudit flags a thin E/M note before you sign it; JotBill works the denial when it lands.
 
-We've changed a fair amount since, but I'm not going to pitch you on that before knowing what broke.
+But the more useful conversation is what pushed you off it in the first place.
 
 Still the best number, ending 0151? Happy to work around your schedule.
 
 Dan
+JotPsych
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/92b5449bb75b
+If you want to pick it back up: https://jotpsych.com/welcome-back/5d056d4bb807
 

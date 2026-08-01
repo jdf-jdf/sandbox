@@ -1,19 +1,18 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Ruth Okonjo
-Reply-To: joannadflores+688a92de4f00@gmail.com
+Reply-To: joannadflores+da10741fe2b3@gmail.com
 
 Ruth,
 
-You used JotPsych at some point and then stopped, and I don't know why. That's the part I'd like to hear.
+You used JotPsych for notes at some point and then stopped, and I don't know why. That's the actual reason I'm writing.
 
-For solo telehealth med management, the documentation problem is usually not the narrative. It's whether the note supports the level you billed, on a stack of 20-minute follow-ups, finished at 8pm because there's nobody else to finish them. Some people leave because that part didn't get better. Some leave over price, or because the workflow didn't fit.
+The part that didn't exist when you were with us: the note now runs into billing. Same system drafts the chart, checks the claim against payer rules before it goes out, and works the denial when one comes back. For a solo prescriber with no biller, that's the difference between a 99214 that holds up and one that gets quietly downcoded.
 
-Whatever the reason, it's useful to us, and I'd rather hear it than guess.
+But I'd rather hear what pushed you off it than pitch you.
 
-Would you be open to a short call? Still the best number, ending 0193? I'll work around your schedule.
+Is 0193 still the best number? Happy to work around your schedule, including between telehealth visits.
 
-Daniel
-JotPsych
+Dan
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/688a92de4f00
+If you want to pick it back up: https://jotpsych.com/welcome-back/da10741fe2b3
 

@@ -37,7 +37,7 @@ what makes three columns into a segmented list.
 | Intake it did not author | `data/lapsed_clinicians.csv` — the real export shape: id, name, email, mobile |
 | Decision it makes alone | Two-axis routing (segment × setting), two researched caches, deterministic suppression, no LLM |
 | Action that leaves the process | A multipart email in a real inbox, tokenised for attribution |
-| Trigger that is not a person | `crontab.txt` → `run.sh`, weekdays 08:00 |
+| Trigger that is not a person | `crontab.txt` → `run.sh`, weekdays 08:00, plus a monthly brand check ahead of it |
 
 The layer kept deliberately thin is generation. It gets one short prompt, low
 reasoning effort, and no authority: it cannot decide who to write to, cannot
@@ -166,6 +166,24 @@ The human's hour goes to three things: overruling a researched verdict they
 know is wrong (both caches are plain JSON, and the run trusts the file over
 the model), deciding the `unclear` domains, and reading the flagged-but-sent
 copy.
+
+Once a month there is a fourth, and it is the only one the machine refuses to
+do for itself. `tools/brand_check.py` re-reads jotpsych.com the morning of the
+first run of the month, diffs it against the variants it has already seen,
+emails marketing for what is not on the site yet, and writes `BRAND_REVIEW.md`
+ordered worst-first. Ten minutes, and only when something actually moved.
+
+That loop exists because the machine had already failed this way. Its prompt
+described JotPsych as "an ambient AI scribe" long after JotPsych became an EHR
+with billing attached, so every email it wrote pitched the exact product this
+list had walked away from, fluently and in good voice. The QC gate could not
+catch it: the gate has an opinion about how we sound, not about whether we are
+still describing the right company.
+
+The check deliberately stops at the work order rather than editing the prompt.
+A machine that rewrites its own brand voice from a scraped diff is one bad
+parse away from mailing thousands of clinicians something nobody approved, and
+this is the one place in the system where the human is the feature.
 
 ## What week two looks like
 

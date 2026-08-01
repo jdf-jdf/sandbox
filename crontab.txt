@@ -8,6 +8,21 @@
 # your shell's working directory and does not inherit your PATH.
 0 8 * * 1-5 /ABSOLUTE/PATH/TO/repo/run.sh
 
+# THE OTHER LOOP. The machine writes in JotPsych's voice, and JotPsych keeps
+# moving: it was an ambient scribe when this list signed up and is a full EHR
+# now. Once a month, before the first run of the month, re-read the site, diff
+# it against last month, ask marketing what is coming, and leave a work order
+# in BRAND_REVIEW.md.
+#
+# 07:00 on the 1st, an hour ahead of the run, so a material change is sitting
+# in front of a human before anything goes out that day. It never edits the
+# prompt itself -- see the header of tools/brand_check.py for why not.
+#
+# Add --send once SEND_TO is set in .env, or --send --force to reach the real
+# marketing inbox. Without either it writes the email to logs/ and sends
+# nothing.
+0 7 1 * * cd /ABSOLUTE/PATH/TO/repo && .venv/bin/python tools/brand_check.py >> logs/brand.log 2>&1
+
 # To watch it fire without waiting a day, swap in the line below, let it run
 # twice, then restore the schedule above:
 # * * * * * /ABSOLUTE/PATH/TO/repo/run.sh

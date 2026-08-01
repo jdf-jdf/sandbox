@@ -1,19 +1,18 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Kenji Tanaka
-Reply-To: joannadflores+9b90b4125304@gmail.com
+Reply-To: joannadflores+62baf30ed12d@gmail.com
 
 Kenji,
 
-You used JotPsych at some point and then stopped, and I don't know why. I'd rather hear it than guess.
+You used JotPsych for notes at some point and then stopped. I'd like to know why, because whatever it was probably still matters.
 
-That matters more from someone running their own practice. You're deciding for yourself and for anyone you bring on, and a tool that produces notes you end up rewriting at 8pm is worse than no tool at all. If that was the problem, or if it was something else entirely, I want the specifics.
+The honest reason I'm writing: what you saw was a note-taker. It isn't one anymore. The chart, the claims, the denials and appeals, e-prescribing and payer enrollment now sit in the same place, and JotAudit flags a thin note before you sign it rather than after a payer downcodes it. For a solo owner paying separately for a scribe, an EHR, a biller and credentialing, that's four invoices that never quite line up.
 
-We've made changes to how narrative progress notes come out, but I'm not going to pitch you on that until I know what went wrong the first time.
+But I'd rather hear what didn't work than pitch you.
 
 Still the best number, ending 0172? Happy to work around your schedule.
 
-Daniel
-JotPsych
+Dan
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/9b90b4125304
+If you want to pick it back up: https://jotpsych.com/welcome-back/62baf30ed12d
 

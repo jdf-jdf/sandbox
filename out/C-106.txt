@@ -1,18 +1,19 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Terrence Boyle
-Reply-To: joannadflores+adff4cb6be63@gmail.com
+Reply-To: joannadflores+2253c8ac12a4@gmail.com
 
 Dr. Boyle,
 
-You used JotPsych at some point and then stopped, and I don't know why. That's the part I'd like to hear.
+You used JotPsych for a while and then stopped, and I don't know why. That's the part I'd actually like to hear.
 
-I'm asking because the product has changed, mostly around the things a solo prescriber carries alone: E/M level support with the note, ICD-10 and CPT that match what actually happened in a 20 minute med check, and fewer notes left open at 9pm because there's no one else to close them.
+What I can tell you is that it isn't only a note-taker now. The same system that writes the chart checks the E/M level and the codes against payer rules before the claim goes out, and works the denial when one comes back, which matters more when there's no biller down the hall.
 
-Whether it's worth a second look depends entirely on what didn't work the first time. If it was accuracy, or price, or the workflow, I'd rather know than guess.
+That's context, not a pitch. The useful thing is the reason you left.
 
-Is 0187 still the best number? Happy to work around your schedule.
+Is the number ending 0187 still the best one? Happy to work around your schedule.
 
-Ben
+Sam
+JotPsych
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/adff4cb6be63
+If you want to pick it back up: https://jotpsych.com/welcome-back/2253c8ac12a4
 

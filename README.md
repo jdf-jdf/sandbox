@@ -152,6 +152,29 @@ nothing else changes.
 
 **Trigger:** `crontab.txt` → `run.sh`. Weekdays at 08:00. Nobody presses anything.
 
+### The slower loop: keeping the voice true
+
+The daily loop learns what not to *write*. It cannot notice when it is
+describing the wrong *company*, and that failure had already happened: the
+prompt called JotPsych "an ambient AI scribe" long after it became a full EHR
+with billing attached, so every email pitched the product this list had
+already left.
+
+| Stage | File | What it is |
+|---|---|---|
+| Brand facts | `BRAND.md` | What JotPsych is, every claim carrying its source URL. The thing a human edits. |
+| Brand voice | `config.py` §3a | `BRAND_BRIEF`, the news gate, the approved claims. Quotes `BRAND.md`. |
+| Brand check | `tools/brand_check.py` | Monthly: re-read the site, diff against last month, ask marketing what is coming, write a work order. |
+
+**Trigger:** `crontab.txt`, 07:00 on the 1st, an hour ahead of that day's run.
+It writes `BRAND_REVIEW.md` and never edits the prompt itself. `run.py` warns
+when the snapshot goes past `BRAND_MAX_AGE_DAYS`.
+
+One finding worth keeping: jotpsych.com serves three different hero headlines
+from the same URL. The checker samples each page several times and remembers
+every variant, because the first version fetched once and reported the
+homepage as rewritten three runs running.
+
 ---
 
 ## What it refuses to send
@@ -233,6 +256,13 @@ on. Every run rewrites `REVIEW_QUEUE.md` with four sections:
 2. **Sent, but worth a look.** Soft flags.
 3. **Deliberately not contacted**, and why.
 4. **Rejected at intake, fix the data**, with line numbers.
+
+Once a month there is a fifth thing, and it is the one that keeps the other
+four honest: `BRAND_REVIEW.md`, written by `tools/brand_check.py` before the
+first run of the month. Ten minutes reading what changed on the site, then
+editing `BRAND.md` and the constants in `config.py` §3a that quote it. Skip it
+for long enough and the machine goes on confidently selling last year's
+product.
 
 ---
 

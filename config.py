@@ -303,6 +303,221 @@ MAX_TOKENS = 2000
 # "medium" if the drafts read thin.
 EFFORT = "low"
 
+
+# ---------------------------------------------------------------------------
+# 3a. BRAND -- what the machine is allowed to believe about JotPsych.
+#
+#     Sourced from BRAND.md, which carries a citation for every fact below.
+#     The prompt used to open by calling JotPsych "an ambient AI scribe". That
+#     was true in 2023, and it is the product this entire list already walked
+#     away from. Describing a churned customer's own reason for leaving back
+#     at them is exactly the "nobody checked" failure the prompt spends a
+#     paragraph warning about, so the description lives here now, in one
+#     place, and moves when the brand moves.
+# ---------------------------------------------------------------------------
+BRAND_BRIEF = (
+    "JotPsych is the behavioral health EHR that defends clinicians from "
+    "insurance companies. Notes, billing and the whole practice in one "
+    "system: it drafts the chart during the session, checks every note and "
+    "claim against payer rules, works the denials, and follows the money "
+    "from the visit to the bank account. The named parts are the AI Scribe, "
+    "JotBill (claims, denials, appeals), JotCred (payer enrollment), "
+    "JotAudit (flags a weak note before it is signed), JotSite (practice "
+    "website), JotRx (e-prescribing, including EPCS) and JotMeet "
+    "(telehealth). That list is complete. If a product name is not on it, it "
+    "does not exist, so do not invent one. "
+    "One thing about the framing, because it is the part that is easy to get "
+    "subtly wrong: JotPsych does not sell time saved. It sells position "
+    "against the payer. The note is a defensive instrument, written to "
+    "survive an audit and beat a downcode. Nothing in the company's own copy "
+    "promises a clinician a better life, and copy that drifts back toward "
+    "work-life balance has left the brand even when every word in it is "
+    "clean."
+)
+
+# Names the QC gate will accept in a body. Anything matching Jot<Capital> and
+# absent from this tuple is blocked outright: see the unknown_module check in
+# machine/qc.py. A regex can express "don't say seamless"; it cannot express
+# "don't say the name of a product we do not sell", so that one is coded.
+BRAND_MODULES = ("JotBill", "JotCred", "JotAudit", "JotSite", "JotRx", "JotMeet")
+
+# The win-back hook, and the only place the machine volunteers what the
+# product does now.
+#
+# Gated by setting rather than said to everyone, because news is only news to
+# somebody who could act on it. The institutional and trainee briefs below
+# argue at length that a pitch to a clinician who cannot buy is worse than
+# silence, and that argument does not stop being true because we finally have
+# something new to say.
+#
+# So membership of this dict IS the gate, and it holds only the two settings
+# that can buy. institutional and trainee are absent on purpose, not by
+# oversight; they resolve to BRAND_NEWS_SUPPRESSED below, as does any setting
+# nobody has written copy for yet. Silence is the default and has to be
+# argued out of, which is the right way round for a list that churned once.
+BRAND_NEWS_BY_SETTING = {
+    "solo": (
+        "They stopped using a note-taker. What they have not seen is that "
+        "the note now runs into billing: the same system writes the chart, "
+        "checks the claim before it goes out, and chases the denial when it "
+        "comes back. For a clinician with no biller and no admin, that is "
+        "the part worth mentioning. One sentence is the whole budget. It is "
+        "context for the question you are asking, not the reason you are "
+        "writing."
+    ),
+    "practice_owner": (
+        "They stopped using a note-taker and will not have seen that it is "
+        "now the chart and the billing in one place. The angle that lands on "
+        "someone who signs the invoices is consolidation: scribe, EHR, "
+        "billing, e-prescribing and credentialing bought separately cost "
+        "more than they should and never quite join up. One sentence, then "
+        "back to the question."
+    ),
+}
+
+# What everyone else gets instead. Said out loud rather than left blank: an
+# empty slot tells the model nothing, and a model told nothing about a subject
+# it knows plenty about will fill the space itself.
+BRAND_NEWS_SUPPRESSED = (
+    "Volunteer nothing about what the product does now. This person cannot "
+    "buy it, and telling somebody what they are missing when they have no "
+    "way to act on it is a pitch wearing a hat. Describe no features, name "
+    "no parts of the product, quote no numbers and no prices. If they ask, "
+    "that is a different email and a better one."
+)
+
+# The numbers JotPsych publishes about itself. Attributable, therefore
+# quotable, but only in this exact wording.
+#
+# machine/qc.py exempts these strings from the two rules named in
+# CLAIM_EXEMPT_RULES by removing them before those rules read the text. So a
+# claim reproduced word for word passes, and a paraphrase ("over 40 hours a
+# month", "nearly all of your documentation time") still trips the gate. That
+# asymmetry is the point: the model may cite us, it may not do arithmetic on
+# our behalf.
+#
+# Worth saying, because no gate can: sourced is not the same as persuasive.
+# "Saves you 30 hours a month" is the exact sentence every scribe vendor
+# sends, to a list that has already ignored it once. The allowlist exists so
+# the machine CAN reach for a number, not so that it should.
+APPROVED_CLAIMS = [
+    ("90% less time on documentation",
+     "https://www.jotpsych.com/post/jotpsych-raises-seed-round"),
+    ("30 hours a month", "https://www.jotpsych.ai/"),
+    ("10,000+ practices", "https://jotpsych.com"),
+    ("2.5M+ notes", "https://jotpsych.com"),
+    ("150+ payer rules", "https://jotpsych.com"),
+    # Commercial facts. Nothing in REFUSAL_RULES blocks a price, so these need
+    # no exemption; they are here because the solo brief says outright that
+    # these clinicians will ask, and a machine that has the answer on file
+    # should not be vague about it.
+    ("$135 a month", "https://jotpsych.com/pricing"),
+    ("no long-term contract", "https://jotpsych.com/pricing"),
+    ("no credit card required to start", "https://jotpsych.com/pricing"),
+]
+
+# Which rules an approved claim is allowed to satisfy. Nothing else is
+# exemptible: an allowlisted string still has to clear em_dash, hype,
+# clinical_claim and the rest. The exemption is about provenance, not licence.
+CLAIM_EXEMPT_RULES = ("fabricated_stat", "unsourced_quantity")
+
+
+# --- keeping all of the above true -----------------------------------------
+# Everything above this line is a fact about a company, and facts about
+# companies go stale. This one already did: the prompt described an ambient
+# scribe for two years after the product stopped being one, and nothing in the
+# machine could notice, because nothing in the machine was looking.
+#
+# tools/brand_check.py looks. Monthly, before the run: re-read the pages, diff
+# them against the last snapshot, ask marketing what is coming that is not on
+# the site yet, and write a work order. It deliberately does not edit any of
+# the constants above. A machine that rewrites its own brand voice off a
+# scraped diff is one bad parse away from sending something nobody approved,
+# and this is the one part of the system where a human in the loop is the
+# feature rather than the cost.
+BRAND_SOURCES = [
+    "https://jotpsych.com",
+    "https://jotpsych.com/pricing",
+    "https://jotpsych.com/for-clinicians",
+]
+BRAND_SNAPSHOT_PATH = "data/brand_snapshot.json"
+BRAND_REVIEW_PATH = "BRAND_REVIEW.md"
+
+# How much of each page the model reads. Whole pages are mostly navigation and
+# the interesting change is near the top, where the positioning lives.
+BRAND_CHECK_MAX_CHARS = 12000
+
+# How many times to read each page per check.
+#
+# Not paranoia, measured: jotpsych.com serves at least three different hero
+# blocks from the same URL, one leading on the scribe, one on the EHR, one on
+# consolidation. A single fetch sees one of them at random, so a checker that
+# fetched once would report a rewritten homepage most months and be wrong
+# every time. Fetching a few times and remembering every variant it has ever
+# seen turns that noise back into signal: a genuinely new variant is news, and
+# the same three in rotation are not.
+BRAND_SAMPLES = 3
+
+# Stale after this. run.py warns and keeps going: a brand that moved last week
+# is a reason to look, not a reason to send nobody anything today. Set a bit
+# over a month so a monthly cron that slips a few days does not cry wolf.
+BRAND_MAX_AGE_DAYS = 35
+
+# Internal, and the reason it is spelled out here rather than derived: this
+# address must never end up in the intake list, the suppression logic, or the
+# attribution ledger. It is a colleague, not a lead.
+BRAND_CONTACT = "marketing@jotpsych.com"
+BRAND_CONTACT_SUBJECT = "Monthly brand check before the win-back run"
+BRAND_CONTACT_BODY = """Hi,
+
+This is the automated monthly check from the win-back machine, which emails \
+lapsed JotPsych signups. It writes from what it believes about the product, so \
+when the product moves and nobody tells it, it keeps selling the old one.
+
+What it read on the site since last month:
+
+{changes}
+
+Two things would help, whenever you get to them:
+
+1. Anything shipping in the next month or two that is not on the site yet, \
+particularly new modules or a change in how we describe what JotPsych is.
+2. Any claim or number we should stop using, or any we have newly earned the \
+right to use.
+
+Reply in whatever form is easiest. A human reads this into {brand_file} and \
+{config_file} before the next run.
+
+{stamp}
+"""
+
+# Given the old and new text of one page, say what actually changed. Formatted
+# with {url}, {old} and {new}.
+BRAND_CHECK_PROMPT = """You are watching one page of a company's website for \
+changes that would affect how a marketing email describes the product.
+
+The company is JotPsych, a behavioral health EHR.
+
+Page: {url}
+
+--- WHAT THIS PAGE SAID LAST TIME ---
+{old}
+
+--- WHAT IT SAYS NOW ---
+{new}
+
+Report only what a writer would need to know. Wording that moved around, \
+navigation, cookie banners and testimonial rotation are not changes. A new \
+product module, a different one-line description of what the company is, a new \
+or withdrawn statistic, and a price change all are.
+
+Be conservative. Reporting a change that did not happen costs a human an hour \
+of chasing it. If the page is materially the same, say so and call severity \
+"none".
+
+Call record_brand_change exactly once."""
+
+
 # Per-segment framing: the positive half of the opinion. What we believe each
 # audience actually cares about, as opposed to REFUSAL_RULES below, which is
 # what we believe they must never be sent.
@@ -323,7 +538,14 @@ SEGMENT_BRIEF = {
         "out, and an overcoded one invites clawback. They care about E/M and "
         "ICD-10/CPT correctness against their actual payer mix, about prior "
         "authorization, and about getting out of the office on time. They do "
-        "the ROI math themselves, so be specific or say nothing."
+        "the ROI math themselves, so be specific or say nothing. This is the "
+        "one segment where the brand's own frame lands unedited: JotPsych "
+        "positions itself against the payers, and an undercoded note and a "
+        "clawback are the same fear from either end. JotAudit flags a thin "
+        "note before it is signed, and JotBill works the denial after it "
+        "lands. The brand's own word for the thing they are afraid of is the "
+        "downcode, and a note built to survive an audit is how it talks about "
+        "the work. Name the specific thing, not the posture."
     ),
     "therapist": (
         "Therapists (PhD/PsyD/LCSW/LMFT/LPC) run 45-55 minute sessions and "
@@ -357,8 +579,9 @@ SETTING_BRIEF = {
         "which makes them the easiest sale and the least forgiving audience "
         "for anything that wastes their time. Their pain is evening "
         "paperwork and the unpaid hours that follow the last session of the "
-        "day. Price matters and they will ask about it. Do not write as if "
-        "they have a team."
+        "day. Price matters and they will ask about it, and our pricing is "
+        "public, so you may answer plainly rather than deflecting to a call. "
+        "Do not write as if they have a team."
     ),
     "practice_owner": (
         "Reached at a domain they appear to own, so most likely the owner or "
@@ -366,7 +589,11 @@ SETTING_BRIEF = {
         "as themselves, which means they think about onboarding, about what "
         "their clinicians will actually adopt, and about what happens to the "
         "notes if they ever leave. Their pain is the aggregate: documentation "
-        "drag across the whole practice, and clinicians burning out on it."
+        "drag across the whole practice, and clinicians burning out on it. "
+        "The other aggregate is the stack. A practice this size is usually "
+        "paying separately for a scribe, an EHR, a biller, e-prescribing and "
+        "credentialing, none of which quite join up, and the person reading "
+        "this is the one who signs all five invoices."
     ),
     "trainee": (
         "Reached at a university address that is not a medical center, so "
@@ -387,13 +614,19 @@ SETTING_BRIEF = {
 # {learned_constraints}. Any column in the CSV is therefore available here as
 # {column_name} with no code change. Referencing a column that doesn't exist
 # fails on the first row and names the missing column.
-PROMPT = """You are writing a single short outreach email on behalf of JotPsych, \
-an ambient AI scribe built specifically for behavioral health clinicians.
+PROMPT = """You are writing a single short outreach email on behalf of JotPsych.
+
+What JotPsych is: {brand_brief}
 
 Everyone on this list has already used JotPsych and stopped. This is a win-back, \
-not an introduction. They know what the product is, so explaining it to them \
-reads as though nobody checked. What you do not know is why they left, and \
-inventing a reason is worse than asking for one.
+not an introduction. What you do not know is why they left, and inventing a \
+reason is worse than asking for one.
+
+They left a note-taker. Everything above about billing, claims and payers came \
+after them, so they have never seen it. That is the one genuinely new thing you \
+have, and how much of it you may use depends entirely on the person:
+
+{brand_news}
 
 Recipient:
   Name: {name}
@@ -431,7 +664,7 @@ a blank reply. We hold a mobile number for them, ending {mobile_last4}.
 
 Rules:
 - Under 120 words.
-- Concrete about documentation burden. No hype, no exclamation marks.
+- Concrete about the paperwork. No hype, no exclamation marks.
 - Never imply the product makes clinical judgments or decisions.
 - Never invent statistics, outcomes, or testimonials.
 - Never reference or invent any patient, case, or session content.
@@ -440,6 +673,28 @@ Rules:
   discussed", "per your request", "following up on our call". That they once
   used the product is the only shared history you have.
 - Plain sign-off. No "Best regards, The JotPsych Team".
+
+Numbers about JotPsych. There is a list of claims we have published and can \
+stand behind, below. You may use one, at most, and only if it earns its place. \
+Two conditions, both hard:
+- Word for word. Reproduce the wording exactly as given. A rephrased claim is
+  an unsourced claim and the gate will stop the email.
+- Nothing else. Any figure about time saved, money recovered, practices,
+  notes, accuracy or price that is not on that list is invented, whatever it
+  sounds like. If the list is empty, no numbers about us at all.
+Bear in mind that "saves you thirty hours a month" is the sentence every \
+scribe vendor sends, and this person has already ignored it once. Usually the \
+stronger email has no number in it.
+
+{approved_claims}
+
+Words:
+- Clinicians, not "providers". Never "users".
+- The chart, the note, the claim. Never "the platform", never "the solution",
+  never "documentation burden": say notes, paperwork, or charting.
+- If they prescribe, they see patients. If they do therapy, they usually say
+  clients. If you do not know which, avoid the noun entirely.
+- Never name a part of the product that was not listed above.
 
 Write like a person, not a language model:
 - No em dashes. Use a comma, a colon, parentheses, or two sentences.
@@ -481,6 +736,15 @@ REFUSAL_RULES = [
     # --- Voice. Overworked clinicians do not respond to startup register. ---
     ("hype", "Hype register — reads as tech marketing, not peer-to-peer",
      r"\b(revolutionary|game.?chang\w+|cutting.edge|unlock|supercharge|10x|seamless\w*|effortless\w*)\b", "block"),
+
+    # Vendor register JotPsych does not use about itself. Distinct from `hype`
+    # above, which catches words that are embarrassing anywhere; these are
+    # words that are merely somebody else's. Note "one-stop shop" appears on
+    # jotpsych.com inside a customer's own quote and never in the company's
+    # voice, which is exactly the line this rule draws: a clinician may say it
+    # about us, we may not say it about ourselves.
+    ("off_brand_vocab", "Vendor register JotPsych never uses in its own voice",
+     r"\b(revolutioniz\w+|frictionless|transform\w*\s+your\s+practice|one[\s.-]?stop\s+shop|all[\s.-]?in[\s.-]?one\s+solution)\b", "block"),
 
     ("fake_urgency", "Manufactured urgency",
      r"\b(act now|limited time|don'?t miss out|last chance|spots? are filling)\b", "block"),
@@ -552,8 +816,22 @@ REFUSAL_RULES = [
      r"\bnot\s+just\s+[\w\s]{1,40},?\s*(?:but|it'?s)\b", "flag"),
 
     # --- Softer signals: send, but tell the human to look. ---
+    # Terminology slips rather than brand failures. The site says clinicians,
+    # never providers, and calls the thing the chart or the note rather than a
+    # platform. Worth a human's eye, not worth binning an otherwise good draft
+    # over, so these flag rather than block. If the review queue fills up with
+    # one of them, the learning loop will feed it back into the prompt as a
+    # constraint on its own and the problem solves itself.
+    ("off_brand_term", "Word the brand does not use",
+     r"\b(providers?|platforms?|solutions?|utiliz\w+|documentation\s+burden|AI-powered)\b", "flag"),
+
     ("too_long", "Over length budget", None, "flag"),          # checked in code
     ("no_personalization", "Recipient name never appears", None, "flag"),  # checked in code
+    # A regex can say "never write seamless". It cannot say "never write the
+    # name of a product we do not sell", because the whole point is that we
+    # cannot enumerate what the model might invent. Coded in machine/qc.py
+    # against BRAND_MODULES, which can.
+    ("unknown_module", "Names a JotPsych product that does not exist", None, "block"),
 ]
 
 MAX_WORDS = 140

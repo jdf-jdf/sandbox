@@ -1,0 +1,22 @@
+To: joannadflores@gmail.com
+Subject: Monthly brand check before the win-back run
+
+Hi,
+
+This is the automated monthly check from the win-back machine, which emails lapsed JotPsych signups. It writes from what it believes about the product, so when the product moves and nobody tells it, it keeps selling the old one.
+
+What it read on the site since last month:
+
+- https://jotpsych.com: unchanged.
+- https://jotpsych.com/pricing: unchanged.
+- https://jotpsych.com/for-clinicians: unchanged.
+
+Two things would help, whenever you get to them:
+
+1. Anything shipping in the next month or two that is not on the site yet, particularly new modules or a change in how we describe what JotPsych is.
+2. Any claim or number we should stop using, or any we have newly earned the right to use.
+
+Reply in whatever form is easiest. A human reads this into BRAND.md and config.py before the next run.
+
+(sent by tools/brand_check.py, 2026-08-01T17:09:13)
+

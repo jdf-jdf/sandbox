@@ -15,6 +15,8 @@ Usage:
   python run.py --input other.csv
 """
 import argparse
+import datetime
+import json
 import os
 import sys
 
@@ -36,6 +38,34 @@ def load_dotenv(path=".env"):
             os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
+def brand_age_warning():
+    """Say so when the brand facts are older than the brand.
+
+    The machine writes in JotPsych's voice from constants in config.py, and
+    those constants were wrong for two years without anything noticing. This
+    is the noticing. It warns and returns: a snapshot that is five weeks old
+    is a reason to run tools/brand_check.py, not a reason to send nobody
+    anything today, and a gate that stops the run over a stale JSON file is a
+    gate somebody deletes.
+    """
+    path = config.BRAND_SNAPSHOT_PATH
+    if not os.path.exists(path):
+        return (f"no brand snapshot at {path}. Run tools/brand_check.py to "
+                f"record what the site says today.")
+    try:
+        with open(path, encoding="utf-8") as f:
+            checked = json.load(f).get("checked_at")
+        age = (datetime.datetime.now()
+               - datetime.datetime.fromisoformat(checked)).days
+    except (ValueError, TypeError, json.JSONDecodeError) as e:
+        return f"could not read {path} ({type(e).__name__}); brand age unknown."
+    if age > config.BRAND_MAX_AGE_DAYS:
+        return (f"brand snapshot is {age} days old (limit "
+                f"{config.BRAND_MAX_AGE_DAYS}). The product may have moved. "
+                f"Run tools/brand_check.py.")
+    return ""
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--send", action="store_true",
@@ -54,6 +84,9 @@ def main():
     print(f"\n=== run {run_no} "
           f"| input: {args.input} "
           f"| mode: {'LIVE SEND' if args.send else 'dry'} ===")
+    stale = brand_age_warning()
+    if stale:
+        print(f"! {stale}")
     if learned:
         print(f"carrying {len(learned)} learned constraint(s) from previous runs:")
         for c in learned:

@@ -31,6 +31,22 @@ def _get_client():
     return _client
 
 
+def _claim_block():
+    """config.APPROVED_CLAIMS, as the prompt sees it.
+
+    The source URL travels with each claim rather than being stripped out. It
+    is not for the reader, since nobody cites a footnote in a cold email. It
+    is there so the model can see that every line is a quotation of something
+    already published, which is the entire basis on which it is allowed to
+    use one at all.
+    """
+    if not config.APPROVED_CLAIMS:
+        return ""
+    lines = "\n".join(f'- "{claim}"  (published: {source})'
+                      for claim, source in config.APPROVED_CLAIMS)
+    return "Claims you may quote, word for word and no other way:\n" + lines
+
+
 def _fallback(row, decision):
     """Deterministic template. Not good writing: it exists so the loop never
     breaks. Its presence in out/ means the model path failed for that row.
@@ -50,8 +66,9 @@ def _fallback(row, decision):
     return (
         f"Hi {label},\n\n"
         f"[FALLBACK TEMPLATE -- LLM unavailable at generation time]\n\n"
-        f"Documentation is the part of the work that follows you home. "
-        f"JotPsych writes the note from the session so the evening is yours.\n\n"
+        f"Paperwork is the part of the work that follows you home. "
+        f"JotPsych writes the chart during the session and checks the claim "
+        f"before it goes out.\n\n"
         f"What we have on file: {detail or '(nothing)'}\n\n"
         f"-- \n"
     )
@@ -92,11 +109,25 @@ def draft(row, decision, learned_constraints, attempts=3):
     digits = "".join(c for c in str(row.get(config.MOBILE_FIELD, "")) if c.isdigit())
     fields["mobile_last4"] = digits[-4:] if len(digits) >= 4 else ""
 
+    setting = decision.get("setting", "")
+
+    # Membership of BRAND_NEWS_BY_SETTING is the gate on whether this person
+    # hears what the product does now. Absent means suppressed, which is the
+    # safe direction: a setting nobody has written copy for yet gets silence
+    # rather than whatever sales pitch happened to be nearest.
+    sells = setting in config.BRAND_NEWS_BY_SETTING
+
     fields.update({
         "segment": decision["segment"],
         "segment_brief": config.SEGMENT_BRIEF.get(decision["segment"], ""),
-        "setting": decision.get("setting", ""),
-        "setting_brief": config.SETTING_BRIEF.get(decision.get("setting"), ""),
+        "setting": setting,
+        "setting_brief": config.SETTING_BRIEF.get(setting, ""),
+        "brand_brief": config.BRAND_BRIEF,
+        "brand_news": config.BRAND_NEWS_BY_SETTING.get(
+            setting, config.BRAND_NEWS_SUPPRESSED),
+        # Claims travel with the news or not at all. A statistic in an email
+        # to somebody we just decided not to pitch is still a pitch.
+        "approved_claims": _claim_block() if sells else "",
         "learned_constraints": constraint_block,
     })
 

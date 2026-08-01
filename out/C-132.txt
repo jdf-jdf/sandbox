@@ -1,18 +1,19 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Naomi Bergstrom
-Reply-To: joannadflores+63c5f96e79b7@gmail.com
+Reply-To: joannadflores+5b401f91d5aa@gmail.com
 
 Dr. Bergstrom,
 
-You used JotPsych at some point and then stopped, and I don't know why. I'd rather hear it than guess.
+You used JotPsych as a scribe at some point and stopped, and I don't know why. That's the part I'd actually like to hear.
 
-If it's useful context, most of the work since then has gone into the parts prescribers actually get judged on: E/M level support against the documentation that's there, ICD-10 and CPT that hold up if a payer looks twice, and notes that close the same day instead of piling up for the weekend. Whether any of that addresses your reason for leaving, I can't say without asking.
+What's changed since is that it isn't only a scribe now. The note, the claim, e-prescribing (including EPCS) and payer enrollment sit in one place, so a med-management visit coded thin gets flagged by JotAudit before you sign it, and JotBill works the denial if one lands. Most practices are paying five separate invoices for that.
 
-If you own the practice, I'd also want to know what your other clinicians thought.
+But I'd rather ask than pitch. Fifteen minutes, whenever suits you.
 
-Is the number ending 0142 still best? Happy to work around your schedule.
+Still the best number, ending 0142?
 
-Ravi
+Daniel
+JotPsych
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/63c5f96e79b7
+If you want to pick it back up: https://jotpsych.com/welcome-back/5b401f91d5aa
 

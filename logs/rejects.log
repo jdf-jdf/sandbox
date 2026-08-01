@@ -1,10 +1,9 @@
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-01	name=Marcus Feld	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-01	name=Marcus Feld	rule=unsourced_quantity	evidence='30 hours a month'	reason=Time-saved claim with no attributable source
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-02	name=Alicia Fontaine	rule=fabricated_relationship	evidence='You asked for'	reason=Claims a prior conversation or request that never happened
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-03	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-03	name=Priya Raghunathan	rule=clinical_claim	evidence='clinical judgment'	reason=Implies the product exercises clinical judgment
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-04	name=Simon Halloway	rule=compliance_overclaim	evidence='completely private'	reason=Vague or unearned security/compliance claim
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-05	name=Ruth Okonjo	rule=clinical_claim	evidence='recommends a diagnosis'	reason=Implies the product exercises clinical judgment
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-06	name=Dale Whitmore	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-06	name=Dale Whitmore	rule=fake_urgency	evidence='Act now'	reason=Manufactured urgency
-2026-08-01T20:33:21+00:00	BLOCKED	id=D-06	name=Dale Whitmore	rule=em_dash	evidence='—'	reason=Em dash: the single most reliable tell in generated prose
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-01	name=Marcus Feld	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-02	name=Alicia Fontaine	rule=fabricated_relationship	evidence='You asked for'	reason=Claims a prior conversation or request that never happened
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-03	name=Priya Raghunathan	rule=phi_leak	evidence='a patient who'	reason=References patient/session content in a marketing asset
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-03	name=Priya Raghunathan	rule=clinical_claim	evidence='clinical judgment'	reason=Implies the product exercises clinical judgment
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-04	name=Simon Halloway	rule=compliance_overclaim	evidence='completely private'	reason=Vague or unearned security/compliance claim
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-05	name=Ruth Okonjo	rule=clinical_claim	evidence='recommends a diagnosis'	reason=Implies the product exercises clinical judgment
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-06	name=Dale Whitmore	rule=hype	evidence='revolutionary'	reason=Hype register — reads as tech marketing, not peer-to-peer
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-06	name=Dale Whitmore	rule=fake_urgency	evidence='Act now'	reason=Manufactured urgency
+2026-08-01T21:09:01+00:00	BLOCKED	id=D-06	name=Dale Whitmore	rule=em_dash	evidence='—'	reason=Em dash: the single most reliable tell in generated prose

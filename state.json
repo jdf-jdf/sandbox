@@ -9,9 +9,35 @@
       "blocked": 0,
       "flagged": 0,
       "sent": 27,
-      "live": true,
+      "live": false,
       "run": 1,
-      "at": "2026-08-01T20:33:04+00:00"
+      "at": "2026-08-01T21:04:09+00:00"
+    },
+    {
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 3,
+      "generated": 27,
+      "blocked": 0,
+      "flagged": 0,
+      "sent": 27,
+      "live": false,
+      "run": 2,
+      "at": "2026-08-01T21:06:31+00:00"
+    },
+    {
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 3,
+      "generated": 27,
+      "blocked": 0,
+      "flagged": 0,
+      "sent": 27,
+      "live": false,
+      "run": 3,
+      "at": "2026-08-01T21:09:01+00:00"
     }
   ],
   "offending_phrases": {},

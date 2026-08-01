@@ -1,19 +1,19 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Aisha Mbeki
-Reply-To: joannadflores+2eab20b28152@gmail.com
+Reply-To: joannadflores+88616f3452d5@gmail.com
 
 Aisha,
 
-You used JotPsych at Northloop and then stopped, and I don't know why. That's the part I'd like to hear.
+You used JotPsych as a scribe at Northloop and then stopped, and I don't know why. That's the part I'd actually like to hear.
 
-I'm not going to guess. The reasons people give tend to be specific: the coding support didn't hold up against their payer mix, the notes needed too much cleanup after a 15-minute med check, or their clinicians just didn't pick it up and the rollout quietly died. Any of those is useful to us, and none of them fits neatly into an email reply.
+Worth saying what's changed, because it isn't the scribe: JotPsych now runs the chart and the billing together. JotAudit flags a thin med-management note before you sign it, so a 99214 doesn't quietly go out as a 99213, and JotBill works the denial when one lands. Credentialing and e-prescribing sit in the same place, which matters more when you're the one signing five separate invoices.
 
-Ten minutes on the phone would tell me more than anything I could write here.
+But mostly I want to know what didn't work the first time.
 
 Still the best number, ending 0139? Happy to work around your schedule.
 
 Daniel
 JotPsych
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/2eab20b28152
+If you want to pick it back up: https://jotpsych.com/welcome-back/88616f3452d5
 
