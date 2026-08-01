@@ -1,0 +1,5 @@
+You mentioned you're running your own practice already.
+
+At that stage the exposure is mostly on the payer side: a note that reads thin under audit, or a claim that gets downcoded and never worked. JotAudit flags a weak note before you sign it, and JotBill handles the denials and appeals rather than leaving them to age out.
+
+Nothing needed from you here. Just wanted you to know which part matters at your stage.

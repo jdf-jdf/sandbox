@@ -85,7 +85,7 @@ def main():
 
     for row_id, name, note, text in FIXTURES:
         row = {config.ID_FIELD: row_id, config.LABEL_FIELD: name}
-        blocked, violations = qc.check(text, row, {})
+        blocked, violations = qc.check(text, row)
         blocks = [v for v in violations if v["severity"] == "block"]
         flags = [v for v in violations if v["severity"] == "flag"]
 

@@ -22,7 +22,7 @@ the whole list either goes out generic or gets suppressed at once.
 import re
 
 import config
-from machine import domains, people
+from machine import domains, people, replies
 
 
 def _matches_rule(needle, haystack):
@@ -49,13 +49,15 @@ def route(row):
 
     needs_review separates a skip that is finished from a skip that is
     waiting on a person. Both stop the send; only one is work.
-    """
-    # The real export is name, email and mobile: no credential column exists
-    # to route on. So the row is topped up from the person cache first, and
-    # everything below routes on the enriched row without caring whether the
-    # value was exported or researched. A value the CSV carries always wins.
-    row = people.enrich(row)
 
+    EXPECTS AN ENRICHED ROW. The real export is name, email and mobile: no
+    credential column exists to route on, so the row has to be topped up from
+    the person cache before anything reads it. run.py does that once, at the
+    top of the loop, precisely so that routing, the prompt and the gate all
+    see the same row. Doing it again here was harmless -- enrich is idempotent
+    and the CSV always wins -- but it split ownership of row preparation
+    across two files and invited them to drift apart.
+    """
     field_a, field_b = config.ROUTE_FIELDS
     val_a = row.get(field_a, "")
     val_b = row.get(field_b, "")
@@ -101,6 +103,20 @@ def route(row):
         return out("institutional" if _matches(email, config.INSTITUTIONAL_EMAIL_DOMAINS)
                    else config.DEFAULT_SETTING, False,
                    "suppressed: do_not_contact flag set")
+
+    # A stated disposition outranks a guess about where they work or what
+    # they are licensed as. Checked before the institutional-domain branch on
+    # purpose: someone replying "already running it" from a kp.org address is
+    # not a register question, they are a buyer the domain cache has not
+    # caught up to yet, and every axis below this line is inference about
+    # someone who has already told us the truth. See machine/replies.py.
+    reply = replies.resolve(row.get(config.ID_FIELD, ""))
+    if reply is not None:
+        setting = reply["setting"] or (
+            "institutional" if _matches(email, config.INSTITUTIONAL_EMAIL_DOMAINS)
+            else config.DEFAULT_SETTING)
+        return out(setting, reply["should_contact"], reply["reason"],
+                   needs_review=reply["needs_review"])
 
     # Checked before the segment, because where they work outranks what
     # their credential is: an employed clinician gets the institutional email

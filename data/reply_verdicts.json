@@ -1,0 +1,61 @@
+{
+  "people": {
+    "C-101": {
+      "disposition": "in_practice",
+      "matched": "already running",
+      "resolved_by": "token 1f8ae6a5c7c3",
+      "seen_at": "2026-08-04",
+      "source": "keyword_stub",
+      "why": "Already running it, about three years now. Two days a week of med checks and the rest is therapy. The billing side is the bit I hate."
+    },
+    "C-108": {
+      "disposition": "not_yet_opening_practice",
+      "matched": "getting set up",
+      "resolved_by": "token 7b6b566ef3e8",
+      "seen_at": "2026-08-05",
+      "source": "keyword_stub",
+      "why": "Getting set up, credentialing is halfway done and I sign a lease next month. Ask me again in the autumn."
+    },
+    "C-110": {
+      "disposition": "in_practice",
+      "matched": "i opened",
+      "resolved_by": "id in the signal (no ledger match for its token)",
+      "seen_at": "2026-08-04",
+      "source": "keyword_stub",
+      "why": "I opened my own place last spring, so this is better timed than the last one you sent."
+    },
+    "C-113": {
+      "disposition": "thinking_about_opening_practice",
+      "matched": "turning it over",
+      "resolved_by": "id in the signal (no ledger match for its token)",
+      "seen_at": "2026-08-05",
+      "source": "keyword_stub",
+      "why": "Still just turning it over honestly. Staying put for now, the pension is hard to walk away from."
+    },
+    "C-121": {
+      "disposition": "interested",
+      "matched": "interested",
+      "resolved_by": "id in the signal (no ledger match for its token)",
+      "seen_at": "2026-08-06",
+      "source": "keyword_stub",
+      "why": "Interested. What does the billing piece cost on top of the notes, and does it do payer enrollment?"
+    },
+    "C-126": {
+      "disposition": "not_interested",
+      "matched": "not interested",
+      "resolved_by": "id in the signal (no ledger match for its token)",
+      "seen_at": "2026-08-06",
+      "source": "keyword_stub",
+      "why": "Not interested, please take me off this list."
+    },
+    "C-999": {
+      "disposition": "unclear",
+      "matched": "",
+      "resolved_by": "id in the signal (no ledger match for its token)",
+      "seen_at": "2026-08-07",
+      "source": "keyword_stub",
+      "why": "?"
+    }
+  },
+  "version": 1
+}

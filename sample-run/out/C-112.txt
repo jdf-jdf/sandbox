@@ -1,14 +1,16 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Aisha Mbeki
-Reply-To: joannadflores+88616f3452d5@gmail.com
+Reply-To: joannadflores+692a7a842586@gmail.com
 
-Aisha, you used JotPsych at Northloop and then stopped, and I'd like to know why. Whatever the reason, I'd rather hear it than guess at it.
+Aisha,
 
-The one thing worth mentioning: when you left, it was a note-taker. It now runs the chart and the billing together, so a thin note gets flagged before it's signed rather than coming back as a downcode months later, and denials get worked in the same place. For an owner, that also means the scribe, the EHR, the biller, e-prescribing and credentialing stop being five separate invoices that never quite line up.
+A day of med-management visits ends with a pile of notes that each have to justify their own level of service, and the ones written fast are the ones that get downcoded. That risk sits with you twice over at Northloop: your own charts, and everyone else's.
 
-Mostly I want the honest version of why it didn't stick. Still the best number, ending 0139, and I'll work around your schedule?
+JotPsych covers considerably more ground than it did when you were using it: the note, the claim, the appeal and e-prescribing now sit in one place, instead of four invoices that never quite line up.
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/88616f3452d5
+I'd rather not guess where you are with all this. Still turning something over, getting something set up, or already running it?
+
+If you want to pick it back up: https://jotpsych.com/welcome-back/692a7a842586
 
 Jo Flores
 JotPsych

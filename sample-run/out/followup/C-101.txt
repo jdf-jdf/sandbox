@@ -1,0 +1,5 @@
+You mentioned you're in practice already, running your own shop.
+
+At that stage the pressure usually isn't the notes themselves, it's what a payer does with them later. A downcoded claim or a records request lands on you, not on a billing department down the hall.
+
+That's the part JotAudit and JotBill are built for: catching a thin note before it's signed, and working the denial when one comes anyway.

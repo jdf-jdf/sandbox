@@ -294,6 +294,201 @@ Finish by calling record_person exactly once."""
 
 
 # ---------------------------------------------------------------------------
+# 2c. REPLY DISPOSITION -- what a clinician told us, not what we guessed.
+#
+#     PROMPT above now closes every email by asking one plain question: still
+#     turning the idea over, getting something set up, or already running a
+#     practice of their own. This is the other half of that question -- what
+#     the machine does with the answer.
+#
+#     Every axis elsewhere in this file is inference: a domain, a title, a
+#     credential, none of which the clinician chose to tell us. A reply is
+#     different. It is the clinician stating their own position on exactly the
+#     three-point path PROMPT asks about, and a stated position outranks a
+#     guess every time one is on file -- including the domain and person
+#     verdicts above. Someone who replies "already running it" from a
+#     kp.org address is not an institutional email waiting on a register
+#     decision; they are a buyer the domain cache has not caught up to yet.
+#
+#     Same two rules as the domain and person layers, because the shape of
+#     the problem is identical: classification happens ONCE, out of band, in
+#     tools/classify_replies.py, and lands in a JSON file that decide.py and
+#     machine/replies.py only ever read. The decision layer stays
+#     deterministic and offline, and a human can open the file and overrule
+#     any line of it.
+#
+#     STUBBED FOR THIS DEMO. tools/classify_replies.py reads hand-written
+#     reply text from data/reply_sample.jsonl -- not a real inbox -- and
+#     classifies it by keyword match, not by a model. Every cached verdict
+#     carries REPLY_STUB_SOURCE so nothing here is mistaken for the real
+#     thing. What IS real: the cache format, the token resolution that ties a
+#     reply back to a clinician (machine/attribution.py), and the routing
+#     effect below. Point the classifier at a real inbox and a real model and
+#     nothing in decide.py or run.py has to change.
+# ---------------------------------------------------------------------------
+REPLY_CACHE_PATH = "data/reply_verdicts.json"
+REPLY_SAMPLE_PATH = "data/reply_sample.jsonl"
+REPLY_STUB_SOURCE = "keyword_stub"
+
+# The full set a classifier may return. `in_practice`, `thinking_about_...`
+# and `not_yet_...` are the three points PROMPT's closing question asks
+# about, in order (already running it / turning it over / getting set up).
+# `interested` and `not_interested` are the two answers that are not about
+# practice status at all, but about whether to write again. `unclear` is the
+# honest fallback: say so rather than guess, same instinct as every other
+# verdict-set in this file (DOMAIN_VERDICT_SETTINGS, PERSON_VERDICT_SETTINGS).
+REPLY_DISPOSITIONS = (
+    "in_practice",
+    "thinking_about_opening_practice",
+    "not_yet_opening_practice",
+    "interested",
+    "not_interested",
+    "unclear",
+)
+
+# Verdict -> override. A verdict missing from this dict (either of the two
+# "still getting there" practice-path answers, or no reply on file at all)
+# leaves should_contact AND setting to the normal routing in decide.route();
+# the reply only adds a note (REPLY_NOTE_TEMPLATE below), it does not
+# redirect anything.
+#
+# `setting`, when present, REPLACES whatever decide.route() would otherwise
+# have computed from the domain/person caches. That is the one place this
+# axis does more than gate should_contact: a clinician who says they are
+# already running their own practice is routed to practice_owner regardless
+# of what an institutional or trainee domain verdict says, because the reply
+# is a newer, truer fact than either cache.
+REPLY_OVERRIDES = {
+    "in_practice": {
+        "setting": "practice_owner", "should_contact": True, "needs_review": False,
+        "reason": "reply verdict in_practice -- they told us directly they now "
+                  "run their own practice, routed to practice_owner regardless "
+                  "of what the domain or person cache says",
+    },
+    "not_interested": {
+        "setting": None, "should_contact": False, "needs_review": False,
+        "reason": "suppressed: reply verdict not_interested -- honoring the reply",
+    },
+    "interested": {
+        "setting": None, "should_contact": False, "needs_review": True,
+        "reason": "held: reply verdict interested -- a warm reply gets a "
+                  "person, not another campaign email",
+    },
+    "unclear": {
+        "setting": None, "should_contact": False, "needs_review": True,
+        "reason": "suppressed pending review: reply verdict unclear -- the "
+                  "classifier was not confident, and this machine sends "
+                  "nothing rather than guess at what a reply meant. Read it "
+                  "and confirm the disposition by hand in "
+                  "data/reply_verdicts.json.",
+    },
+}
+
+# Folded into the row's `notes` field (machine/replies.enrich) for every
+# disposition, overridden or not, so a draft that does go out can honestly
+# reference what they said instead of inventing rapport -- see the
+# fabricated_relationship rule in REFUSAL_RULES. {seen_at} and {why} come off
+# the cached verdict.
+REPLY_NOTE_TEMPLATE = "In a reply on {seen_at}, they said: {why}"
+
+
+# ---------------------------------------------------------------------------
+# 2d. FOLLOW-UP -- once a reply is classified, what the next email says.
+#
+#     tools/classify_replies.py answers WHAT they said. This decides WHAT WE
+#     SAY BACK, and the answer is not one email, it is three: a reply that
+#     asks about pricing gets a different next email than one that says
+#     "maybe next year". Lead temperature is a third axis, orthogonal to
+#     SEGMENT and SETTING -- it is about the reply just received, not about
+#     who the clinician is.
+#
+#     STUBBED FOR THIS DEMO, same as the classifier upstream. tools/followup.py
+#     drafts ONE follow-up per classified reply and writes it to
+#     out/followup/<id>.txt for a human to read, exactly like a dry run of
+#     run.py writes to out/. It does not send anything and it does not
+#     schedule anything: a real cadence, what goes out when and what happens
+#     if THIS goes unanswered too, is Week Two, same boundary the rest of the
+#     timing engine draws around itself. What is NOT stubbed: every draft
+#     this produces still passes through machine/qc.py, the same 23 rules and
+#     the same quarantine path as the first email. A follow-up earns no less
+#     scrutiny for being the second email in the thread.
+# ---------------------------------------------------------------------------
+
+# disposition -> lead temperature. None means "no follow-up drafted at all":
+# not_interested already gets should_contact=False in REPLY_OVERRIDES, and
+# drafting a follow-up to someone who told us to stop is the one mistake this
+# whole file exists to prevent.
+LEAD_TEMPERATURE = {
+    "interested": "hot",
+    "in_practice": "warm",
+    "thinking_about_opening_practice": "warm",
+    "not_yet_opening_practice": "warm",
+    "unclear": "cold",
+    "not_interested": None,
+}
+
+# What each temperature is FOR, not just its tone. Hot and warm want opposite
+# things from the same machine: a hot lead is done being marketed to and
+# wants a person, a warm lead is not ready for a person yet and a call would
+# be the wrong ask twice in one thread.
+FOLLOWUP_BRIEF = {
+    "hot": (
+        "They asked a direct question or asked to talk. Answer it if it is "
+        "on the approved claims list; if it needs a real answer (specific "
+        "pricing, a demo, a contract), say plainly that a person will follow "
+        "up rather than answering it yourself. This is the one temperature "
+        "where offering a call is the right move, because they asked first. "
+        "Short. No selling: they are already sold, the job now is not to "
+        "get in the way."
+    ),
+    "warm": (
+        "They told us something true and specific about where they stand: "
+        "already running their own practice, thinking about it, or not "
+        "quite there yet. Reference it in one plain sentence; do not "
+        "paraphrase it into something warmer than what they actually said. "
+        "Then say one thing relevant to that stage and stop. No call, no "
+        "calendar: this is a nurture touch, not a close."
+    ),
+    "cold": (
+        "The reply did not classify cleanly and a person has not read it "
+        "yet. Write nothing that assumes a disposition we do not actually "
+        "have. A short, generic acknowledgment that keeps the door open is "
+        "the entire job; guessing at what they meant is worse than a plain "
+        "'thanks for writing back' twice."
+    ),
+}
+
+# Formatted against brand_brief, name, segment, setting, reply_text,
+# reply_disposition, temperature, followup_brief and learned_constraints.
+FOLLOWUP_PROMPT = """You are writing a SECOND, short email on behalf of \
+JotPsych, replying to a reply. This is not the win-back email: they already \
+answered that one.
+
+What JotPsych is: {brand_brief}
+
+Recipient: {name}
+Segment: {segment}
+Setting: {setting}
+Their reply, verbatim: "{reply_text}"
+How that reply was read: {reply_disposition} ({temperature} lead)
+
+{followup_brief}
+
+Rules, same as always:
+- Under 80 words. This is a reply to a reply, not a new pitch.
+- Never invent anything they did not say. Quote or closely paraphrase the
+  reply above; do not embellish it with enthusiasm or detail it does not
+  contain.
+- Do not sign off. No "Best regards", no name. End on your last sentence.
+- No em dashes, no hype, no exclamation marks, and no fabricated history
+  beyond the one reply quoted above.
+
+{learned_constraints}
+
+Output only the email body. No subject line, no preamble."""
+
+
+# ---------------------------------------------------------------------------
 # 3. GENERATION
 # ---------------------------------------------------------------------------
 MODEL = "claude-opus-5"
@@ -625,12 +820,31 @@ PROMPT = """You are writing a single short outreach email on behalf of JotPsych.
 What JotPsych is: {brand_brief}
 
 Everyone on this list has already used JotPsych and stopped. This is a win-back, \
-not an introduction. What you do not know is why they left, and inventing a \
-reason is worse than asking for one.
+not an introduction.
+
+Do not ask why they left. Someone asked that is being handed unpaid work, and \
+the answer is a fact about the past that changes nothing. The useful question \
+is where they are NOW, because that is the thing that moves, and the premise \
+of this whole list is that the timing was wrong rather than the product.
+
+Behavioral health clinicians move along a path, and three points on it matter:
+
+  1. Turning the idea over. Employed somewhere, wondering about going out on
+     their own.
+  2. Not open yet, but close. Credentialing, a lease, choosing the systems.
+  3. Established solo or small practice, steady caseload, past the scramble.
+
+Those three want completely different things, and you almost never can tell \
+which one this person is from the file below. Guessing insults them, and \
+guessing wrong is the worst email this machine could write: the just-starting \
+note sent to someone eight years in reads as though nobody looked. So ask.
 
 They left a note-taker. Everything above about billing, claims and payers came \
-after them, so they have never seen it. That is the one genuinely new thing you \
-have, and how much of it you may use depends entirely on the person:
+after them, so they have never seen it. You may say, in ONE plain sentence, \
+that JotPsych covers more ground than it did when they signed up. Never say \
+which part they used or wanted, because the export does not record it. Never \
+list the lines at them: a menu is a brochure, and a reader handed several \
+options answers none of them. One sentence, then the question.
 
 {brand_news}
 
@@ -647,27 +861,31 @@ address and a mobile number; the credential and the role were found by \
 searching the open web, not told to us. "Anything on file" is usually empty, \
 because usually there is nothing. So write from what is above and nothing \
 else. You do not know why they left, what they thought of the \
-product, how long they used it, or what their caseload looks like.
+product, how long they used it, what their caseload looks like, or which of \
+the three points on the path above they are standing on.
+
+Segment and setting decide the REGISTER, not the subject. The subject is the \
+question. Use these two to choose the vocabulary and how formally to write, \
+and to say one true thing about their working day. Do not use them to find \
+something to pitch.
 
 Segment context: {segment_brief}
 
 Setting context: {setting_brief}
 
-Close by asking for a call, not for a reply. Why they stopped is usually more \
-nuanced than anyone types into an email, and the ask is easier to answer than \
-a blank reply. We hold a mobile number for them, ending {mobile_last4}.
+Close with the question and nothing else. One sentence asking where they are \
+now: still turning it over, getting something set up, or already running it. \
+Plain words, not a form, and answerable in a line.
 
-- Ask whether that is still the best number, and offer to work around their
-  schedule. One sentence, at the end, no build-up.
-- You may write the last four digits. You must NEVER write the full number.
-  They gave it to us and will not remember giving it to us, and quoting it
-  back at a clinician who spends their day on confidentiality reads as
-  surveillance. "Still the best number, ending {mobile_last4}?" is the most
-  specific you are allowed to be.
-- If {mobile_last4} reads NONE-ON-FILE then we do not have a number at all.
-  Write no digits and no reference to digits: no "ending", no "the number we
-  have". Just ask whether a call is easier than email and how to reach them.
-- Ask. Do not assume. Never say you will call, only that you would like to.
+- No call, no calendar, no "quick chat", no "worth fifteen minutes?". An ask
+  that costs them a scheduling decision is a sales move, and this is not one.
+  A question they can answer in six words while walking between sessions is
+  the entire point.
+- Never write a phone number. Not the full number, not the last four digits,
+  no "the number we have on file". They gave it to us and will not remember
+  giving it to us, and quoting it back at someone who spends their working day
+  on confidentiality reads as surveillance.
+- One question, not two. Two is a form, and a form gets no reply.
 
 Rules:
 - Under 120 words.
@@ -712,8 +930,14 @@ Write like a person, not a language model:
 - Never say a thing "stands as", "serves as", or "underscores" anything.
 - Banned: delve, leverage, robust, seamless, landscape, realm, unlock.
 - Don't open by explaining the state of healthcare. Open with them.
-- Say one specific thing about their actual day. Vagueness reads as a mail
-  merge, because it is one.
+- Say one specific thing about the SHAPE of their working day: what the
+  paperwork does to a Thursday for someone in their role. Vagueness reads as a
+  mail merge, because it is one.
+- But never a specific EVENT. You know their role and where they work. You do
+  not know a single thing they actually did. "When you signed a 99214 last
+  week" is a sentence this machine cannot truthfully write, and it is worse
+  than vagueness because it is confident. No "last week", no "yesterday", no
+  "your last session". Write about the job, never about their diary.
 
 {learned_constraints}
 
@@ -807,6 +1031,22 @@ REFUSAL_RULES = [
     # to stay legal, so the pattern requires the giveaway object after the verb.
     ("fabricated_relationship", "Claims a prior conversation or request that never happened",
      r"\b(you\s+asked\s+(?:for|us|me|about)|as\s+(?:we\s+)?discussed|per\s+your\s+request|following\s+up\s+on\s+(?:our|your)|as\s+promised|(?:great|good)\s+(?:speaking|talking|chatting)\s+with\s+you|thanks\s+for\s+reaching\s+out|when\s+we\s+(?:spoke|talked)|you\s+mentioned\s+that)\b", "block"),
+
+    # The sibling of fabricated_relationship, and it appeared the moment the
+    # prompt started asking for something specific about their working day.
+    # A real draft opened "when you signed a 99214 last week" -- plausible,
+    # well-written, and entirely invented: the export carries a name, an email
+    # and a mobile, and nothing whatsoever about what anyone did last week.
+    #
+    # Deliberately matches the time expression rather than trying to parse the
+    # claim around it. We hold no activity data at all, so there is no true
+    # sentence this machine can write that needs "yesterday" in it. Writing
+    # about our own timeline is the one plausible false positive, and it has
+    # an easy out: name the month, or say "recently".
+    ("invented_recency",
+     "Pins something to a specific recent time. We have no activity data, so it is invented",
+     r"\b(last\s+(?:week|night|month|monday|tuesday|wednesday|thursday|friday)|yesterday|this\s+(?:morning|afternoon|evening)|earlier\s+today|a\s+few\s+days\s+ago)\b",
+     "block"),
 
     # --- AI tells. ---
     # The rules above catch output that is WRONG. These catch output that is

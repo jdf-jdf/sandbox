@@ -1,14 +1,16 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Marcus Feld
-Reply-To: joannadflores+5d056d4bb807@gmail.com
+Reply-To: joannadflores+92b5449bb75b@gmail.com
 
-Dr. Feld, you used JotPsych for notes at some point and stopped, and I'd like to know why. Whatever the reason, I'd rather hear it than guess at it.
+Dr. Feld,
 
-The part worth mentioning: it isn't only a scribe now. JotAudit flags a thin note before you sign it, JotBill works the denials and appeals after a claim lands, and JotCred handles payer enrollment. For a practice paying separately for a scribe, an EHR, a biller, e-prescribing and credentialing, those five invoices are one system now, and the E/M level on a fifteen-minute med check gets checked against payer rules before it goes out rather than after the downcode.
+A day of fifteen-minute med checks ends with a stack of notes that all have to justify the level they were billed at, and the difference between a 99214 that holds up and one that gets downcoded is usually a line nobody had time to write.
 
-Still the best number, ending 0151? I'll work around your schedule.
+JotPsych covers a lot more ground than it did when you were using it: the note, the claim, the denial and the enrollment now sit in one place, instead of arriving as four separate invoices that never quite line up.
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/5d056d4bb807
+Where are you with the practice now: still turning something over, getting it set up, or already running it?
+
+If you want to pick it back up: https://jotpsych.com/welcome-back/92b5449bb75b
 
 Jo Flores
 JotPsych

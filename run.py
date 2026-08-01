@@ -21,8 +21,8 @@ import os
 import sys
 
 import config
-from machine import (attribution, decide, generate, intake, people, qc, review,
-                     send, signature, state as state_mod)
+from machine import (attribution, decide, generate, intake, people, qc, replies,
+                     review, send, signature, state as state_mod)
 
 
 def load_dotenv(path=".env"):
@@ -126,6 +126,13 @@ def main():
         # so routing, the prompt and the gate all see one row. The real export
         # is name/email/mobile; everything else was found, not given.
         row = people.enrich(row)
+        # Then their own words, if they have ever sent us any. This is the one
+        # field on the row that is neither exported nor inferred, and it is why
+        # a second email can reference what someone actually said without the
+        # model inventing it: fabricated_relationship blocks that invention
+        # precisely because `notes` is normally empty. Once they reply, it
+        # isn't. Second, so a note already on the row still wins.
+        row = replies.enrich(row)
         label = row.get(config.LABEL_FIELD, row[config.ID_FIELD])
         decision = decide.route(row)
         if not decision["should_contact"]:
@@ -147,7 +154,7 @@ def main():
             return 1
 
         # --- 4. QC GATE --------------------------------------------------
-        blocked, violations = qc.check(text, row, decision)
+        blocked, violations = qc.check(text, row)
         all_violations.extend(violations)
 
         if blocked:

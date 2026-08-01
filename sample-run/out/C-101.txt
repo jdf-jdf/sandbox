@@ -1,16 +1,14 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Amara Osei
-Reply-To: joannadflores+e3d03035d513@gmail.com
+Reply-To: joannadflores+3928a3e899b2@gmail.com
 
-Amara, you used JotPsych for notes at some point and then stopped, and I don't know why. That's the actual reason I'm writing.
+A day split between med checks and longer sessions means the coding question changes shape hour by hour: a 99213 that should have been a 99214, or a level that invites a clawback six months later. That is the part that follows you home, not the typing.
 
-The one thing that's changed since: the note now runs into the billing. The same system that writes the chart checks the claim against payer rules before it goes out, and works the denial when it comes back. For a solo practice with no biller, that's the part I'd want a prescriber to know about, especially where a thin note turns into a downcode on a 99214.
+JotPsych covers a lot more ground than it did when you were using it. The short version: the note, the claim, e-prescribing and enrollment now sit in one place, instead of four bills that never quite line up.
 
-But I'd rather hear what didn't work the first time than pitch you on the second.
+Where are you at the moment, still turning the idea of your own practice over, getting something set up, or already running it?
 
-Would a short call be easier than email? Still the best number, ending 0142, and I'll work around your schedule.
-
-If you want to pick it back up: https://jotpsych.com/welcome-back/e3d03035d513
+If you want to pick it back up: https://jotpsych.com/welcome-back/3928a3e899b2
 
 Jo Flores
 JotPsych

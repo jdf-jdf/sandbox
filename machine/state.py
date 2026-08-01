@@ -32,9 +32,48 @@ def save(state):
 
 
 def learned_constraints(state):
-    """The phrases that got the most drafts killed, worst first."""
-    phrases = Counter(state.get("offending_phrases", {}))
-    return [p for p, _ in phrases.most_common(config.LEARNED_CONSTRAINT_COUNT)]
+    """The phrases most worth banning next time. One per rule before two from any.
+
+    Ties are the normal case, not the exception: most phrases are seen once, so
+    a plain most_common() falls back to insertion order. That is how the first
+    real run filled all five slots from four rules and dropped `hype`,
+    `fake_urgency` and `em_dash` -- the three that generalise to every future
+    draft -- in favour of one-off phrases that no other draft will ever
+    contain.
+
+    So the list is built in rounds: the best phrase from each rule, then the
+    second-best from each, until it is full. A rule that fires constantly still
+    wins on the second pass; it just cannot take every slot on the first.
+
+    Falls back to the flat ordering when phrase_rules is absent, so a state.json
+    written before this existed still loads.
+    """
+    counts = Counter(state.get("offending_phrases", {}))
+    rules = state.get("phrase_rules", {})
+    limit = config.LEARNED_CONSTRAINT_COUNT
+
+    ranked = {}
+    for phrase, n in counts.most_common():
+        # No recorded rule: key on the phrase itself, which degrades exactly to
+        # the old behaviour rather than lumping unrelated phrases together.
+        ranked.setdefault(rules.get(phrase, phrase), []).append(phrase)
+
+    # Rules ordered by their strongest phrase, so the worst offender still
+    # leads the list.
+    order = sorted(ranked, key=lambda r: -counts[ranked[r][0]])
+
+    picked, depth = [], 0
+    while len(picked) < limit:
+        before = len(picked)
+        for rule in order:
+            if depth < len(ranked[rule]):
+                picked.append(ranked[rule][depth])
+                if len(picked) == limit:
+                    return picked
+        if len(picked) == before:      # every rule exhausted
+            break
+        depth += 1
+    return picked
 
 
 def learn(state, violations, source="run"):
@@ -66,6 +105,9 @@ def learn(state, violations, source="run"):
             continue
         ev = v["evidence"].strip().lower()
         phrases[ev] = phrases.get(ev, 0) + 1
+        # Which rule caught it, so learned_constraints() can spread its picks
+        # across rules instead of taking five phrases from four of them.
+        state.setdefault("phrase_rules", {})[ev] = v["rule"]
         learned += 1
 
     if learned:

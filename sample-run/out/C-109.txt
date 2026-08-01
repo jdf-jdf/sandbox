@@ -1,14 +1,18 @@
 To: joannadflores@gmail.com
 Subject: [machine] draft for Yusuf Ahmadi
-Reply-To: joannadflores+5866aa98807d@gmail.com
+Reply-To: joannadflores+0faa34f94f94@gmail.com
 
-Dr. Ahmadi, you used JotPsych for notes at some point and stopped, and I'd like to know why. Whatever the reason, I'd rather hear it than guess at it.
+Dr. Ahmadi,
 
-The one thing worth mentioning: it isn't only a scribe now. The chart, the claim and the denial work sit in the same place, along with e-prescribing and payer enrollment, so a practice your size isn't paying five separate invoices for tools that don't talk to each other. JotAudit flags a thin E/M note before you sign it, which is the same fear as a clawback seen from the other end.
+A day of fifteen-minute med checks ends with a stack of notes that all have to justify the level you coded, and the ones that get downcoded are rarely the ones you worried about while writing them.
 
-Fifteen minutes, whenever suits you. Is the mobile ending 0195 still the best number?
+You used JotPsych as a scribe. It covers a lot more ground now: the note, the claim behind it, and what happens when a payer pushes back all sit in one place.
 
-If you want to pick it back up: https://jotpsych.com/welcome-back/5866aa98807d
+For a practice your size, that also means one bill instead of a scribe, an EHR, a biller, e-prescribing and credentialing that never quite line up.
+
+Where are things for you now: still turning something over, getting it set up, or already running it?
+
+If you want to pick it back up: https://jotpsych.com/welcome-back/0faa34f94f94
 
 Jo Flores
 JotPsych

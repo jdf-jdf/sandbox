@@ -41,8 +41,15 @@ def _without_approved_claims(text):
     return text
 
 
-def check(text, row, decision):
-    """Return (blocked, violations). violations is a list of dicts."""
+def check(text, row):
+    """Return (blocked, violations). violations is a list of dicts.
+
+    Takes the row, not the decision. The gate judges the copy on its own
+    terms: whether a draft leaks patient content or invents a statistic has
+    nothing to do with which segment it was routed to, and a gate that reads
+    the routing is a gate that can be argued out of firing. The row is here
+    only for the recipient's name, which the personalization check needs.
+    """
     violations = []
     sourced = _without_approved_claims(text)
 

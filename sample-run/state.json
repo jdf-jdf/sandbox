@@ -9,37 +9,60 @@
       "blocked": 0,
       "flagged": 0,
       "sent": 10,
-      "live": true,
+      "live": false,
       "run": 1,
-      "at": "2026-08-01T21:29:16+00:00"
+      "at": "2026-08-01T22:15:40+00:00"
     },
     {
       "input": "data/lapsed_clinicians.csv",
       "read": 15,
       "intake_rejected": 2,
-      "suppressed": 3,
-      "generated": 10,
+      "suppressed": 5,
+      "generated": 8,
       "blocked": 0,
-      "flagged": 0,
-      "sent": 10,
+      "flagged": 3,
+      "sent": 8,
       "live": false,
       "run": 2,
-      "at": "2026-08-01T21:30:19+00:00"
-    },
-    {
-      "input": "data/lapsed_clinicians.csv",
-      "read": 15,
-      "intake_rejected": 2,
-      "suppressed": 3,
-      "generated": 10,
-      "blocked": 0,
-      "flagged": 0,
-      "sent": 10,
-      "live": false,
-      "run": 3,
-      "at": "2026-08-01T21:31:21+00:00"
+      "at": "2026-08-01T22:16:41+00:00"
     }
   ],
-  "offending_phrases": {},
-  "rule_hits": {}
+  "offending_phrases": {
+    "90% reduction": 1,
+    "you asked for": 1,
+    "a patient who": 1,
+    "clinical judgment": 1,
+    "completely private": 1,
+    "recommends a diagnosis": 1,
+    "revolutionary": 1,
+    "act now": 1,
+    "\u2014": 1
+  },
+  "rule_hits": {
+    "fabricated_stat": 1,
+    "fabricated_relationship": 1,
+    "phi_leak": 1,
+    "clinical_claim": 2,
+    "compliance_overclaim": 1,
+    "hype": 1,
+    "fake_urgency": 1,
+    "em_dash": 1
+  },
+  "phrase_rules": {
+    "90% reduction": "fabricated_stat",
+    "you asked for": "fabricated_relationship",
+    "a patient who": "phi_leak",
+    "clinical judgment": "clinical_claim",
+    "completely private": "compliance_overclaim",
+    "recommends a diagnosis": "clinical_claim",
+    "revolutionary": "hype",
+    "act now": "fake_urgency",
+    "\u2014": "em_dash"
+  },
+  "learning_sources": {
+    "gate_demo": {
+      "at": "2026-08-01T22:18:45+00:00",
+      "blocks": 9
+    }
+  }
 }
