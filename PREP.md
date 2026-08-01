@@ -6,6 +6,7 @@ Not part of the deliverable. Delete this file before you share the repo.
 
 ## Tonight (90 minutes, then stop)
 
+- [ ] `python3 -m venv .venv && source .venv/bin/activate` (prompt shows `(.venv)`)
 - [ ] `pip install -r requirements.txt`
 - [ ] `cp .env.example .env`, fill it in
 - [ ] **`python tools/check_smtp.py`** → run until it says SENT, then check the
@@ -77,6 +78,9 @@ five rows. Cheap points, in order of value per minute:
 - **Behind at 2:00** → cut the learning loop first, then cron (replace with a
   one-line `while true; do ... sleep; done` script, which the brief explicitly
   accepts as a trigger). Never cut the QC gate — it carries two rubric rows.
+- **`command not found: python`** → new terminal, venv not active. Run
+  `source .venv/bin/activate`. Check your prompt for `(.venv)` before
+  debugging anything else.
 
 ---
 

@@ -14,11 +14,17 @@ drafts it, refuses to send anything off-brand, and emails what survives.
 This is the part that makes it a machine rather than a picture of one.
 
 ```bash
+python3 -m venv .venv         # first time only
+source .venv/bin/activate     # every new terminal -- prompt shows (.venv)
 pip install -r requirements.txt
 cp .env.example .env          # fill in your keys
 python run.py                 # dry run: writes to out/, sends no email
 python run.py --send          # live: also emails via Gmail SMTP
 ```
+
+> On macOS, bare `python` and `pip` don't exist outside a virtualenv — and
+> `pip install` without one fails with `externally-managed-environment`. The
+> venv fixes both, and makes every command below work exactly as written.
 
 **To run it on your data instead of ours** — one of:
 
