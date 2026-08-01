@@ -348,7 +348,14 @@ SETTING_BRIEF = {
         "planning something of their own, and who at their organization "
         "actually evaluates documentation tools. Say plainly that you know "
         "they may not be able to choose this themselves. Being the vendor "
-        "who understood that is the entire play."
+        "who understood that is the entire play.\n\n"
+        "On the path, they are stage 1 by definition: employed, and either "
+        "settled there or quietly working out an exit. Which of those two is "
+        "the only thing worth asking, and it is a question almost everyone "
+        "enjoys answering about themselves.\n\n"
+        "Do NOT ask for a call. Asking an employed clinician to get on the "
+        "phone with a vendor whose product they cannot buy is asking them to "
+        "spend the one thing they have less of than money. One question."
     ),
     "solo": (
         "Solo clinicians, reached at a personal address (Gmail, iCloud, "
@@ -358,7 +365,18 @@ SETTING_BRIEF = {
         "for anything that wastes their time. Their pain is evening "
         "paperwork and the unpaid hours that follow the last session of the "
         "day. Price matters and they will ask about it. Do not write as if "
-        "they have a team."
+        "they have a team.\n\n"
+        "This is the bucket where you know the least and the question earns "
+        "the most. A personal email address is stage-blind: it is worn by the "
+        "clinician still employed and daydreaming about leaving, by the one "
+        "who left two months ago and is drowning in setup, and by the one who "
+        "has run her own practice for twelve years. Those three people need "
+        "different things and share an inbox pattern. Do not pick one. Name "
+        "two or three of the stages and ask which fits. That question is the "
+        "entire email and it is allowed to be almost the entire email.\n\n"
+        "Do NOT ask for a call. They have not told you anything yet, and a "
+        "call is a big ask to make of someone who owes you nothing. One "
+        "question, one line to answer it. The call is the next email."
     ),
     "practice_owner": (
         "Reached at a domain they appear to own, so most likely the owner or "
@@ -366,7 +384,19 @@ SETTING_BRIEF = {
         "as themselves, which means they think about onboarding, about what "
         "their clinicians will actually adopt, and about what happens to the "
         "notes if they ever leave. Their pain is the aggregate: documentation "
-        "drag across the whole practice, and clinicians burning out on it."
+        "drag across the whole practice, and clinicians burning out on it.\n\n"
+        "Someone who bought a domain has already made the jump, so they sit at "
+        "stage 3 or 4 and the stage question is mostly answered. For them the "
+        "live unknown is the other axis: which part of running the place is "
+        "the mess right now. Ask that. It is the question that gets a product "
+        "line named without you having to guess one, and an owner will answer "
+        "it happily because it is the thing they complain about anyway. What "
+        "would you hand over first, notes or billing or the schedule, is a "
+        "fair way to ask as long as you do not read out the whole list.\n\n"
+        "This is the one setting where you MAY also ask for a call, because "
+        "they are a live buyer with budget and no approval chain. Ask the "
+        "stage question first and let the call be the smaller second sentence, "
+        "never the other way around."
     ),
     "trainee": (
         "Reached at a university address that is not a medical center, so "
@@ -379,7 +409,9 @@ SETTING_BRIEF = {
         "plainly why you are writing, ask where they are in training and "
         "what comes after. Do not pitch a purchase, do not describe features, "
         "and do not pretend to know their situation. One honest question "
-        "beats a paragraph of positioning."
+        "beats a paragraph of positioning.\n\n"
+        "They sit before stage 1, which makes 'what comes after this' the "
+        "natural question rather than a sales one. Do NOT ask for a call."
     ),
 }
 
@@ -387,13 +419,79 @@ SETTING_BRIEF = {
 # {learned_constraints}. Any column in the CSV is therefore available here as
 # {column_name} with no code change. Referencing a column that doesn't exist
 # fails on the first row and names the missing column.
-PROMPT = """You are writing a single short outreach email on behalf of JotPsych, \
-an ambient AI scribe built specifically for behavioral health clinicians.
 
-Everyone on this list has already used JotPsych and stopped. This is a win-back, \
-not an introduction. They know what the product is, so explaining it to them \
-reads as though nobody checked. What you do not know is why they left, and \
-inventing a reason is worse than asking for one.
+# The product stopped being one thing, which changes what an email is allowed
+# to assume. The export says a person signed up. It does not say which part they
+# signed up for, and most of this list arrived when the scribe was the whole
+# product. "You tried our note-taker" is therefore a guess wearing the clothes
+# of a fact, and it is the same failure as guessing their stage.
+#
+# Edit this list as lines ship. It is injected into the prompt, so adding one
+# here changes every email the next run writes with no code change.
+PRODUCT_LINES = [
+    "the scribe: the session note, written as you work",
+    "billing and coding",
+    "audit and documentation review",
+    "revenue analytics",
+    "e-prescribing",
+    "scheduling",
+    "credentialing",
+]
+PRODUCT_LINES_BLOCK = "\n".join(f"  - {p}" for p in PRODUCT_LINES)
+
+PROMPT = """You are writing a single short outreach email on behalf of JotPsych, \
+which began as an ambient scribe for behavioral health clinicians and is now \
+several products.
+
+Everyone on this list came to JotPsych once and is not a customer today. They \
+know what the product is, so explaining it to them reads as though nobody \
+checked.
+
+This is not a win-back and you must not write one. Almost nobody on this list \
+weighed the product and rejected it. The timing was wrong: the practice was not \
+ready, the old contract had a year to run, the pain had not arrived yet. Timing \
+changes, and that is the entire premise of this email.
+
+So do not ask why they left. A clinician who is asked that is being handed \
+unpaid work, and the answer is a fact about the past. Ask where they are now. \
+That answer tells you whether the timing has turned, and it is the output this \
+machine exists to produce.
+
+The journey, which is the actual subject of the email. Behavioral health \
+clinicians move along a path from employed to independent:
+  1. Employed somewhere, turning over the idea of going out on their own.
+  2. Recently made the jump, wiring up the practice: credentialing, first
+     clients, picking systems.
+  3. Established solo, steady caseload, past the scramble.
+  4. Growing, adding clinicians, buying for other people as well as themselves.
+
+Where someone sits on that path decides whether JotPsych is irrelevant, \
+interesting, or urgent. Usually you cannot tell from the file below, and \
+guessing insults them. Ask.
+
+The second thing you do not know is which product. JotPsych is now several \
+lines:
+{product_lines}
+
+The export records that this person signed up. It does not record which line \
+they used, and most of this list arrived when the scribe was the entire \
+product, so the line they would want today may not have existed when they came. \
+Writing "when you tried our note-taker" is a guess dressed as a fact, and it is \
+the same mistake as guessing their stage.
+
+Three rules follow, and they matter more than they look:
+- Never state which part they used or wanted. You do not know.
+- Never list the lines at them. A menu is a brochure, this is not a brochure,
+  and a reader who is handed seven options answers none of them.
+- You MAY say, in one plain sentence, that JotPsych covers more ground than it
+  did when they signed up. That is true, it is worth their knowing, and it
+  earns the question that follows. Then ask, and let them name the part.
+
+The stage and the product are not separate questions. Someone wiring up a new \
+practice is thinking about credentialing and scheduling; someone established is \
+thinking about billing and what the revenue actually looks like. Ask where they \
+are and the answer usually tells you which line to talk about next, which is \
+why one good question beats two mediocre ones.
 
 Recipient:
   Name: {name}
@@ -408,15 +506,30 @@ address and a mobile number; the credential and the role were found by \
 searching the open web, not told to us. "Anything on file" is usually empty, \
 because usually there is nothing. So write from what is above and nothing \
 else. You do not know why they left, what they thought of the \
-product, how long they used it, or what their caseload looks like.
+product, how long they used it, or what their caseload looks like. Above all \
+you do not know which of the four stages they are in now. The setting below is \
+a hint, never a verdict: it is derived from their email domain, which is a \
+weak signal about a person's life. Write the email that finds out.
 
 Segment context: {segment_brief}
 
 Setting context: {setting_brief}
 
-Close by asking for a call, not for a reply. Why they stopped is usually more \
-nuanced than anyone types into an email, and the ask is easier to answer than \
-a blank reply. We hold a mobile number for them, ending {mobile_last4}.
+Close on one question about where they are, and make it answerable in a single \
+line. Rules for that question:
+
+- It ends in a question mark. "I would love to hear where you landed" is not a
+  question and converts like the statement it is.
+- A three word reply has to be a real answer. Naming two or three of the stages
+  above and asking which one fits is the highest-converting form, because it
+  costs them nothing and shows you know the path exists.
+- One question only. A second ask competes with the first and both lose.
+- No product in it. The moment the question is a pretext for a pitch, it stops
+  being a question and they can feel it.
+
+Whether you may ALSO ask for a call is decided by the setting context below. \
+Only ask when that context tells you to. Where it does, we hold a mobile number \
+ending {mobile_last4}.
 
 - Ask whether that is still the best number, and offer to work around their
   schedule. One sentence, at the end, no build-up.
@@ -431,7 +544,9 @@ a blank reply. We hold a mobile number for them, ending {mobile_last4}.
 
 Rules:
 - Under 120 words.
-- Concrete about documentation burden. No hype, no exclamation marks.
+- Concrete about whichever part of the work you name, and never vague about
+  which part. "Your workflow" and "your admin burden" are what a vendor writes
+  when it does not know. No hype, no exclamation marks.
 - Never imply the product makes clinical judgments or decisions.
 - Never invent statistics, outcomes, or testimonials.
 - Never reference or invent any patient, case, or session content.
@@ -526,6 +641,39 @@ REFUSAL_RULES = [
     ("fabricated_relationship", "Claims a prior conversation or request that never happened",
      r"\b(you\s+asked\s+(?:for|us|me|about)|as\s+(?:we\s+)?discussed|per\s+your\s+request|following\s+up\s+on\s+(?:our|your)|as\s+promised|(?:great|good)\s+(?:speaking|talking|chatting)\s+with\s+you|thanks\s+for\s+reaching\s+out|when\s+we\s+(?:spoke|talked)|you\s+mentioned\s+that)\b", "block"),
 
+    # --- Premise. The reframe the machine runs on. ---
+    # These clinicians did not weigh the product and reject it; the timing was
+    # wrong. An email that treats them as churn asks them to relitigate a
+    # decision they do not remember making, and the reply rate shows it. The
+    # prompt now forbids the win-back frame. This makes it true on every run
+    # rather than most runs.
+    #
+    # Deliberately does NOT catch the bare phrase "why you stopped", because
+    # the strongest version of the new opener is "I'm not writing to ask why
+    # you stopped", and a gate that blocks its own best line is a gate someone
+    # switches off. The interrogative forms below have no innocent reading.
+    ("winback_framing", "Treats the recipient as churn to be won back",
+     r"\b(welcome\s+back|come\s+back\s+to|back\s+on\s+board|give\s+(?:us|it|jotpsych)\s+another\s+(?:try|chance|look)|second\s+chance|win\s+you\s+back|we(?:'ve|\s+have)?\s+noticed\s+you|why\s+did\s+you\s+(?:stop|leave|cancel)|what\s+made\s+you\s+(?:stop|leave|cancel)|what\s+went\s+wrong)\b", "block"),
+
+    # The rule above catches an email that SAYS come back. This catches the
+    # quieter version that every draft of the first generation opened with:
+    # "you used JotPsych at some point and then stopped". Nobody asks them to
+    # return, but the lapse is still the subject of the sentence, and the
+    # recipient is still being handed a decision of theirs to explain.
+    #
+    # Flag, not block, on purpose. The strongest opener does not mention
+    # stopping at all ("you signed up a while back, which usually means the
+    # notes were getting away from you around then"), so a block is probably
+    # correct eventually. Promote it once a run's worth of drafts shows the
+    # model reliably writes around it, rather than guessing that now.
+    ("lapse_as_subject", "Opens on the recipient's lapse instead of their situation",
+     r"\b(?:you|they)\s+(?:then\s+)?stopped\b|\byou\s+(?:used|tried)\s+\w+\s+at\s+some\s+point\b", "flag"),
+
+    # Coded check, implemented in machine/qc.py: a regex cannot express "asks
+    # nothing at all". Listed here so this file stays the whole opinion.
+    ("no_question", "Body asks nothing, so there is nothing to reply to",
+     None, "block"),
+
     # --- AI tells. ---
     # The rules above catch output that is WRONG. These catch output that is
     # RIGHT but reads like a machine wrote it, which for a cold email to a
@@ -588,9 +736,14 @@ SUBJECT_TEMPLATE = "[machine] draft for {name}"
 # one row and one run, so "a dormant clinician came back" stops being a story
 # and becomes a lookup. See machine/attribution.py.
 ATTRIBUTION_TOKEN_CHARS = 12
-ATTRIBUTION_LINK_TEMPLATE = "https://jotpsych.com/welcome-back/{token}"
+ATTRIBUTION_LINK_TEMPLATE = "https://jotpsych.com/hello/{token}"
 ATTRIBUTION_LEDGER_PATH = "logs/attribution.jsonl"
-ATTRIBUTION_FOOTER = "If you want to pick it back up: {link}"
+# The footer states a fact and asks for nothing. It used to read "If you want to
+# pick it back up", under a /welcome-back/ slug, which confessed that the email
+# was a win-back however carefully the body avoided saying so. A reader who is
+# asked "where are you now?" and then handed a come-back link has been told the
+# question was a pretext, and they only need to notice that once.
+ATTRIBUTION_FOOTER = "Your old account is still there: {link}"
 
 # "file" always runs and needs no credentials.
 # "smtp" is the real outbound action. Both run when --send is passed;

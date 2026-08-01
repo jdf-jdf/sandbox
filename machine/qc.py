@@ -50,5 +50,17 @@ def check(text, row, decision):
             "severity": "flag", "evidence": label,
         })
 
+    # The machine's whole output is the reply, because the reply is what says
+    # where this clinician now sits on the path from employed to independent.
+    # That requires asking. An email with no question in it is a statement
+    # mailed at someone, and it converts like one. Cheap check, and it holds
+    # the line the prompt asks for when the model drifts back into declaring.
+    if "?" not in text:
+        violations.append({
+            "rule": "no_question",
+            "reason": "body asks nothing, so there is nothing to reply to",
+            "severity": "block", "evidence": "(no question mark in body)",
+        })
+
     blocked = any(v["severity"] == "block" for v in violations)
     return blocked, violations
