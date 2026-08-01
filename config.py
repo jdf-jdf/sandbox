@@ -443,9 +443,18 @@ PROMPT = """You are writing a single short outreach email on behalf of JotPsych,
 which began as an ambient scribe for behavioral health clinicians and is now \
 several products.
 
-Everyone on this list came to JotPsych once and is not a customer today. They \
-know what the product is, so explaining it to them reads as though nobody \
-checked.
+Everyone on this list signed up for JotPsych once and is not a customer today. \
+Signed up is the entire content of the record. They tried it. Whether they \
+finished setting it up, wrote a single note with it, or ever watched it do the \
+thing it does, nobody knows, and the export cannot tell you. Treat "they have \
+seen this before" as a maybe and never as a fact.
+
+Two ways to get that wrong. Writing as though they used it daily and then quit \
+invents a relationship, and they will catch it, because they remember how \
+little they actually did. Writing as though they have never heard of JotPsych \
+throws away the one real thing you have, which is that at some point this \
+person went looking for something and landed on us. Sit between the two: assume \
+the name is familiar, assume nothing after that.
 
 This is not a win-back and you must not write one. Almost nobody on this list \
 weighed the product and rejected it. The timing was wrong: the practice was not \
@@ -506,7 +515,8 @@ address and a mobile number; the credential and the role were found by \
 searching the open web, not told to us. "Anything on file" is usually empty, \
 because usually there is nothing. So write from what is above and nothing \
 else. You do not know why they left, what they thought of the \
-product, how long they used it, or what their caseload looks like. Above all \
+product, whether they ever truly used it, or what their caseload looks like. \
+Above all \
 you do not know which of the four stages they are in now. The setting below is \
 a hint, never a verdict: it is derived from their email domain, which is a \
 weak signal about a person's life. Write the email that finds out.
@@ -641,6 +651,18 @@ REFUSAL_RULES = [
     ("fabricated_relationship", "Claims a prior conversation or request that never happened",
      r"\b(you\s+asked\s+(?:for|us|me|about)|as\s+(?:we\s+)?discussed|per\s+your\s+request|following\s+up\s+on\s+(?:our|your)|as\s+promised|(?:great|good)\s+(?:speaking|talking|chatting)\s+with\s+you|thanks\s+for\s+reaching\s+out|when\s+we\s+(?:spoke|talked)|you\s+mentioned\s+that)\b", "block"),
 
+    # Sibling of fabricated_relationship above, and the more common overclaim.
+    # The export records a SIGNUP. It does not record a single minute of use.
+    # Plenty of this list signed up, never finished setting it up, and never
+    # wrote a note with it. Telling that person "when you used JotPsych" is a
+    # claim they know to be false, and the credibility of everything after it
+    # goes with it. "Signed up" and "tried" are supported. "Used" is not.
+    #
+    # "you used to write these by hand" is legitimate and common, hence the
+    # lookahead: it excludes "used to" without excluding "you used JotPsych".
+    ("claimed_usage", "Claims they used the product, which the signup record cannot support",
+     r"\byou\s+used\b(?!\s+to\b)|\byou\s+were\s+using\b|\byou(?:'ve|\s+have)\s+been\s+using\b|\bsince\s+you\s+stopped\s+using\b", "block"),
+
     # --- Premise. The reframe the machine runs on. ---
     # These clinicians did not weigh the product and reject it; the timing was
     # wrong. An email that treats them as churn asks them to relitigate a
@@ -743,7 +765,7 @@ ATTRIBUTION_LEDGER_PATH = "logs/attribution.jsonl"
 # was a win-back however carefully the body avoided saying so. A reader who is
 # asked "where are you now?" and then handed a come-back link has been told the
 # question was a pretext, and they only need to notice that once.
-ATTRIBUTION_FOOTER = "Your old account is still there: {link}"
+ATTRIBUTION_FOOTER = "What JotPsych looks like now: {link}"
 
 # "file" always runs and needs no credentials.
 # "smtp" is the real outbound action. Both run when --send is passed;
