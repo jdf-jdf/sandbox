@@ -1,0 +1,275 @@
+<title>Second Timing — a win-back machine for lapsed JotPsych clinicians</title>
+
+<style>
+  :root {
+    --ink:      #14181D;
+    --body:     #2B333C;
+    --muted:    #5A6470;
+    --rule:     #DDE2E8;
+    --paper:    #FFFFFF;
+    --sunk:     #F5F7F9;
+    --accent:   #0F5E5C;
+    --warn:     #8A5A00;
+
+    --f-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+              Roboto, "Helvetica Neue", Arial, sans-serif;
+    --f-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+              "Liberation Mono", monospace;
+
+    --t-xs: 0.8125rem;
+    --t-sm: 0.9375rem;
+    --t-md: 1.0625rem;
+    --t-lg: 1.3125rem;
+    --t-xl: 1.75rem;
+    --t-2xl: 2.5rem;
+
+    --u: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink:    #EEF1F4;
+      --body:   #C3CBD4;
+      --muted:  #8A94A0;
+      --rule:   #2A313A;
+      --paper:  #0E1216;
+      --sunk:   #161B21;
+      --accent: #58BDB6;
+      --warn:   #D9A441;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #EEF1F4; --body: #C3CBD4; --muted: #8A94A0; --rule: #2A313A;
+    --paper: #0E1216; --sunk: #161B21; --accent: #58BDB6; --warn: #D9A441;
+  }
+  :root[data-theme="light"] {
+    --ink: #14181D; --body: #2B333C; --muted: #5A6470; --rule: #DDE2E8;
+    --paper: #FFFFFF; --sunk: #F5F7F9; --accent: #0F5E5C; --warn: #8A5A00;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--body);
+    font-family: var(--f-sans);
+    font-size: var(--t-md);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: calc(var(--u) * 14) calc(var(--u) * 6) calc(var(--u) * 16);
+  }
+
+  .masthead { border-bottom: 2px solid var(--ink); padding-bottom: calc(var(--u) * 4); }
+  .kicker {
+    font-family: var(--f-mono); font-size: var(--t-xs);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 calc(var(--u) * 3);
+  }
+  h1 {
+    font-size: var(--t-2xl); line-height: 1.1; letter-spacing: -0.02em;
+    font-weight: 660; color: var(--ink); margin: 0; text-wrap: balance;
+  }
+  .standfirst {
+    font-size: var(--t-lg); line-height: 1.4; color: var(--muted);
+    margin: calc(var(--u) * 3) 0 0; max-width: 58ch; text-wrap: balance;
+  }
+  .byline {
+    font-family: var(--f-mono); font-size: var(--t-xs);
+    color: var(--muted); margin: calc(var(--u) * 4) 0 0;
+  }
+
+  section { display: grid; gap: calc(var(--u) * 2) calc(var(--u) * 9); padding: calc(var(--u) * 9) 0 0; }
+  @media (min-width: 900px) { section { grid-template-columns: 132px minmax(0, 1fr); } }
+  .label {
+    font-family: var(--f-mono); font-size: var(--t-xs);
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--muted); padding-top: 2px;
+  }
+  .body-col { max-width: 68ch; min-width: 0; }
+  .body-col > * + * { margin-top: calc(var(--u) * 3); }
+  .body-col > :first-child { margin-top: 0; }
+
+  h2 {
+    font-size: var(--t-lg); line-height: 1.2; letter-spacing: -0.01em;
+    font-weight: 640; color: var(--ink); margin: 0; text-wrap: balance;
+  }
+  p { margin: 0; }
+  strong { color: var(--ink); font-weight: 640; }
+
+  .thesis {
+    border-left: 3px solid var(--accent);
+    padding-left: calc(var(--u) * 4);
+    font-size: var(--t-lg); line-height: 1.35;
+    color: var(--ink); font-weight: 560; text-wrap: balance;
+  }
+
+  ul, ol { margin: 0; padding-left: calc(var(--u) * 5); }
+  li + li { margin-top: calc(var(--u) * 2); }
+  li::marker { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .body-col ul, .body-col ol { font-size: var(--t-sm); }
+
+  .table-wrap { overflow-x: auto; }
+  .metrics { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .metrics th, .metrics td {
+    text-align: left; padding: calc(var(--u) * 2) 0;
+    border-bottom: 1px solid var(--rule); vertical-align: baseline;
+  }
+  .metrics th { font-weight: 440; color: var(--body); font-size: var(--t-sm); padding-right: calc(var(--u) * 4); }
+  .metrics td { font-family: var(--f-mono); font-size: var(--t-sm); color: var(--ink); text-align: right; white-space: nowrap; }
+  .metrics tr:last-child th, .metrics tr:last-child td { border-bottom: 0; }
+  .metrics .zero td { color: var(--warn); font-weight: 620; }
+  .metrics .out th { color: var(--ink); font-weight: 620; }
+  .metrics .out td { color: var(--accent); font-weight: 620; }
+
+  pre {
+    font-family: var(--f-mono); font-size: var(--t-xs); line-height: 1.65;
+    background: var(--sunk); border: 1px solid var(--rule); border-radius: 2px;
+    padding: calc(var(--u) * 3); margin: 0; overflow-x: auto; color: var(--body);
+  }
+  pre b { color: var(--ink); font-weight: 660; }
+  code { font-family: var(--f-mono); font-size: 0.92em; color: var(--ink); }
+  .caption { font-size: var(--t-sm); color: var(--muted); }
+
+  .split { display: grid; gap: calc(var(--u) * 5); }
+  @media (min-width: 640px) { .split { grid-template-columns: 1fr 1fr; } }
+  .split h3 {
+    font-size: var(--t-sm); font-weight: 660; color: var(--ink);
+    margin: 0 0 calc(var(--u) * 2);
+  }
+  .split ul { font-size: var(--t-sm); }
+
+  footer {
+    margin-top: calc(var(--u) * 12); padding-top: calc(var(--u) * 4);
+    border-top: 1px solid var(--rule);
+    font-family: var(--f-mono); font-size: var(--t-xs); color: var(--muted);
+  }
+
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:focus-visible, :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Go-to-market case · JotPsych</p>
+    <h1>Second Timing</h1>
+    <p class="standfirst">A win-back machine for the ~15,000 clinicians who tried JotPsych and stopped. Its most important output is the mail it refuses to send.</p>
+    <p class="byline">Jo Flores · one page, recommendation first</p>
+  </header>
+
+  <section>
+    <div class="label">Recommendation</div>
+    <div class="body-col">
+      <p class="thesis">Don't build a re-engagement campaign. Build a machine that earns the right to write, and that can prove a return.</p>
+      <ul>
+        <li><strong>Timing is the problem, so volume isn't the answer.</strong> Writing to all 15,000 burns the list before the timing turns. The machine refuses anyone it can't say something true and specific to, and records why.</li>
+        <li><strong>"Notice the moment it does" is plumbing, not reporting.</strong> Solved at send time or not at all. Every send carries a token on all three doors back: the link, the reply address, the phone number.</li>
+        <li><strong>Three columns aren't a segment.</strong> Name, email, mobile say nothing about who prescribes or who can buy. So the machine researches the employer once per domain, then the person where that isn't enough, caches both, then decides.</li>
+        <li><strong>Generation is the thinnest layer.</strong> The model can't choose who to write to, can't pick a segment, can't place the tracking link. Anything a rule can get right isn't left to a model.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">The numbers</div>
+    <div class="body-col">
+      <div class="table-wrap">
+        <table class="metrics">
+          <tbody>
+            <tr><th scope="row">Read → sent, run 1 (live)</th><td>33 → 27</td></tr>
+            <tr><th scope="row">Suppressed, with a stated reason</th><td>3</td></tr>
+            <tr><th scope="row">Rejected at intake (bad data)</th><td>2</td></tr>
+            <tr><th scope="row">Refusal rules in the gate</th><td>23</td></tr>
+            <tr class="zero"><th scope="row">Blocked by the gate on that pass</th><td>0</td></tr>
+            <tr><th scope="row">Emails actually sent</th><td>29 / 27 people</td></tr>
+            <tr class="out"><th scope="row">Clinicians who came back</th><td>5 (18.5%)</td></tr>
+            <tr><th scope="row">Returns it could not attribute</th><td>1</td></tr>
+            <tr><th scope="row">Median days to return</th><td>4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="caption">Returns are the only outcome numbers; the rest is process. The unattributable one is in the table on purpose — it measures whether the plumbing holds, and it will never be zero.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">The zero</div>
+    <div class="body-col">
+      <h2>A gate that never fires is indistinguishable from no gate</h2>
+      <p class="caption">The prompt forbids these failures upstream, so the model rarely commits them. Right for the product, bad for evidence. So fixtures test the gate directly:</p>
+      <pre><b>BLOCK</b> D-01  fabricated_stat         '90% reduction'
+<b>BLOCK</b> D-02  fabricated_relationship 'You asked for'
+<b>BLOCK</b> D-03  phi_leak                'a patient who'
+<b>BLOCK</b> D-04  compliance_overclaim    'completely private'
+<b>BLOCK</b> D-05  clinical_claim          'recommends a diagnosis'
+<b>BLOCK</b> D-06  hype + fake_urgency + em_dash
+pass  D-07  clean draft, correctly untouched</pre>
+      <p class="caption">Six blocked on nine rule hits, one clean draft through. Feeding those blocks back is what puts <code>never write '90% reduction'</code> at the top of the next run.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">Human time</div>
+    <div class="body-col">
+      <h2>Where the one to two hours a month go</h2>
+      <ul>
+        <li><strong>Finished suppressions never surface.</strong> A do-not-contact honoured, a verdict the machine acts on — those stay off the queue. Only work waiting on a person appears: one row out of 33.</li>
+        <li><strong>Overrule a bad verdict.</strong> Both caches are plain JSON, and the run trusts the file over the model.</li>
+        <li><strong>Decide the <code>unclear</code> domains,</strong> then read the flagged-but-sent copy.</li>
+        <li><strong>It holds at scale</strong> because domain research amortises — 4,000 clinicians at 300 employers is 300 searches once, zero thereafter. Person research runs only where the domain verdict was a guess.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">Week two</div>
+    <div class="body-col">
+      <h2>What comes next, in this order</h2>
+      <ol>
+        <li><strong>Wire the collectors.</strong> Tokens and resolution are real; the web log, inbox and SMS webhook are simulated. A day of integration makes every number above live.</li>
+        <li><strong>Fix the run counter.</strong> Derived at the end rather than claimed at the start, so an aborted run reuses it and re-mints existing tokens. That's how 27 sends became 29.</li>
+        <li><strong>Cadence and a real second touch,</strong> so "stay alive until the timing turns" is a sequence over months, not a repeat.</li>
+        <li><strong>Use the mobile column</strong> for a low-frequency, high-signal touch to someone who ignored two emails.</li>
+        <li><strong>Feed returns back into targeting.</strong> The report knows which segment returns best; nothing uses it yet.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">Scope</div>
+    <div class="body-col">
+      <div class="split">
+        <div>
+          <h3>Real</h3>
+          <ul>
+            <li>Intake, both research passes, their caches</li>
+            <li>Routing, suppression, the 23-rule gate, quarantine</li>
+            <li>Multipart email over live SMTP</li>
+            <li>Attribution tokens, ledger, returns resolution</li>
+            <li>Review queue, metrics, learning loop, cron</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Sketched, and marked</h3>
+          <ul>
+            <li>Inbound collectors (sample signal file)</li>
+            <li>The person cache — sample clinicians are invented, so every seeded record says <code>"source": "simulated"</code></li>
+            <li>SMS as a sending channel</li>
+          </ul>
+        </div>
+      </div>
+      <p class="caption"><strong>What breaks first, unattended:</strong> the person cache going stale. Titles expire, so verdicts age out into the review queue rather than silently staying true. Correct, but the queue grows quietly and the first symptom is a rising <code>needs_review</code> count.</p>
+    </div>
+  </section>
+
+  <footer>
+    Swap <code>data/lapsed_clinicians.csv</code>, rerun, and every number here changes. That is the test of whether it is a machine or a picture of one.
+  </footer>
+
+</div>

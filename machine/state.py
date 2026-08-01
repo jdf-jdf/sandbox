@@ -37,17 +37,49 @@ def learned_constraints(state):
     return [p for p, _ in phrases.most_common(config.LEARNED_CONSTRAINT_COUNT)]
 
 
-def record_run(state, metrics, all_violations):
-    """Fold this run's results back into memory."""
+def learn(state, violations, source="run"):
+    """Fold blocking violations into the machine's memory. Returns the count.
+
+    Split out of record_run() because a block and a run are different facts,
+    and only one of them is a claim about the list. tools/gate_demo.py feeds
+    the real gate fixture drafts and gets real blocks: those are legitimate
+    input to the constraint list, but recording them as a RUN would assert the
+    machine processed clinicians it never saw.
+
+    That split is what lets the loop close honestly on a list the model does
+    not misbehave on. `source` is kept so state.json says where a constraint
+    came from rather than implying it was earned in production.
+    """
     phrases = state.setdefault("offending_phrases", {})
     hits = state.setdefault("rule_hits", {})
 
-    for v in all_violations:
+    learned = 0
+    exempt = tuple(getattr(config, "LEARN_EXEMPT_RULES", ()))
+    for v in violations:
         if v["severity"] != "block":
             continue  # only blocking rules feed the learning loop
+        # The hit is always recorded -- how often a gate fires is real signal.
+        # The evidence is not, when the evidence is the recipient's own data:
+        # see config.LEARN_EXEMPT_RULES.
+        hits[v["rule"]] = hits.get(v["rule"], 0) + 1
+        if v["rule"] in exempt:
+            continue
         ev = v["evidence"].strip().lower()
         phrases[ev] = phrases.get(ev, 0) + 1
-        hits[v["rule"]] = hits.get(v["rule"], 0) + 1
+        learned += 1
+
+    if learned:
+        state.setdefault("learning_sources", {})[source] = {
+            "at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "blocks": state.get("learning_sources", {}).get(
+                source, {}).get("blocks", 0) + learned,
+        }
+    return learned
+
+
+def record_run(state, metrics, all_violations):
+    """Fold this run's results back into memory."""
+    learn(state, all_violations, source="run")
 
     run_no = len(state.get("runs", [])) + 1
     metrics = dict(metrics)

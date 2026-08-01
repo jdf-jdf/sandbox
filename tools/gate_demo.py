@@ -2,17 +2,18 @@
 """
 Prove the gate, on demand, without waiting for the model to misbehave.
 
-    python tools/gate_demo.py
+    python tools/gate_demo.py               # show what the gate catches
+    python tools/gate_demo.py --feed-state  # and let the machine learn from it
 
 WHY THIS EXISTS, honestly.
 
 The brief asks to see at least one rejected output and the check that caught
 it. On the current list the machine does not produce one, and that is worth
-stating plainly rather than engineering around: across three live runs of 18
-sends each, the gate blocked nothing. config.PROMPT forbids statistics, hype,
-patient content and invented relationships up front, so the model mostly does
-not write them, and even data/gate_test.csv (six rows built to bait exactly
-those failures) came back clean.
+stating plainly rather than engineering around: across one live run of 27
+sends and two dry ones, the gate blocked nothing. config.PROMPT forbids
+statistics, hype, patient content and invented relationships up front, so the
+model mostly does not write them, and even data/gate_test.csv (six rows built
+to bait exactly those failures) came back clean.
 
 A gate that never fires is indistinguishable from no gate. So this feeds it
 drafts that a less-constrained model does produce -- every one of these is
@@ -23,12 +24,13 @@ The drafts are fixtures. The gate is the real one: it imports machine/qc.py
 and config.REFUSAL_RULES, nothing is stubbed, and the blocks are appended to
 logs/rejects.log in the same format a live run writes.
 """
+import argparse
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config  # noqa: E402
-from machine import qc, review  # noqa: E402
+from machine import qc, review, state as state_mod  # noqa: E402
 
 # (id, name, what is wrong with it, the draft)
 FIXTURES = [
@@ -71,6 +73,12 @@ FIXTURES = [
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--feed-state", action="store_true",
+                    help="fold these blocks into state.json, so the phrases "
+                         "enter the next run's prompt as hard constraints")
+    args = ap.parse_args()
+
     blocked_records, passed = [], []
     print(f"\nfeeding {len(FIXTURES)} fixture draft(s) through the real gate "
           f"({len(config.REFUSAL_RULES)} rules)\n")
@@ -100,6 +108,21 @@ def main():
     path = review.append_rejects_log(blocked_records)
     print(f"\n  {len(blocked_records)} blocked, {len(passed)} passed")
     print(f"  blocked copy -> quarantine/    evidence -> {path}")
+
+    if args.feed_state:
+        st = state_mod.load()
+        violations = [v for rec in blocked_records for v in rec["violations"]]
+        learned = state_mod.learn(st, violations, source="gate_demo")
+        state_mod.save(st)
+        carried = state_mod.learned_constraints(st)
+        print(f"\n  {learned} block(s) folded into {config.STATE_PATH} "
+              f"(source: gate_demo)")
+        print(f"  the next run will carry {len(carried)} constraint(s):")
+        for c in carried:
+            print(f"    - never write {c!r}")
+        print("\n  Recorded as a learning source, NOT as a run: these drafts "
+              "are fixtures,\n  and state.json should not imply the machine "
+              "wrote to clinicians it never saw.")
     print("\n  The clean draft passing matters as much as the others failing: "
           "a gate\n  that blocks everything is no more useful than one that "
           "blocks nothing.\n")

@@ -80,13 +80,14 @@ RECORD_TOOL = {
 def already_settled(email):
     """True if config already decides this address without research.
 
-    @kp.org is named in SUPPRESS_EMAIL_DOMAINS and @gmail.com in
+    @kp.org is named in INSTITUTIONAL_EMAIL_DOMAINS and @gmail.com in
     PERSONAL_EMAIL_DOMAINS. Paying a search to re-confirm either would be
     silly, and would quietly let the cache overrule a decision a human made
     on purpose.
     """
     probe = email.lower()
-    named = list(config.SUPPRESS_EMAIL_DOMAINS) + list(config.PERSONAL_EMAIL_DOMAINS)
+    named = (list(config.INSTITUTIONAL_EMAIL_DOMAINS)
+             + list(config.PERSONAL_EMAIL_DOMAINS))
     return any(p.lower() in probe for p in named)
 
 

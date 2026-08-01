@@ -102,22 +102,34 @@ RECORD_TOOL = {
 def already_settled(email):
     """True if config decides this address without any research at all."""
     probe = (email or "").lower()
-    named = list(config.SUPPRESS_EMAIL_DOMAINS) + list(config.PERSONAL_EMAIL_DOMAINS)
+    named = (list(config.INSTITUTIONAL_EMAIL_DOMAINS)
+             + list(config.PERSONAL_EMAIL_DOMAINS))
     return any(p.lower() in probe for p in named)
 
 
-def people_needing_research(path, cache, refresh=False, refresh_stale=False):
+def people_needing_research(path, cache, refresh=False, refresh_stale=False,
+                            include_simulated=False):
     """Rows whose setting is a domain-level guess this pass is meant to check.
+
+    Returns (work, skipped_simulated).
 
     Deliberately re-derives the domain hypothesis rather than calling
     decide.route(), because route() already consults this cache: asking it
     would return "suppressed, never researched" and tell us nothing about
     which rows are worth researching.
+
+    Seeded records are held back from --refresh on purpose. The sample list is
+    invented, so researching "Tobias Grant at cornell.edu" returns an
+    Australian reality-TV contestant and an unrelated LinkedIn profile, and
+    the honest verdict is 'unclear' -- which then overwrites a deliberate
+    fixture and pushes the row onto the human's work order. A reviewer running
+    the documented command should not watch the sample decay. Pass
+    --include-simulated to override, which is what a real list wants.
     """
     if not os.path.exists(path):
         raise FileNotFoundError(f"Intake file not found: {path}")
 
-    work = []
+    work, skipped_simulated = [], []
     with open(path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             email = (row.get(config.ADDRESS_FIELD) or "").strip()
@@ -129,11 +141,17 @@ def people_needing_research(path, cache, refresh=False, refresh_stale=False):
             if not domains.needs_lookup(domain):
                 continue
 
-            if not people.needs_lookup(
-                    domains.resolve(domain, config.DEFAULT_SETTING)["setting"]):
+            setting = domains.resolve(domain, config.DEFAULT_SETTING)["setting"]
+            if not people.needs_lookup(setting):
                 continue
 
             record = cache.get(people.key(email))
+            if (record is not None
+                    and record.get("source") == config.SIMULATED_SOURCE
+                    and not include_simulated):
+                skipped_simulated.append(label)
+                continue
+
             if record is not None and not refresh:
                 if not refresh_stale:
                     continue
@@ -148,7 +166,7 @@ def people_needing_research(path, cache, refresh=False, refresh_stale=False):
                 "hypothesis": setting,
                 "credential": (row.get("credential") or "").strip(),
             })
-    return work
+    return work, skipped_simulated
 
 
 def _extract(content):
@@ -263,12 +281,24 @@ def main():
                     help="re-research everyone already cached")
     ap.add_argument("--refresh-stale", action="store_true",
                     help="re-research only those whose evidence has expired")
+    ap.add_argument("--include-simulated", action="store_true",
+                    help="also re-research seeded sample records (on the "
+                         "invented list this replaces them with 'unclear')")
     args = ap.parse_args()
 
     load_dotenv()
     cache = dict(people.load(force=True))
-    work = people_needing_research(args.input, cache, refresh=args.refresh,
-                                   refresh_stale=args.refresh_stale)
+    work, skipped = people_needing_research(
+        args.input, cache, refresh=args.refresh,
+        refresh_stale=args.refresh_stale,
+        include_simulated=args.include_simulated)
+
+    if skipped:
+        print(f"\nholding {len(skipped)} seeded sample record(s): "
+              f"{', '.join(skipped[:4])}{' ...' if len(skipped) > 4 else ''}")
+        print("  These people are invented, so there is nothing on the web to "
+              "find and\n  researching them would replace a deliberate fixture "
+              "with 'unclear'.\n  Use --include-simulated on a real list.")
 
     if not work:
         print(f"Nobody to research. {len(cache)} person/people already in "

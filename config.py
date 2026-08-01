@@ -918,3 +918,27 @@ STATE_PATH = "state.json"
 # How many of the worst-offending phrases are fed back into the next run's
 # prompt as explicit "never write this" constraints.
 LEARNED_CONSTRAINT_COUNT = 5
+
+# Rules whose "evidence" is a piece of the RECIPIENT'S OWN ROW rather than a
+# phrase the model chose. These must never become learned constraints.
+#
+# The learning loop remembers the evidence string, which is right for
+# `hype` ("revolutionary" is a habit worth banning everywhere) and actively
+# harmful for `phone_number`, where the evidence IS a clinician's mobile
+# number. Feeding that back teaches the machine nothing generalizable -- no
+# other row contains that number -- and writes one clinician's phone number
+# into the prompt used to draft to every other clinician. A privacy rule that
+# leaks the thing it protects is worse than not having it.
+#
+# The rule still counts in rule_hits: that a gate fired 24 times is real signal
+# about the machine's health. It is only the literal evidence that is dropped.
+LEARN_EXEMPT_RULES = ("phone_number", "no_personalization")
+
+# The `source` value marking a verdict that was seeded rather than researched.
+# The sample clinicians are invented, so there is nothing on the open web to
+# find about them: researching one returns an unrelated stranger and the
+# honest verdict is 'unclear', which overwrites the fixture and puts the row
+# on the human's work order. tools/classify_people.py holds these back from
+# --refresh so a reviewer running the documented command does not watch the
+# sample decay. On a real list, pass --include-simulated (or seed nothing).
+SIMULATED_SOURCE = "simulated"
