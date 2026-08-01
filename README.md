@@ -26,19 +26,21 @@ It runs on a schedule. Nobody presses anything.
 The export is three columns: a name, an email address, and a mobile number.
 That is all a signup ever gave us.
 
-A second sample is included so the outputs visibly change. Same three columns,
-different people:
+Nothing in those three columns tells you the thing that decides what to write.
+A psychiatrist doing fifteen-minute medication checks and a therapist doing
+fifty-minute sessions have almost nothing in common in their working day, and
+an email that does not know which one it is talking to reads as a mail merge,
+because it is one. Whether someone owns their practice, works for a hospital,
+or is still in training changes the message just as much, and none of that is
+in the file either.
 
 So the machine's first real act is to go and find out. It researches the
 employer behind each email address, then researches the individual person where
 the employer's answer is not enough on its own. Both answers get saved, so the
 same question is never paid for twice.
 
-That one reads 8 and sends 6. The two it declines show both halves of the
-decision layer: `felix@aurandcounseling.com` is a do-not-contact flag, which is
-finished, and `sbhatt@cornell.edu` is a person the domain pass could only call
-`trainee`, which is work. Everything in `out/`, `quarantine/`,
-`logs/rejects.log`, `REVIEW_QUEUE.md` and `state.json` differs on the next run.
+That research is the difference between three columns and a segmented list. It
+is also the part that makes the copy possible.
 
 ## The marketing call we made
 
@@ -376,13 +378,22 @@ export shape and nothing more, because everything else the copy depends on is
 something the machine goes and finds. Hand it a richer file and any column it
 carries wins over anything researched.
 
-A second sample list is included so you can watch the answers change:
+A second sample list is included so you can watch the answers change. Same
+three columns, different people:
 
 ```bash
 python run.py --input data/clinicians_sample_b.csv
 ```
 
-Everything downstream will differ: the drafts, the blocked copy, the reject
+That one reads 8 and writes to 6, and the two it declines are there on purpose,
+because they are the two different kinds of "no" this machine makes. Felix
+Aurand asked not to be contacted, which is a closed question that needs nobody's
+afternoon. Sunita Bhatt sits on a Cornell address that the employer research can
+only call "still in training", and nobody has checked whether that is true of
+her specifically, so she waits for a person rather than receiving a guess. One
+is finished. The other is work, and it says so.
+
+Everything downstream will differ too: the drafts, the blocked copy, the reject
 log, the review queue and the metrics.
 
 **To point it at something other than clinicians entirely** (support tickets,
