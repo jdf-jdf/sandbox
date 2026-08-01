@@ -104,10 +104,28 @@ register.
 | **Employed by an institution** | Hospital, health system, academic medical centre | They cannot buy, and a discount is meaningless to them. Write anyway, because clinicians leave for private practice constantly. Be worth answering rather than persuasive. |
 | **Still in training** | A university address that is not a medical centre | They cannot buy today and they pick their own tools the moment they finish. Check the premise rather than assume it, ask one honest question, do not pitch. |
 
-Someone holding two credentials is common here, and the prescribing one wins,
-because a person who can write a prescription has the prescriber's problem.
-That is a deliberate choice, not an accident of which rule happened to come
-first.
+Someone holding two credentials is common here. MD/PhD, PsyD/LMFT, PhD/LCSW:
+dual qualifications are ordinary in behavioural health, and a person holding
+both answers to two rules at once. The prescribing credential wins. Somebody
+who can write a prescription has the prescriber's problem, so the coding and
+audit copy is the copy they need.
+
+That is a deliberate choice rather than an accident of which rule happened to
+be typed first, and the cost of getting it backwards is worth spelling out.
+Reverse the order and every dual-credentialed clinician on the list quietly
+starts receiving the therapist email instead. Nothing breaks. Nothing lands in
+the review queue. The copy still reads well, still passes every check, and
+still goes to the wrong person, which is the exact failure this machine exists
+to prevent.
+
+The same care goes into recognising a credential at all. The machine looks for
+whole credentials rather than letters sitting inside longer words, because the
+naive version finds "DO" inside "Doctorate" and files a psychology doctoral
+intern as an osteopathic physician. That one is worth dwelling on, because of
+how it fails: the resulting email is well written, passes every check, and is
+addressed to entirely the wrong kind of clinician. The matching also has to
+cope with how people actually write these things, so "MD/PhD" and "MD-PhD" both
+still count.
 
 ## How you write to a clinician without losing them
 
