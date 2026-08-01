@@ -77,10 +77,12 @@ python tools/classify_domains.py         # employer, once per domain
 python tools/classify_people.py          # the person, only where the domain is unsure
 ```
 
-**Pass one, per employer.** `@kp.org` is a health system and nobody there can
-buy an EHR add-on. `@med.cornell.edu` is an academic medical center and
-`@cornell.edu` is a university, and no pattern match gets you that: it is a
-fact about the world. Verdicts land in `data/domain_verdicts.json`. This
+**Pass one, per employer.** `@kp.org` is a health system, and whether that
+means "do not write" or "write differently" is a config flag
+(`SUPPRESS_INSTITUTIONAL`), not a hardcoded assumption. Either way you have to
+know which employer it is, and that is the hard part: `@med.cornell.edu` is an
+academic medical center while `@cornell.edu` is a university, and no pattern
+match gets you there. It is a fact about the world, not about the string. Verdicts land in `data/domain_verdicts.json`. This
 amortises. Four thousand clinicians at three hundred employers costs three
 hundred searches once, and nothing ever again.
 

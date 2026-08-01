@@ -77,8 +77,16 @@ def route(row):
     # Normalised here, before any return, so every path downstream reports the
     # same segment: "unknown" leaking into a contactable decision costs the
     # email its SEGMENT_BRIEF and nothing says so.
-    thin_export = not any(row.get(f, "").strip() for f in config.ROUTE_FIELDS)
-    if segment == config.DEFAULT_SEGMENT and thin_export:
+    # Only the fields the rules actually read count. Every rule today tests the
+    # credential and none test the practice_type, so a researched job title
+    # with no credential beside it is still nothing to route on, and reporting
+    # it as "could not classify credential ''" describes a bug rather than the
+    # situation. Derived from SEGMENT_RULES so it stays true if the rules change.
+    tested = [v for v, used in (
+        (val_a, any(ma for (ma, _mb), _n in config.SEGMENT_RULES)),
+        (val_b, any(mb for (_ma, mb), _n in config.SEGMENT_RULES)),
+    ) if used]
+    if segment == config.DEFAULT_SEGMENT and not any(v.strip() for v in tested):
         segment = "unspecified"
 
     def out(setting, should_contact, reason, needs_review=False):
