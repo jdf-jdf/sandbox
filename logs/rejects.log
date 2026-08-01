@@ -1,2 +1,2 @@
-2026-08-01T19:24:31+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=fabricated_stat	evidence='90% reduction'	reason=Numeric claim the machine cannot source
-2026-08-01T19:24:31+00:00	BLOCKED	id=c004	name=Tom Brennan	rule=unsourced_quantity	evidence='30 hours a month'	reason=Time-saved claim with no attributable source
+2026-08-01T19:45:17+00:00	BLOCKED	id=C-128	name=Priya Raghunathan	rule=clinical_claim	evidence='clinical judgment'	reason=Implies the product exercises clinical judgment
+2026-08-01T19:45:32+00:00	BLOCKED	id=C-131	name=Simon Halloway	rule=compliance_overclaim	evidence='completely private'	reason=Vague or unearned security/compliance claim

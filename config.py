@@ -11,11 +11,11 @@ something belongs in this file that isn't in it yet.
 #    Swapping this path (or overwriting the CSV) changes the inputs, and
 #    therefore the outputs. Nothing downstream is pinned to this file.
 # ---------------------------------------------------------------------------
-INTAKE_CSV = "data/clinicians.csv"
+INTAKE_CSV = "data/lapsed_clinicians.csv"
 
 # Columns the machine needs. A row missing any of these is rejected at intake
 # rather than silently producing garbage downstream.
-REQUIRED_COLUMNS = ["id", "name", "credential", "practice_type", "email"]
+REQUIRED_COLUMNS = ["id", "name", "email", "mobile"]
 
 # The machine does not assume what its rows are called. These are the only
 # places anything outside this file reaches into a row by a literal column
@@ -25,7 +25,8 @@ ID_FIELD = "id"          # names the artifact: out/<id>.txt, quarantine/<id>.txt
 LABEL_FIELD = "name"     # what shows in logs and the review queue
 ADDRESS_FIELD = "email"  # where outbound goes, when SEND_TO is unset
 # What SEGMENT_RULES match against, in order. Two fields, matching the
-# two-part tuples below.
+# two-part tuples below. SEGMENT is the clinical role, so it reads the
+# credential: the address is the SETTING axis and is handled separately below.
 ROUTE_FIELDS = ("credential", "practice_type")
 
 
@@ -35,17 +36,33 @@ ROUTE_FIELDS = ("credential", "practice_type")
 #    every decision made here is one the LLM cannot get wrong.
 # ---------------------------------------------------------------------------
 
-# Segment routing. First matching rule wins.
-# (credential substring, practice_type substring) -> segment name
+# Segment routing. First matching rule wins, and each half is matched as a
+# whole token, not as a substring: see _matches_rule in machine/decide.py for
+# why "DO" must not be allowed to match "Doctorate".
+# (credential token, practice_type token) -> segment name
+#
+# ORDER IS LOAD-BEARING, so state the decision rather than leaving it to the
+# accident of which line came first. Dual degrees are real and common here
+# (MD/PhD, PsyD/LMFT, PhD/LCSW). The prescribing credential wins: someone who
+# can write a prescription has the prescriber's problem, and the coding and
+# audit copy is the copy they need. Moving the therapist rules above these
+# would silently reroute every dual-credentialed clinician on the list.
 SEGMENT_RULES = [
     (("MD", ""), "prescriber"),
     (("DO", ""), "prescriber"),
     (("PMHNP", ""), "prescriber"),
+    (("APRN", ""), "prescriber"),
+    (("DNP", ""), "prescriber"),
+    (("CNS", ""), "prescriber"),
     (("NP", ""), "prescriber"),
     (("PhD", ""), "therapist"),
     (("PsyD", ""), "therapist"),
+    (("EdD", ""), "therapist"),
     (("LCSW", ""), "therapist"),
+    (("LICSW", ""), "therapist"),
     (("LMFT", ""), "therapist"),
+    (("LMHC", ""), "therapist"),
+    (("LPCC", ""), "therapist"),
     (("LPC", ""), "therapist"),
 ]
 DEFAULT_SEGMENT = "unknown"
@@ -54,6 +71,105 @@ DEFAULT_SEGMENT = "unknown"
 # `do_not_contact` is a column in the CSV; add your own conditions here.
 SUPPRESS_IF_DO_NOT_CONTACT = True
 SUPPRESS_UNKNOWN_SEGMENT = True  # we'd rather send nothing than send generic
+
+# Domains nobody at can buy an EHR add-on, so the machine never writes to
+# them. Substring match against the address, same as SEGMENT_RULES. This is
+# the cheap half of the domain question: the employers big enough to name.
+SUPPRESS_EMAIL_DOMAINS = [
+    "@kp.org",
+    "@sutterhealth.",
+    "@providence.",
+]
+
+# The other axis. SEGMENT is the clinical role and decides what the email
+# talks about. SETTING is where they work and decides whether we write at all
+# and in what register: the same PsyD is a different email in solo practice,
+# at a practice they own, and two years into a doctorate.
+PERSONAL_EMAIL_DOMAINS = [
+    "@gmail.", "@yahoo.", "@outlook.", "@hotmail.", "@icloud.",
+    "@me.com", "@aol.", "@proton.me", "@protonmail.", "@comcast.",
+]
+PERSONAL_SETTING = "solo"              # personal address = they are the practice
+DEFAULT_SETTING = "practice_owner"     # owns a domain = likely the buyer
+
+# Domain lookup. Some addresses cannot be classified from the string alone.
+# A .org or .edu tells you the sender is not on webmail; it does not tell you
+# whether they can buy anything -- @med.cornell.edu is a health system and
+# @cornell.edu is a university. That question needs research, and research is
+# neither deterministic nor free, so it does not belong in the decision layer.
+#
+# tools/classify_domains.py researches each domain ONCE and writes its verdict
+# to the file below. decide.py only ever READS that file. The decision layer
+# therefore stays deterministic and offline: same CSV plus same cache always
+# produces the same decisions, and a human can open the file and overrule it.
+DOMAIN_LOOKUP_SUFFIXES = (".org", ".edu")
+DOMAIN_CACHE_PATH = "data/domain_verdicts.json"
+
+# Verdict -> setting. None means suppress: researched, and the answer is no.
+# A verdict missing from this map ("unclear") or missing from the cache
+# entirely also suppresses -- an unresearched institution is exactly the case
+# where a guess is expensive, so the machine declines to guess and puts the
+# domain on the human's work order instead. Same instinct as
+# SUPPRESS_UNKNOWN_SEGMENT: in doubt, send nothing.
+DOMAIN_VERDICT_SETTINGS = {
+    "health_system": None,
+    "training": "trainee",
+    "private_practice": "practice_owner",
+}
+# Asymmetric on purpose. Being wrong in the two directions costs different
+# amounts, so they get different bars. A shaky "health_system" costs one
+# unsent email to someone who might have been a buyer. A shaky
+# "private_practice" mails a hospital employee, which is the exact outcome
+# this whole mechanism exists to prevent. So: suppress on any confidence,
+# contact only on high.
+DOMAIN_MIN_CONFIDENCE_TO_CONTACT = "high"   # one of: low, medium, high
+
+# How the research step (tools/classify_domains.py) is told to think. It runs
+# once per domain, not once per row, so a list of 4,000 clinicians at 300
+# employers costs 300 searches, and costs nothing at all on the second run.
+DOMAIN_MAX_SEARCHES = 4                # web searches per domain, hard cap
+DOMAIN_RESEARCH_PROMPT = """Identify the organization that owns the email \
+domain {domain} and decide which one thing it is.
+
+Search for the domain itself. Do not reason from the name alone: plenty of \
+private group practices own a .org, and plenty of universities run a hospital \
+under a subdomain.
+
+The subdomain is the answer more often than the root domain is. Treat \
+med.cornell.edu and cornell.edu as two different organizations, because they \
+are: the first is an academic medical center, the second is a university. \
+Research the exact domain you were given.
+
+Choose exactly one verdict:
+
+- "health_system" if the domain belongs to a hospital, health system, \
+academic medical center, medical school, clinic network, or community health \
+organization. These people are employees. Their documentation tool was chosen \
+for them by an institution, they cannot buy software, and mail to them is \
+wasted.
+
+- "training" if the domain belongs to a university or college that is NOT a \
+medical center. A behavioral health clinician at such an address is most \
+likely still in training: a doctoral student, a resident on a campus address, \
+or someone accruing supervised hours. They cannot buy anything today, but \
+they choose their own tools when they finish.
+
+- "private_practice" if the domain belongs to a private practice, group \
+practice, or a small clinical business, whatever its suffix.
+
+- "unclear" if the search does not settle it, or if the domain plausibly \
+covers both a university and its medical center under one address. Say \
+unclear rather than guessing. A wrong "private_practice" mails a hospital \
+employee, and a wrong "training" mails someone a message about a career stage \
+they left a decade ago.
+
+Set confidence honestly. "high" means the search showed you the organization \
+and its type directly. "medium" means the evidence is good but indirect. \
+"low" means you are inferring. Anything below {min_confidence} is treated as \
+unclear and goes to a human, so an honest "low" costs nothing and a \
+flattering "high" costs a misdirected email.
+
+Finish by calling record_verdict exactly once."""
 
 
 # ---------------------------------------------------------------------------
@@ -93,6 +209,42 @@ SEGMENT_BRIEF = {
     ),
 }
 
+# Per-setting framing: the other axis. SEGMENT is what the work is, SETTING is
+# who they answer to. It decides register and ask, not subject matter.
+SETTING_BRIEF = {
+    "solo": (
+        "Solo clinicians, reached at a personal address (Gmail, iCloud, "
+        "Proton, and the like). They are the practice: no admin, no billing "
+        "staff, no IT department to ask. Nobody has to approve a purchase, "
+        "which makes them the easiest sale and the least forgiving audience "
+        "for anything that wastes their time. Their pain is evening "
+        "paperwork and the unpaid hours that follow the last session of the "
+        "day. Price matters and they will ask about it. Do not write as if "
+        "they have a team."
+    ),
+    "practice_owner": (
+        "Reached at a domain they appear to own, so most likely the owner or "
+        "a partner at a private practice. They buy for other people as well "
+        "as themselves, which means they think about onboarding, about what "
+        "their clinicians will actually adopt, and about what happens to the "
+        "notes if they ever leave. Their pain is the aggregate: documentation "
+        "drag across the whole practice, and clinicians burning out on it."
+    ),
+    "trainee": (
+        "Reached at a university address that is not a medical center, so "
+        "most likely still in training: residency, fellowship, a doctoral "
+        "program, or supervised hours toward licensure. Two things follow. "
+        "They cannot buy anything today, and their institution already "
+        "chose their EHR for them. But they will be choosing their own tools "
+        "the moment they go into practice, which is the only reason to write "
+        "at all. Open by checking the premise rather than assuming it: say "
+        "plainly why you are writing, ask where they are in training and "
+        "what comes after. Do not pitch a purchase, do not describe features, "
+        "and do not pretend to know their situation. One honest question "
+        "beats a paragraph of positioning."
+    ),
+}
+
 # Formatted against the WHOLE intake row plus {segment}, {segment_brief} and
 # {learned_constraints}. Any column in the CSV is therefore available here as
 # {column_name} with no code change. Referencing a column that doesn't exist
@@ -100,14 +252,22 @@ SEGMENT_BRIEF = {
 PROMPT = """You are writing a single short outreach email on behalf of JotPsych, \
 an ambient AI scribe built specifically for behavioral health clinicians.
 
+Everyone on this list has already used JotPsych and stopped. This is a win-back, \
+not an introduction. They know what the product is, so explaining it to them \
+reads as though nobody checked. What you do not know is why they left, and \
+inventing a reason is worse than asking for one.
+
 Recipient:
   Name: {name}
   Credential: {credential}
   Practice: {practice_type}
   Segment: {segment}
+  Setting: {setting}
   What we know: {notes}
 
 Segment context: {segment_brief}
+
+Setting context: {setting_brief}
 
 Rules:
 - Under 120 words.
@@ -115,6 +275,10 @@ Rules:
 - Never imply the product makes clinical judgments or decisions.
 - Never invent statistics, outcomes, or testimonials.
 - Never reference or invent any patient, case, or session content.
+- Never claim a prior conversation, request, or relationship. If it is not in
+  "What we know" above, it did not happen. No "you asked for", "as we
+  discussed", "per your request", "following up on our call". That they once
+  used the product is the only shared history you have.
 - Plain sign-off. No "Best regards, The JotPsych Team".
 
 Write like a person, not a language model:
@@ -178,6 +342,15 @@ REFUSAL_RULES = [
     # slots", "45-55 minute sessions") stays legal.
     ("unsourced_quantity", "Time-saved claim with no attributable source",
      r"\b\d{1,4}\+?\s*(?:hours?|hrs?|minutes?|mins?)\s*(?:a|an|per|each)\s+(?:day|week|month|year)\b", "block"),
+
+    # Warmth the machine has not earned. A win-back list is exactly where this
+    # goes wrong: having once been a customer is real shared history, and the
+    # model will happily inflate it into a conversation that never happened.
+    # Deliberately narrow. "You asked for the two figures" is invented; "you
+    # asked on the webinar whether..." is grounded in the notes field and has
+    # to stay legal, so the pattern requires the giveaway object after the verb.
+    ("fabricated_relationship", "Claims a prior conversation or request that never happened",
+     r"\b(you\s+asked\s+(?:for|us|me|about)|as\s+(?:we\s+)?discussed|per\s+your\s+request|following\s+up\s+on\s+(?:our|your)|as\s+promised|(?:great|good)\s+(?:speaking|talking|chatting)\s+with\s+you|thanks\s+for\s+reaching\s+out|when\s+we\s+(?:spoke|talked)|you\s+mentioned\s+that)\b", "block"),
 
     # --- AI tells. ---
     # The rules above catch output that is WRONG. These catch output that is

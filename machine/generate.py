@@ -84,6 +84,8 @@ def draft(row, decision, learned_constraints, attempts=3):
     fields.update({
         "segment": decision["segment"],
         "segment_brief": config.SEGMENT_BRIEF.get(decision["segment"], ""),
+        "setting": decision.get("setting", ""),
+        "setting_brief": config.SETTING_BRIEF.get(decision.get("setting"), ""),
         "learned_constraints": constraint_block,
     })
 

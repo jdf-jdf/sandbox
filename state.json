@@ -1,51 +1,23 @@
 {
   "runs": [
     {
-      "input": "data/clinicians.csv",
-      "read": 10,
-      "intake_rejected": 2,
-      "suppressed": 2,
-      "generated": 6,
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 11,
+      "generated": 19,
       "blocked": 1,
-      "flagged": 1,
-      "sent": 5,
+      "flagged": 0,
+      "sent": 18,
       "live": true,
       "run": 1,
-      "at": "2026-08-01T19:24:31+00:00"
-    },
-    {
-      "input": "data/clinicians.csv",
-      "read": 10,
-      "intake_rejected": 2,
-      "suppressed": 2,
-      "generated": 6,
-      "blocked": 0,
-      "flagged": 2,
-      "sent": 6,
-      "live": true,
-      "run": 2,
-      "at": "2026-08-01T19:25:13+00:00"
-    },
-    {
-      "input": "data/clinicians.csv",
-      "read": 10,
-      "intake_rejected": 2,
-      "suppressed": 2,
-      "generated": 6,
-      "blocked": 0,
-      "flagged": 2,
-      "sent": 6,
-      "live": true,
-      "run": 3,
-      "at": "2026-08-01T19:25:58+00:00"
+      "at": "2026-08-01T19:45:32+00:00"
     }
   ],
   "offending_phrases": {
-    "90% reduction": 1,
-    "30 hours a month": 1
+    "completely private": 1
   },
   "rule_hits": {
-    "fabricated_stat": 1,
-    "unsourced_quantity": 1
+    "compliance_overclaim": 1
   }
 }

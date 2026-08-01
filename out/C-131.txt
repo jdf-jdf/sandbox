@@ -1,0 +1,14 @@
+To: joannadflores@gmail.com
+Subject: [machine] draft for Simon Halloway, LPC
+
+Simon,
+
+You stopped using JotPsych over security, and that was a fair place to draw the line. I don't want to guess at the rest of it, so: what specifically would you need to see? A BAA, our retention and deletion policy, where audio goes and how long it lives, subprocessor list, what happens to your notes if you leave. I can send documentation rather than assurances.
+
+If there was more to it than security, I'd rather hear that too.
+
+The evening backlog of narrative notes across your clinicians doesn't get smaller on its own, but neither does the risk if the answers aren't good enough. Happy to be told they aren't.
+
+Reply here and I'll send whatever's useful.
+
+Dan

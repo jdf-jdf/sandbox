@@ -1,0 +1,100 @@
+{
+  "domains": {
+    "cornell.edu": {
+      "confidence": "high",
+      "organization": "Cornell University (Ithaca, NY)",
+      "source": "llm+search",
+      "sources": [
+        "https://www.cornell.edu/visit/",
+        "https://it.cornell.edu/email-cornell",
+        "https://scl.cornell.edu/get-involved/tatkon-center-new-students/new-students-cornell/graduate-and-professional/netid-email",
+        "https://leadiq.com/c/weill-cornell-medicine/5a1d8a922400002400644931/email-format",
+        "https://weillcornell.org/contact"
+      ],
+      "verdict": "training",
+      "why": "Search confirmed cornell.edu is the root domain of Cornell University, a private research university in Ithaca, where students/faculty/staff receive NetID@cornell.edu addresses; its academic medical center, Weill Cornell Medicine, operates separately on med.cornell.edu. A behavioral health clinician at cornell.edu is therefore on the academic campus, not the medical center."
+    },
+    "mayoclinic.org": {
+      "confidence": "high",
+      "organization": "Mayo Clinic",
+      "source": "llm+search",
+      "sources": [
+        "https://www.mayoclinic.org/about-mayo-clinic",
+        "https://en.wikipedia.org/wiki/Mayo_Clinic",
+        "https://www.linkedin.com/company/mayo-clinic",
+        "https://en.wikipedia.org/wiki/Mayo_Clinic_Florida"
+      ],
+      "verdict": "health_system",
+      "why": "mayoclinic.org is the official web domain of Mayo Clinic, described in sources as a nonprofit American academic medical center for integrated health care, education and research, with campuses in Rochester MN, Jacksonville FL, and Phoenix/Scottsdale AZ and tens of thousands of employed physicians and staff. Anyone at this address is an institutional employee, not an independent buyer."
+    },
+    "med.cornell.edu": {
+      "confidence": "high",
+      "organization": "Weill Cornell Medicine (Joan and Sanford I. Weill Medical College of Cornell University)",
+      "source": "llm+search",
+      "sources": [
+        "https://weill.cornell.edu/",
+        "https://en.wikipedia.org/wiki/Weill_Cornell_Medicine",
+        "https://en.wikipedia.org/wiki/Weill_Cornell_Medical_Center",
+        "https://medicine.weill.cornell.edu/divisions-programs"
+      ],
+      "verdict": "health_system",
+      "why": "Search shows the cornell.edu medical subdomains belong to Weill Cornell Medicine, a private medical school of Cornell University affiliated with NewYork-Presbyterian/Weill Cornell Medical Center, and med.cornell.edu is its faculty/staff email domain \u2014 an academic medical center, not the undergraduate university."
+    },
+    "northsidecommunityhealth.org": {
+      "confidence": "medium",
+      "organization": "Northside Community Health Center (specific entity unconfirmed; candidates include the Fort Worth, TX center now operating as North Texas Area Community Health Centers, a Lafayette, LA center listed by the Louisiana Dept. of Health, and one operated by MCHCC)",
+      "source": "llm+search",
+      "sources": [
+        "https://ntachc.org/about-us/",
+        "https://nmtccoalition.org/project/northside-community-health-center/",
+        "https://ldh.la.gov/directory/detail/13115",
+        "https://mchcc.org/locations/northside-community-health-center",
+        "https://aging.networkofcare.org/tarrant-tx/services/agency?pid=NorthTexasAreaCommunityHealthCenterNorthsideCommunityHealthCenterHealthMedicalCare_987_1_0"
+      ],
+      "verdict": "health_system",
+      "why": "The exact domain never appeared in search results, so I could not confirm the specific registrant; however, every organization operating under the name \"Northside Community Health Center\" that searches surfaced is a nonprofit community health center / FQHC offering primary and behavioral health care, not a university or a private group practice. Clinicians at any of these are institutional employees on an employer-selected system."
+    },
+    "peacehealth.org": {
+      "confidence": "high",
+      "organization": "PeaceHealth",
+      "source": "llm+search",
+      "sources": [
+        "https://www.peacehealth.org/",
+        "https://www.peacehealth.org/about-peacehealth",
+        "https://en.wikipedia.org/wiki/PeaceHealth",
+        "https://www.peacehealth.org/locations"
+      ],
+      "verdict": "health_system",
+      "why": "peacehealth.org is the corporate domain of PeaceHealth, a nonprofit Catholic health system headquartered in Vancouver, Washington, operating medical centers, critical access hospitals and clinics across Washington, Oregon and Alaska. Clinicians at this address are institutional employees, not independent purchasers."
+    },
+    "ucsf.edu": {
+      "confidence": "high",
+      "organization": "University of California, San Francisco (UCSF) / UCSF Health",
+      "source": "llm+search",
+      "sources": [
+        "https://www.ucsf.edu/about",
+        "https://www.ucsf.edu/about/mission-and-values",
+        "https://www.ucsf.edu/sites/default/files/2026-04/UCSF_FactSheet_04.01.2026_Accessible.pdf",
+        "https://www.collegevine.com/faq/101607/does-ucsf-have-an-undergrad-program"
+      ],
+      "verdict": "health_system",
+      "why": "UCSF's own materials describe it as a university exclusively focused on health, with graduate-level health professions education, biomedical research, and patient care through its top-ranked hospitals; it has no undergraduate programs, so ucsf.edu is the root domain of an academic medical center rather than a general university campus. Clinicians, faculty, and staff at this address are institutional employees of UCSF/UCSF Health."
+    },
+    "umich.edu": {
+      "confidence": "medium",
+      "organization": "University of Michigan (Regents of the University of Michigan), Ann Arbor, MI",
+      "source": "llm+search",
+      "sources": [
+        "https://umich.edu/about/",
+        "https://umich.edu/contact/",
+        "https://leadiq.com/c/university-of-michigan-medical-school/5a1d846e24000024005ee100/email-format",
+        "https://rocketreach.co/university-of-michigan-medical-school-email-format_b5c6101df42e0c4f",
+        "https://rocketreach.co/michigan-medicine-email-format_b5c61003f42e0c4f",
+        "https://leadiq.com/c/university-of-michigan-medical-center/5a1d95ad2300005900845b69/email-format"
+      ],
+      "verdict": "unclear",
+      "why": "umich.edu is the root domain of the University of Michigan, a public research university, but email-format data shows University of Michigan Medical School personnel also use First.Last@umich.edu / flast@umich.edu addresses while Michigan Medicine's clinical enterprise uses the separate med.umich.edu subdomain \u2014 so a @umich.edu address could be a campus student/trainee or a salaried academic medical center employee."
+    }
+  },
+  "version": 1
+}

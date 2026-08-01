@@ -35,13 +35,19 @@ def check(text, row, decision):
             "severity": "flag", "evidence": f"{words} words",
         })
 
+    # Any token of the label counts, not just the first. An email that opens
+    # "Dr. Whitfield," is personalized, and for a cold approach to a clinician
+    # it is the more appropriate register. Keying this to the first name alone
+    # flagged those anyway, and a review queue with false positives in it is a
+    # review queue nobody opens. Single characters are skipped so a middle
+    # initial cannot satisfy the check on its own.
     label = row.get(config.LABEL_FIELD, "")
-    first_name = label.split()[0] if label else ""
-    if first_name and first_name.lower() not in text.lower():
+    name_parts = [p for p in re.split(r"[^\w']+", label) if len(p) > 1]
+    if name_parts and not any(p.lower() in text.lower() for p in name_parts):
         violations.append({
             "rule": "no_personalization",
             "reason": f"recipient's {config.LABEL_FIELD} never appears in the body",
-            "severity": "flag", "evidence": first_name,
+            "severity": "flag", "evidence": label,
         })
 
     blocked = any(v["severity"] == "block" for v in violations)

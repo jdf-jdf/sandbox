@@ -11,3 +11,6 @@ BRIEF.md
 # out/, quarantine/, logs/ and state.json are deliberately NOT ignored.
 # They are the machine's output and its audit trail; a reader should be able
 # to see what it produced and what it stopped without running anything.
+
+# macOS finder droppings.
+.DS_Store
