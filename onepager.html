@@ -164,6 +164,20 @@
   </header>
 
   <section>
+    <div class="label">Note</div>
+    <div class="body-col">
+      <p class="thesis">Quick version of what it does: it reads a list of people who tried JotPsych and stopped, figures out who each one actually is (prescriber or therapist, solo or institutional), decides which of them we can say something true and specific to, writes to those and only those, and refuses to send anything that would embarrass us.</p>
+      <p>Refusing to send is most of the value. A campaign optimizes for volume out the door. This optimizes for not burning goodwill on a mail-merge these clinicians would spot in two seconds.</p>
+      <p><strong>A few things worth your five minutes:</strong></p>
+      <ul>
+        <li><strong>The 24-rule gate is the part I'd stress-test first.</strong> It blocks fabricated stats, invented conversations ("as we discussed"), PHI mentions, hype words, the whole list. Run <code>python tools/gate_demo.py</code> and you'll see it catch six of seven planted bad drafts in real time, with the exact line that tripped it.</li>
+        <li><strong>There's one call in here I want your read on.</strong> Institutional clinicians (hospital, health system) get written to instead of suppressed. They can't buy today, but they leave for private practice constantly, and the one who can't buy this year picks their own tools the year after &mdash; so silence costs us that person permanently, and writing costs us one email. That's <code>SUPPRESS_INSTITUTIONAL = False</code> in <code>config.py</code>. Flip it and rerun if you want to see the suppressed numbers versus what the machine resolves on its own, which is the version I actually care about long-term.</li>
+      </ul>
+      <p><strong>What it can't do yet:</strong> it doesn't know about the warm funnel sitting in the CRM or in your heads (new SDR territory, a partner intro, someone who opened four emails and never replied). That's a column on the intake CSV whenever you're ready to feed it in. Happy to walk through any of it live, or just tell me where to point it next.</p>
+    </div>
+  </section>
+
+  <section>
     <div class="label">Recommendation</div>
     <div class="body-col">
       <p class="thesis">Don't build a re-engagement campaign. Build a machine that earns the right to write, and that can prove a return.</p>

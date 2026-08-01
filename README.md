@@ -56,18 +56,20 @@ know what it is. Explaining it back to them reads as though nobody checked the
 file. What we genuinely do not know is why they left, and inventing a reason is
 worse than asking for one.
 
-**We ask for a call, not a reply.** Why someone stopped is almost always more
-complicated than what they would type into an email. A specific, small ask is
-easier to answer than a blank one.
+**We ask one question, not for a call.** Why someone left is a question about
+the past, and the answer changes nothing. Where they stand now is the thing
+that moves, so every email closes with the same plain question: still turning
+the idea over, getting something set up, or already running a practice of
+their own. Answerable in six words while walking between sessions, and unlike
+a call, it costs them nothing to answer.
 
 **We say plainly when we know someone cannot buy.** A clinician employed by a
 hospital did not choose their documentation system and cannot switch it. So we
-do not pitch them. We say we know they may not get to choose, ask whether they
-are staying put, and ask who at their organisation actually evaluates these
-tools. Being the vendor who understood their situation is the whole play, and
-it costs nothing to be that vendor a year early. This is not a hypothesis. One
-of the five clinicians who came back on the last run was employed by a health
-system, and he replied to say he is leaving it in January.
+do not pitch them, but we ask the same one question anyway, because clinicians
+leave institutions for private practice constantly, and the one who cannot buy
+this year picks their own tools the year after. Being the vendor who
+understood that is the whole play, and it costs nothing to be that vendor a
+year early.
 
 **We read the market before writing a word.** JotPsych's own positioning (the
 seed round, the 2026 JotAudit and JotRx launches, the move from note-taker
@@ -126,17 +128,23 @@ that is invented.
 **Never state a number we cannot source.** No percentages, no hours saved per
 month. If we cannot point at where it came from, it does not go in.
 
-**Never print their phone number back at them.** We hold it because they gave
-it to us at signup, and they will not remember doing so. Quoting it at someone
-who spends their working life on confidentiality reads as surveillance, and
-produces "how did you get this" instead of "sure, Tuesday". The email may ask
-whether the number ending in those four digits is still the best one. That is
-as specific as it is allowed to be.
+**Never print their phone number back at them, at all.** We hold it because
+they gave it to us at signup, and they will not remember doing so. Quoting it
+at someone who spends their working life on confidentiality reads as
+surveillance. An earlier version let the email ask about the last four
+digits; the current one drops the number from the copy entirely, because
+there was no version of that ask worth the risk of getting it wrong.
+
+**Never pin something to a day it did not happen on.** "When you signed a
+note last week" is invented: the machine holds a name, an email and a mobile
+number, and nothing whatsoever about anyone's actual week. Write about the
+shape of the job, what the paperwork does to a Thursday for someone in their
+role, never about a specific event on a specific day.
 
 **Never sound like a machine wrote it.** No em dashes, no hype, no
 "revolutionary", no opening paragraph about the state of healthcare. Say one
-specific thing about their actual day. Vagueness reads as a mail merge, because
-that is exactly what it is.
+specific thing about the shape of their working day. Vagueness reads as a mail
+merge, because that is exactly what it is.
 
 **Keep it under 120 words**, and sign off like a person.
 
@@ -159,8 +167,7 @@ constantly, and the person who cannot buy this year picks their own tools the
 year after. So the institution now changes the message rather than cancelling
 it. The old behaviour is still there as a switch, because it is a marketing
 judgement rather than a fact, and the argument may go the other way next
-quarter. The clinician quoted earlier, the one leaving his health system in
-January, would have received nothing under the original design.
+quarter.
 
 **We tried to read the employer off the email address, and it does not work.**
 An address ending in .org or .edu tells you the person is not on webmail and
@@ -237,20 +244,23 @@ The identifier is derived rather than stored, which means it can be rebuilt
 from the original list if the record is ever lost, and it gives nothing away if
 it turns up in a public URL.
 
-On the last run, three clinicians came back out of the ten written to, which
-is 30%. One clicked, one replied, and one sent a text. The median gap was
-three days, and the range ran from two days to eighteen.
+`python tools/returns.py` resolves every inbound signal (a click, a reply, a
+text) against the attribution ledger and reports who came back, through which
+door, and how many days after. It needs a live run first: point it at a
+ledger of dry runs and it says so rather than reporting zero as though that
+were an answer, because a dry run writes a draft and earns nothing back to
+attribute.
 
-One more came back and could not be traced, because they went straight to the
-pricing page without touching anything we could recognise. That number is
-reported rather than hidden. It is the honest measure of whether the plumbing
-holds, it will never be zero, and a report that quietly dropped it would be
-worth less than no report at all.
+Any return it cannot trace, someone who went straight to the pricing page
+without touching anything we could recognise, is reported too, not hidden.
+That number is the honest measure of whether the plumbing holds. It will
+never be zero, and a report that quietly dropped it would be worth less than
+no report at all.
 
 **One caveat, stated plainly.** Reading the real web log, the real inbox and a
-real SMS webhook is three integrations that are not built. A sample file stands
-in for all three, in the shape they would produce. Point the report at a real
-export and nothing else changes.
+real SMS webhook is three integrations that are not built. A sample file,
+`data/inbound_sample.jsonl`, stands in for all three, in the shape they would
+produce. Point the report at a real export and nothing else changes.
 
 ## What the last run actually did
 
@@ -260,19 +270,63 @@ From a sample list of 15 clinicians:
 |---|---|
 | Rows read | 15 |
 | Rejected before spending anything, because the data was bad | 2 |
-| Deliberately not contacted, each with a stated reason | 3 |
-| Written to | 10 |
+| Deliberately not contacted, each with a stated reason | 5 |
+| Written to | 8 |
 | Stopped by the safety checks | 0 |
-| Left needing a human afterwards | 3 items, about 9 minutes |
-| Came back | 3, plus 1 we could not trace |
+| Left needing a human afterwards | 7 items, about 21 minutes |
 
-The three not contacted were the person who asked not to be, the Cornell
+The five not contacted split into two kinds. Three are the domain and person
+research doing its job: the person who asked not to be contacted, the Cornell
 professor the research identified as faculty rather than a trainee, and the
-Michigan address the research could not settle. Each of those says so, in
-writing. The two rejected rows were a malformed email address and a missing
-name, each reported with its line number so the data can be fixed.
+Michigan address the research could not settle. Two are new, and came from a
+reply rather than from research: one clinician told us not to write again,
+and one asked a direct pricing question and is waiting on a person instead of
+another automated email. See "Learning from what they say back", below. The
+two rejected rows were a malformed email address and a missing name, each
+reported with its line number so the data can be fixed.
 
 Run it on a different list and every one of those numbers changes.
+
+## Learning from what they say back
+
+Every email now closes with the same plain question: still turning the idea
+over, getting something set up, or already running a practice of their own.
+A reply to that question is not a guess the way a researched domain or title
+is. It is the clinician answering, in their own words, and a stated answer
+outranks an inferred one every time one is on file.
+
+`tools/classify_replies.py` reads inbound reply text and sorts it into one of
+six answers: already running their own practice, thinking about it, not
+quite there, interested enough to ask something back, not interested at all,
+or unclear. `machine/replies.py` caches the result, and `decide.py` reads it
+ahead of the domain and person layers, so a reply overrules a stale guess
+rather than the other way round.
+
+| They said | What the machine does |
+|---|---|
+| Already running their own practice | Routed to `practice_owner` regardless of what the domain cache says. Someone who told us this directly is a buyer the research has not caught up to yet. |
+| Thinking about it / not quite there | Whether we write is unchanged, but their own words go into the next draft's notes, so it can honestly reference what they said instead of the model inventing rapport. |
+| Interested, and asked something | Held. No automated email goes out; it lands on the review queue for a person, because a warm reply earns a person, not another campaign send. |
+| Not interested | Suppressed outright, settled, no further contact. |
+| Unclear | Held pending a human, the same as an unresearched domain: the machine declines to guess at what a reply meant. |
+
+A held or hot reply is not left with nothing, either. `tools/followup.py`
+drafts a short, temperature-specific follow-up for every classified reply
+that is not an opt-out (hot for someone who asked a direct question, warm for
+someone who told us where they stand, cold for the ones the classifier could
+not read) and writes it to `out/followup/<id>.txt` for a person to read, edit
+and send. It passes through the same QC gate as the first email: a second
+message in the thread earns no less scrutiny than the first.
+
+**What is stubbed, precisely.** The classifier is a keyword table reading a
+hand-written sample file, `data/reply_sample.jsonl`, not a model reading a
+real inbox, and `tools/followup.py` drafts and gates but does not send. Every
+cached verdict carries `"source": "keyword_stub"` so nothing downstream
+mistakes it for judgment. What is real: the token resolution that ties a
+reply to the clinician who sent it, the cache format, the routing effect in
+`decide.py`, and the QC gate that reads every follow-up draft. Swapping the
+classifier for a model reading a real inbox, and wiring `tools/followup.py`
+to an actual send, is the only thing that changes to make this live.
 
 ## Where one to two hours a month go
 
@@ -281,8 +335,8 @@ judgment rather than triage.
 
 Decisions that are **finished** never appear in the work section. "We looked it
 up, and Mayo Clinic employees cannot buy" is a closed question, listed only for
-the audit trail. Decisions that are **waiting on a person** are the whole list,
-and there is one of them right now.
+the audit trail. Decisions that are **waiting on a person** are the whole list:
+an unsettled domain, say, or a reply the classifier could not read.
 
 The hour goes to three things: overruling a researched answer that someone
 knows is wrong, settling the addresses the research could not, and reading the
@@ -314,15 +368,19 @@ loop is the feature, not the overhead.
 **Real:** reading the list, both rounds of research and their saved answers,
 the routing, the decisions not to send, the writing, the safety checks, the
 quarantine of blocked copy, real email over a live connection, the tracking
-identifiers and their ledger, the returns report, the review queue, the
+identifiers and their ledger, the returns report, the reply cache and its
+routing effect, the QC gate on follow-up drafts, the review queue, the
 metrics, the learning loop, the schedule, and the monthly check that keeps the
 brand voice from going stale.
 
 **Sketched, and marked as such:** the three collectors that would feed real
-click, reply and text signals into the returns report; the person-level
-research for this sample, because the sample clinicians are invented and
-therefore cannot be researched (every simulated record says so in the file);
-and SMS as a channel to send on rather than only to be reached on.
+click, reply and text signals into the returns report; the reply classifier,
+which reads a hand-written sample file by keyword rather than a real inbox by
+model; the person-level research for this sample, because the sample
+clinicians are invented and therefore cannot be researched (every simulated
+record says so in the file); SMS as a channel to send on rather than only to
+be reached on; and the follow-up send itself, which drafts and gates but does
+not deliver.
 
 **What breaks first if this ran unattended for a month:** the person-level
 research going stale. Titles expire, and the one-year rule means old answers
@@ -344,9 +402,15 @@ broken.
    today it does exactly one job: it tells us who texted back. For a rare,
    high-signal message to a clinician who has ignored two emails, that is the
    right channel, and the consent question is answerable.
-4. **Feed returns back into targeting.** The report already knows which kind of
-   clinician comes back most. Nothing yet uses that to decide who gets written
-   to next.
+4. **Feed clicks and texts back into targeting, the way a reply already does.**
+   A reply overrides routing for the next scheduled email; a click or a text
+   does not yet, because neither carries any content to route on, only a
+   timestamp. Once there is a real inbox, an interested-but-unreplied click is
+   worth noticing too.
+5. **Send the follow-up, and give it a cadence of its own.**
+   `tools/followup.py` drafts and gates today; it does not deliver, and it
+   does not know whether a follow-up it already sent went unanswered. Both
+   are the same missing piece as item 2, one email later in the thread.
 
 ## Run it yourself
 
@@ -396,22 +460,28 @@ the whole row, so any column is available to them. No code changes.
 | The list it reads | `data/lapsed_clinicians.csv` |
 | Every setting, opinion and rule, in one commented file | `config.py` |
 | Drafts it wrote | `out/` |
+| Reply text, standing in for a real inbox | `data/reply_sample.jsonl` |
+| What each reply was read as | `data/reply_verdicts.json` |
+| Follow-up drafts a reply earned | `out/followup/` |
 | Copy it stopped, so you can judge whether it was right | `quarantine/` and `logs/rejects.log` |
 | What a human needs to decide | `REVIEW_QUEUE.md` |
 | Numbers across every run | `state.json` |
 | The one-page recommendation | `WRITEUP.md`, or `onepager.html` in a browser |
 
-Those five output paths are written by a run and are not in the repository, so
-a fresh clone starts at run 1 with an empty trend rather than inheriting
-someone else's. **A frozen copy of one full pass is committed under
-[`sample-run/`](sample-run/)** — read that to see what the machine produces and
-what it refuses without running anything, or needing a key.
+Those output paths are written by a run (or by the two reply-learning tools)
+and are not in the repository, so a fresh clone starts at run 1 with an empty
+trend rather than inheriting someone else's. **A frozen copy of one full pass
+is committed under [`sample-run/`](sample-run/)** — read that to see what the
+machine produces and what it refuses without running anything, or needing a
+key.
 
-### Two things worth running once
+### A few things worth running once
 
 ```bash
-python tools/gate_demo.py   # feeds real bad drafts through the real checks
-python tools/returns.py     # who came back, through which door, how long after
+python tools/gate_demo.py         # feeds real bad drafts through the real checks
+python tools/returns.py           # who came back, through which door, how long after
+python tools/classify_replies.py  # reads sample reply text, decides what it means
+python tools/followup.py          # drafts the follow-up each classified reply earns
 ```
 
 ## How AI was used
