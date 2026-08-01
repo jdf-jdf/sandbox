@@ -7,6 +7,13 @@ stop the loop:
   2. A template fallback, so the machine still completes its cycle when the
      API is unreachable. Degraded text that ships beats no text at all, and
      the run log makes it obvious which path produced each draft.
+
+Both defences are for a TRANSIENT failure. A rejected credential is not one,
+and treating it as one is actively misleading: every row retries three times,
+falls back to the template, and the template echoes the raw row -- including
+the mobile number -- so the gate blocks all of it. The run then reports a wall
+of `phone_number` violations, which describes neither the cause nor the fix.
+So an auth failure stops the run instead, once, saying what is wrong.
 """
 import os
 import time
@@ -14,6 +21,21 @@ import time
 import config
 
 _client = None
+
+
+class CredentialError(RuntimeError):
+    """The API key was rejected. Not retryable, and not a per-row problem."""
+
+
+def is_auth_error(exc):
+    """True for the errors no amount of retrying will fix.
+
+    Checked by status code and class name rather than isinstance, because the
+    SDK is imported lazily and may not be importable in this scope at all.
+    """
+    if getattr(exc, "status_code", None) in (401, 403):
+        return True
+    return type(exc).__name__ in ("AuthenticationError", "PermissionDeniedError")
 
 
 def _get_client():
@@ -170,6 +192,8 @@ def draft(row, decision, learned_constraints, attempts=3):
 
             return text.strip(), "llm"
         except Exception as e:          # noqa: BLE001 -- deliberately broad
+            if is_auth_error(e):
+                raise CredentialError(str(e)) from None
             last_err = e
             if i < attempts - 1:
                 time.sleep(2 ** i)

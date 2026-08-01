@@ -399,7 +399,13 @@ the whole row, so any column is available to them. No code changes.
 | Copy it stopped, so you can judge whether it was right | `quarantine/` and `logs/rejects.log` |
 | What a human needs to decide | `REVIEW_QUEUE.md` |
 | Numbers across every run | `state.json` |
-| The one-page recommendation | `WRITEUP.md` |
+| The one-page recommendation | `WRITEUP.md`, or `onepager.html` in a browser |
+
+Those five output paths are written by a run and are not in the repository, so
+a fresh clone starts at run 1 with an empty trend rather than inheriting
+someone else's. **A frozen copy of one full pass is committed under
+[`sample-run/`](sample-run/)** — read that to see what the machine produces and
+what it refuses without running anything, or needing a key.
 
 ### Two things worth running once
 

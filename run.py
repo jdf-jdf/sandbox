@@ -134,7 +134,17 @@ def main():
             continue
 
         # --- 3. GENERATE -------------------------------------------------
-        text, source = generate.draft(row, decision, learned)
+        # A rejected key is not a bad row, so it stops the run rather than
+        # degrading 4,000 of them one at a time. Caught here rather than
+        # around the loop so the rows already written stay written.
+        try:
+            text, source = generate.draft(row, decision, learned)
+        except generate.CredentialError as e:
+            print(f"\n! ANTHROPIC_API_KEY was rejected: {e}")
+            print("  Nothing further was generated. Fix the key in .env and "
+                  "rerun; `python tools/check_llm.py` tests it on its own.")
+            print(f"  {len(sent_ok)} row(s) completed before this point.\n")
+            return 1
 
         # --- 4. QC GATE --------------------------------------------------
         blocked, violations = qc.check(text, row, decision)

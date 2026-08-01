@@ -41,7 +41,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from run import load_dotenv  # noqa: E402
 import config  # noqa: E402
-from machine import domains, people  # noqa: E402
+from machine import domains, generate, people  # noqa: E402
 
 # Newest first. An account not enabled for a newer tool version gets a 400,
 # which is recoverable: drop to the next rather than failing the whole run.
@@ -268,6 +268,12 @@ def pick_search_tool(client):
             )
             return tool
         except Exception as e:  # noqa: BLE001
+            # See classify_domains.py: an auth failure is not a missing tool
+            # version, and saying so sends the reader to the wrong place.
+            if generate.is_auth_error(e):
+                raise RuntimeError(
+                    f"ANTHROPIC_API_KEY was rejected ({e}). Fix it in .env; "
+                    f"`python tools/check_llm.py` tests it on its own.") from None
             print(f"  ({version} unavailable: {type(e).__name__})")
     raise RuntimeError("No usable web_search tool version for this account.")
 

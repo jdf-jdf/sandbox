@@ -8,18 +8,24 @@ venv/
 PREP.md
 BRIEF.md
 
-# out/, quarantine/, logs/ and state.json are deliberately NOT ignored.
-# They are the machine's output and its audit trail; a reader should be able
-# to see what it produced and what it stopped without running anything.
+# The machine's own output. Ignored so a fresh clone starts at run 1 with an
+# empty trend, rather than inheriting someone else's run counter and
+# rejection-rate history and reporting them as its own.
+#
+# A reader should still be able to see what the machine produced and what it
+# stopped without running anything, so a frozen copy of one pass is committed
+# under sample-run/ instead. See sample-run/README.md.
+# Leading slash matters: these are anchored to the repo root so that the
+# frozen copies under sample-run/ are still committed. Without it, `out/`
+# matches at any depth and silently swallows sample-run/out/ as well.
+/out/
+/quarantine/
+/logs/
+/state.json
+/REVIEW_QUEUE.md
 
 # macOS finder droppings.
 .DS_Store
-
-# macOS
-.DS_Store
-
-# Claude Code worktrees
-.claude/worktrees/
 
 # Claude Code worktrees, not part of the deliverable.
 .claude/worktrees/
