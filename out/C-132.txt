@@ -1,12 +1,19 @@
 To: joannadflores@gmail.com
-Subject: [machine] draft for Naomi Bergstrom, MD, PhD
+Subject: [machine] draft for Naomi Bergstrom
+Reply-To: joannadflores+5b401f91d5aa@gmail.com
 
 Dr. Bergstrom,
 
-You used JotPsych for a while and then stopped, and I'd rather hear the reason from you than guess at it. My rough guess is the templates: a research protocol has fields a standard med-management note doesn't, and rewriting structure after every visit costs more time than it saves.
+You used JotPsych at some point and then stopped. I'd rather hear why than guess.
 
-Two things are different now. Templates are editable field by field, so a protocol note can hold the sections you actually need. And notes surface E/M and ICD-10 suggestions you review before signing, which matters more if you're also thinking about what your clinicians would adopt.
+If it was the coding side, that's the part we've put the most work into: E/M level support and ICD-10/CPT capture that you review before anything goes out, so a 15-minute med check doesn't get documented at a level you can't defend or paid at one below what you did.
 
-If the reason you left was something else entirely, tell me and I'll stop guessing.
+If it was something else entirely, that's more useful for me to know than anything I could pitch.
 
-Sam
+Either way, a one-line reply tells me more than another email from me would. And if the answer is that you've moved on, say so and I'll stop.
+
+Ravi
+JotPsych
+
+If you want to pick it back up: https://jotpsych.com/welcome-back/5b401f91d5aa
+

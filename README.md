@@ -1,8 +1,17 @@
-# [MACHINE NAME] — a machine for [WHAT IT DOES]
+# Second Timing
 
-**What it does in one sentence:** reads a list of behavioral-health clinicians
-it did not author, decides who to contact and what each one should hear,
-drafts it, refuses to send anything off-brand, and emails what survives.
+A win-back machine for lapsed JotPsych clinicians.
+
+**What it does in one sentence:** reads a list of lapsed clinicians it did not
+author (name, email, mobile, nothing else), researches who they actually are,
+decides who is worth writing to and what each one should hear, drafts it,
+refuses to send anything off-brand, emails what survives with a token that
+makes a return traceable, and reports who came back.
+
+Most of these clinicians did not choose against JotPsych. The timing was
+wrong: the practice was not ready, the contract had a year left. So the
+machine is built for the two things that follow from that. Stay alive with
+them until the timing turns, and notice the moment it does.
 
 ---
 
@@ -23,15 +32,19 @@ python run.py --send          # live: also emails via Gmail SMTP
 
 **To run it on different data** — one of:
 
-1. Replace `data/clinicians.csv` with your file, keep the header row, run again.
+1. Replace `data/lapsed_clinicians.csv` with your file, keep the header row, run again.
 2. Or point at it directly, no editing:
 
 ```bash
 python run.py --input /path/to/your_list.csv --send
 ```
 
-Required columns: `id, name, credential, practice_type, email`.
-Optional: `do_not_contact`, `notes`.
+Required columns: `id, name, email, mobile`. Optional: `do_not_contact`.
+
+That is deliberately the real export and nothing more. The machine is not
+handed a credential or a practice type, because JotPsych does not have them:
+it goes and finds them (see "Where the machine gets what it wasn't given").
+Hand it a richer CSV and any column it carries wins over anything researched.
 
 A second sample is included so the outputs visibly change:
 
@@ -48,6 +61,78 @@ at the top of `config.py`. Those are the only places anything outside that
 file refers to a column by name, and `config.PROMPT` is formatted against the
 whole row, so any column is available to it as `{column_name}`. No code
 changes.
+
+---
+
+## Where the machine gets what it wasn't given
+
+The export is three columns. Everything the copy depends on (is this a
+prescriber or a therapist, do they own the practice, can they buy at all) is
+absent from it and present on the open web. So the machine researches its own
+inputs, in two passes, both cached, both out of band.
+
+```bash
+python tools/classify_domains.py --dry   # what needs researching, calls nothing
+python tools/classify_domains.py         # employer, once per domain
+python tools/classify_people.py          # the person, only where the domain is unsure
+```
+
+**Pass one, per employer.** `@kp.org` is a health system and nobody there can
+buy an EHR add-on. `@med.cornell.edu` is an academic medical center and
+`@cornell.edu` is a university, and no pattern match gets you that: it is a
+fact about the world. Verdicts land in `data/domain_verdicts.json`. This
+amortises. Four thousand clinicians at three hundred employers costs three
+hundred searches once, and nothing ever again.
+
+**Pass two, per person, and only where pass one was guessing.** A university
+verdict is a fact about the campus, not about the clinician standing on it.
+The same `cornell.edu` address fits a doctoral student and a professor of
+thirty years, and sending the trainee note to the professor is the most
+insulting thing this machine could do. So `training` is treated as a
+hypothesis and checked by name.
+
+**Titles expire, so verdicts do too.** A 2019 lab page calling someone a
+doctoral candidate is evidence about 2019. Every person verdict records the
+publication date of the evidence behind it, and anything older than
+`PERSON_EVIDENCE_MAX_AGE_MONTHS` (12) stops being trusted and goes back on the
+research pile, no matter how confident it was. `--refresh-stale` re-researches
+exactly those.
+
+Both passes only ever *write* the cache. `decide.py` only ever *reads* it, so
+the decision layer stays deterministic and offline: same CSV plus same cache
+gives the same answers, a search outage cannot change who gets contacted, and
+a human can open either JSON file and overrule any line in it.
+
+---
+
+## Proving it worked
+
+Every send carries one token, on all three doors a clinician can come back
+through:
+
+| door | carries the token as | resolved by |
+|---|---|---|
+| click | `jotpsych.com/welcome-back/<token>` | web log |
+| reply | `you+<token>@gmail.com` | inbox |
+| text | nothing (SMS can't) | the mobile number on the row |
+
+The token is an HMAC of the row id and run number, so it is stable, rebuildable
+from the CSV if the ledger is lost, and does not leak a customer list when it
+shows up in a public URL. Every send is appended to `logs/attribution.jsonl`.
+
+```bash
+python tools/returns.py     # the impact report
+```
+
+That resolves inbound signals back to named clinicians and reports how many
+came back, through which door, how long after, and which segment returns
+best. It also counts the ones it *could not* attribute, because that number is
+the honest measure of whether the plumbing holds.
+
+The collectors are the sketched part: reading the real web log, inbox and SMS
+webhook is three integrations. `data/inbound_sample.jsonl` stands in for all
+three in the shape they would emit. Point `--inbound` at a real export and
+nothing else changes.
 
 ---
 

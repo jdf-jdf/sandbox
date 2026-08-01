@@ -20,7 +20,14 @@ def _label(row):
 
 def write_queue(quarantined, flagged, suppressed, bad_rows, path="REVIEW_QUEUE.md"):
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    total = len(quarantined) + len(flagged) + len(bad_rows)
+
+    # A skip is either finished or waiting, and only the waiting ones are
+    # work. Lumping them together is how a queue becomes wallpaper: 40 correct
+    # suppressions bury the 2 domains nobody has ever checked.
+    open_skips = [s for s in suppressed if s["decision"].get("needs_review")]
+    settled_skips = [s for s in suppressed if not s["decision"].get("needs_review")]
+
+    total = len(quarantined) + len(flagged) + len(bad_rows) + len(open_skips)
 
     L = [
         "# Review queue",
@@ -60,13 +67,29 @@ def write_queue(quarantined, flagged, suppressed, bad_rows, path="REVIEW_QUEUE.m
         L.append(f"- **{_label(f['row'])}** — {rules} — sent anyway, "
                  f"see `out/{f['row'][config.ID_FIELD]}.txt`")
 
-    L += ["", "## 3. Deliberately not contacted", ""]
-    if not suppressed:
-        L.append("_None._")
-    for s in suppressed:
-        L.append(f"- **{_label(s['row'])}** (line {s['row']['_line']}) — {s['decision']['reason']}")
+    L += ["", "## 3. Not contacted, waiting on you", ""]
+    if not open_skips:
+        L.append("_None. Every skip this run was already settled._")
+    else:
+        L.append("_The machine stopped rather than guess. Each of these needs "
+                 "a person to decide, and stays here until someone does._")
+        L.append("")
+    for s in open_skips:
+        L.append(f"- **{_label(s['row'])}** (line {s['row']['_line']}, "
+                 f"`{s['row'].get(config.ADDRESS_FIELD, '?')}`) — "
+                 f"{s['decision']['reason']}")
 
-    L += ["", "## 4. Rejected at intake — fix the data", ""]
+    L += ["", "## 4. Not contacted, settled — no action needed", ""]
+    if not settled_skips:
+        L.append("_None._")
+    else:
+        L.append("_Listed for the audit trail, not for your afternoon._")
+        L.append("")
+    for s in settled_skips:
+        L.append(f"- **{_label(s['row'])}** (line {s['row']['_line']}) — "
+                 f"{s['decision']['reason']}")
+
+    L += ["", "## 5. Rejected at intake — fix the data", ""]
     if not bad_rows:
         L.append("_None._")
     for b in bad_rows:

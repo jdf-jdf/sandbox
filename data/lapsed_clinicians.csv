@@ -1,34 +1,34 @@
-id,name,credential,practice_type,email,mobile,do_not_contact,notes
-C-101,Amara Osei,PMHNP,private practice,amara.osei@gmail.com,+1-415-555-0142,0,"Trialed Nov 2024, lapsed after 3 weeks. Said the note editor fought her on med-management templates."
-C-102,Daniel Whitfield,LCSW,group practice,dwhitfield@yahoo.com,+1-503-555-0118,0,"Signed up during the spring promo, never completed onboarding. No sessions recorded."
-C-103,Priya Raman,PsyD,private practice,priya.raman@icloud.com,+1-617-555-0176,0,"Active for 4 months, cancelled Jan 2025. Exit note: too expensive for a two-day-a-week caseload."
-C-104,Robert Delgado,LMFT,private practice,rdelgado54@aol.com,+1-505-555-0133,0,"Lapsed 8 months ago. Opened the last 3 emails, clicked nothing."
-C-105,Hana Kobayashi,LPC,private practice,h.kobayashi@proton.me,+1-206-555-0159,0,"Privacy questions during trial, asked where audio is stored. Never converted."
-C-106,Terrence Boyle,MD,private practice,tboyle.md@comcast.net,+1-215-555-0187,0,"Two-year customer, churned when we changed the billing cycle. Worth a real apology."
-C-107,Marisol Vega,LCSW,private practice,marisol.vega@me.com,+1-786-555-0164,1,"Asked to be removed from all marketing in Feb. Honor it."
-C-108,Greg Lindqvist,PhD,private practice,glindqvist@outlook.com,+1-612-555-0121,0,"Trial expired without contact. No support tickets, no complaints, just gone."
-C-109,Yusuf Ahmadi,MD,group practice,yusuf@bayareapsychiatry.com,+1-510-555-0195,0,"Owner. Bought 4 seats, dropped to 1, then to 0. Said adoption stalled with his associates."
-C-110,Elena Sokolova,PsyD,group practice,elena@riverstonecounseling.com,+1-303-555-0148,0,"Evaluated for a 9-clinician practice, chose a competitor on price. Contract is up this quarter."
-C-111,Kenji Tanaka,LMFT,solo practice,kenji@drtanakatherapy.com,+1-808-555-0172,0,"Lapsed after the mobile app change. Records on a phone between home visits."
-C-112,Aisha Mbeki,PMHNP,group practice,aisha@northloopbehavioral.com,+1-312-555-0139,0,"Founder of a 3-person practice. Churned over the lack of a supervisor review workflow."
-C-113,Nathan Cole,MD,health system,ncole@kp.org,+1-916-555-0107,0,"Individual signup on a work address. Never had authority to buy."
-C-114,Bridget Nolan,LCSW,health system,bnolan@sutterhealth.org,+1-925-555-0183,0,"Trialed on her own, IT blocked the integration."
-C-115,Samuel Ortiz,DO,health system,sortiz@providence.org,+1-971-555-0126,0,"Asked for a HIPAA BAA, escalated to procurement, went quiet."
-C-116,Rachel Feinberg,MD,academic medical center,rfeinberg@med.cornell.edu,+1-212-555-0154,0,"Attending. Trialed during a research rotation, no purchasing authority."
-C-117,Tobias Grant,PsyD,doctoral program,tgrant@cornell.edu,+1-607-555-0111,0,"Clinical psychology doctoral student. Used the free tier for practicum notes."
-C-118,Lucia Moreno,PMHNP,health system,lmoreno@mayoclinic.org,+1-507-555-0169,0,"Signed up at a conference. Employer EHR already covers documentation."
-C-119,Devon Pruitt,LCSW,community clinic,dpruitt@northsidecommunityhealth.org,+1-773-555-0192,0,"Nonprofit community clinic. Asked about grant pricing, we had none."
-C-120,Ingrid Halvorsen,PhD,university counseling,ihalvorsen@umich.edu,+1-734-555-0145,0,"University counseling center. Interested personally, could not expense it."
-C-121,Omar Haddad,MD,university,ohaddad@ucsf.edu,+1-628-555-0178,0,"Unclear whether this is the medical center or the campus. Was mid-fellowship at signup."
-C-122,Beatriz Salgado,LMFT,nonprofit,bsalgado@peacehealth.org,+1-360-555-0136,0,"Trialed for 10 days. No stated reason for lapsing."
-C-123,Wendell Fry,LPC,private practice,wfry@,+1-704-555-0163,0,"Address was mistyped at signup and never corrected. Bounced every send."
-C-124,,LCSW,private practice,jbaptiste@gmail.com,+1-985-555-0129,0,"Name field never filled in. Row came from the conference scanner."
-C-125,Colleen Ashby,PhD,private practice,cashby@ashbypsych.com,,0,"Long-lapsed. Phone number was never collected."
-C-126,Marcus Feld,MD,private practice,mfeld@feldpsychiatry.com,+1-408-555-0151,0,"Churned on price, said he would reconsider if we showed the numbers. Wants the 90% reduction in documentation time and the 30 hours per month figure."
-C-127,Alicia Fontaine,LMFT,private practice,afontaine@gmail.com,+1-323-555-0188,0,"Went to a competitor whose rep called their product a revolutionary game-changer, and she signed that week. Responds to bold marketing."
-C-128,Priya Raghunathan,LCSW,community clinic,praghunathan@icloud.com,+1-919-555-0174,0,"On the exit call she described a patient who presented with acute risk, and asked whether the scribe would have captured the risk assessment properly."
-C-129,Dale Whitmore,PsyD,private practice,dale@whitmorepsych.com,+1-802-555-0117,0,"Left a voicemail asking for the two figures we quote in marketing. Nobody ever called him back."
-C-130,Ruth Okonjo,PMHNP,private practice,ruth.okonjo@outlook.com,+1-404-555-0193,0,"Wanted to know whether it would suggest a diagnosis from the session before she committed. Never got an answer."
-C-131,Simon Halloway,LPC,private practice,shalloway@hallowaycounseling.com,+1-651-555-0166,0,"Churned over security. Said he would return only if we could tell him it is completely private and fully compliant."
-C-132,Naomi Bergstrom,"MD, PhD",private practice,naomi@bergstrommindhealth.com,+1-206-555-0142,0,"Dual degree, splits research with a small private caseload. Lapsed when the templates stopped matching her research protocol."
-C-133,Caleb Ruiz,Psychology Doctoral Intern,university counseling,caleb.ruiz@gmail.com,+1-512-555-0128,0,"Doctoral intern accruing supervised hours toward licensure. Free tier, lapsed after a month."
+id,name,email,mobile,do_not_contact
+C-101,Amara Osei,amara.osei@gmail.com,+1-415-555-0142,0
+C-102,Daniel Whitfield,dwhitfield@yahoo.com,+1-503-555-0118,0
+C-103,Priya Raman,priya.raman@icloud.com,+1-617-555-0176,0
+C-104,Robert Delgado,rdelgado54@aol.com,+1-505-555-0133,0
+C-105,Hana Kobayashi,h.kobayashi@proton.me,+1-206-555-0159,0
+C-106,Terrence Boyle,tboyle.md@comcast.net,+1-215-555-0187,0
+C-107,Marisol Vega,marisol.vega@me.com,+1-786-555-0164,1
+C-108,Greg Lindqvist,glindqvist@outlook.com,+1-612-555-0121,0
+C-109,Yusuf Ahmadi,yusuf@bayareapsychiatry.com,+1-510-555-0195,0
+C-110,Elena Sokolova,elena@riverstonecounseling.com,+1-303-555-0148,0
+C-111,Kenji Tanaka,kenji@drtanakatherapy.com,+1-808-555-0172,0
+C-112,Aisha Mbeki,aisha@northloopbehavioral.com,+1-312-555-0139,0
+C-113,Nathan Cole,ncole@kp.org,+1-916-555-0107,0
+C-114,Bridget Nolan,bnolan@sutterhealth.org,+1-925-555-0183,0
+C-115,Samuel Ortiz,sortiz@providence.org,+1-971-555-0126,0
+C-116,Rachel Feinberg,rfeinberg@med.cornell.edu,+1-212-555-0154,0
+C-117,Tobias Grant,tgrant@cornell.edu,+1-607-555-0111,0
+C-118,Lucia Moreno,lmoreno@mayoclinic.org,+1-507-555-0169,0
+C-119,Devon Pruitt,dpruitt@northsidecommunityhealth.org,+1-773-555-0192,0
+C-120,Ingrid Halvorsen,ihalvorsen@umich.edu,+1-734-555-0145,0
+C-121,Omar Haddad,ohaddad@ucsf.edu,+1-628-555-0178,0
+C-122,Beatriz Salgado,bsalgado@peacehealth.org,+1-360-555-0136,0
+C-123,Wendell Fry,wfry@,+1-704-555-0163,0
+C-124,,jbaptiste@gmail.com,+1-985-555-0129,0
+C-125,Colleen Ashby,cashby@ashbypsych.com,,0
+C-126,Marcus Feld,mfeld@feldpsychiatry.com,+1-408-555-0151,0
+C-127,Alicia Fontaine,afontaine@gmail.com,+1-323-555-0188,0
+C-128,Priya Raghunathan,praghunathan@icloud.com,+1-919-555-0174,0
+C-129,Dale Whitmore,dale@whitmorepsych.com,+1-802-555-0117,0
+C-130,Ruth Okonjo,ruth.okonjo@outlook.com,+1-404-555-0193,0
+C-131,Simon Halloway,shalloway@hallowaycounseling.com,+1-651-555-0166,0
+C-132,Naomi Bergstrom,naomi@bergstrommindhealth.com,+1-206-555-0142,0
+C-133,Caleb Ruiz,caleb.ruiz@gmail.com,+1-512-555-0128,0

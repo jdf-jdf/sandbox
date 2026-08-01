@@ -28,10 +28,13 @@ class FileSender:
         self.outdir = outdir
         os.makedirs(outdir, exist_ok=True)
 
-    def send(self, to, subject, body, row):
+    def send(self, to, subject, body, row, reply_to=""):
         path = os.path.join(self.outdir, f"{row[config.ID_FIELD]}.txt")
         with open(path, "w", encoding="utf-8") as f:
-            f.write(f"To: {to}\nSubject: {subject}\n\n{body}\n")
+            header = f"To: {to}\nSubject: {subject}\n"
+            if reply_to:
+                header += f"Reply-To: {reply_to}\n"
+            f.write(f"{header}\n{body}\n")
         return f"wrote {path}"
 
 
@@ -68,11 +71,15 @@ class SMTPSender:
                 "Copy .env.example to .env and fill them in."
             )
 
-    def send(self, to, subject, body, row):
+    def send(self, to, subject, body, row, reply_to=""):
         msg = EmailMessage()
         msg["From"] = self.addr
         msg["To"] = to
         msg["Subject"] = subject
+        # Distinct per clinician, one mailbox. A reply is attributable
+        # from the envelope alone, without opening it.
+        if reply_to:
+            msg["Reply-To"] = reply_to
         msg.set_content(body)                       # plain-text fallback
         msg.add_alternative(_html_from_text(body),  # the page
                             subtype="html")
@@ -94,7 +101,7 @@ class GmailAPISender:
     """
     name = "gmail_api"
 
-    def send(self, to, subject, body, row):
+    def send(self, to, subject, body, row, reply_to=""):
         raise NotImplementedError("Gmail API sender not wired up -- using SMTP.")
 
 

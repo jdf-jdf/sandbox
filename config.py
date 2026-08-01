@@ -72,14 +72,34 @@ DEFAULT_SEGMENT = "unknown"
 SUPPRESS_IF_DO_NOT_CONTACT = True
 SUPPRESS_UNKNOWN_SEGMENT = True  # we'd rather send nothing than send generic
 
-# Domains nobody at can buy an EHR add-on, so the machine never writes to
-# them. Substring match against the address, same as SEGMENT_RULES. This is
-# the cheap half of the domain question: the employers big enough to name.
-SUPPRESS_EMAIL_DOMAINS = [
+# Employers big enough to name. The cheap half of the domain question: no
+# search needed, the answer is already known.
+#
+# These used to be a suppression list. They are now a SETTING, because the
+# premise behind suppressing them was wrong in a specific way. "Cannot buy
+# today" is true. "Not worth writing to" does not follow: behavioral health
+# clinicians leave institutions for private practice constantly, and the
+# person who cannot buy this year picks their own tools the year after. It is
+# the same argument that already applies to trainees.
+#
+# So the institution changes the message rather than cancelling it. See
+# SETTING_BRIEF["institutional"]: no pitch, no subscription, keep the thread
+# open and ask who actually evaluates tools there.
+INSTITUTIONAL_EMAIL_DOMAINS = [
     "@kp.org",
     "@sutterhealth.",
     "@providence.",
 ]
+
+# Flip to True to restore the old behaviour: institutions get nothing at all.
+# Kept as a switch rather than deleted, because it is a marketing judgement
+# and not a fact, and the argument may go the other way next quarter.
+#
+# One consequence worth knowing before flipping it back. While this is False,
+# no domain verdict can stop a send, so a wrong verdict costs a slightly
+# misjudged email instead of a misdirected one. That is what lets
+# DOMAIN_MIN_CONFIDENCE_TO_CONTACT relax and the review queue stay short.
+SUPPRESS_INSTITUTIONAL = False
 
 # The other axis. SEGMENT is the clinical role and decides what the email
 # talks about. SETTING is where they work and decides whether we write at all
@@ -112,16 +132,15 @@ DOMAIN_CACHE_PATH = "data/domain_verdicts.json"
 # domain on the human's work order instead. Same instinct as
 # SUPPRESS_UNKNOWN_SEGMENT: in doubt, send nothing.
 DOMAIN_VERDICT_SETTINGS = {
-    "health_system": None,
+    "health_system": "institutional",
     "training": "trainee",
     "private_practice": "practice_owner",
 }
-# Asymmetric on purpose. Being wrong in the two directions costs different
-# amounts, so they get different bars. A shaky "health_system" costs one
-# unsent email to someone who might have been a buyer. A shaky
-# "private_practice" mails a hospital employee, which is the exact outcome
-# this whole mechanism exists to prevent. So: suppress on any confidence,
-# contact only on high.
+# Only bites while SUPPRESS_INSTITUTIONAL is True. With suppression off, the
+# verdict picks a register rather than a fate, so a low-confidence guess costs
+# a slightly wrong tone and holding the send adds nothing. The bar is kept
+# here, and kept high, so that flipping suppression back on restores the
+# careful behaviour in one move instead of two.
 DOMAIN_MIN_CONFIDENCE_TO_CONTACT = "high"   # one of: low, medium, high
 
 # How the research step (tools/classify_domains.py) is told to think. It runs
@@ -173,6 +192,102 @@ Finish by calling record_verdict exactly once."""
 
 
 # ---------------------------------------------------------------------------
+# 2b. PERSON LOOKUP -- the second pass, and the one that makes a three-column
+#     list workable.
+#
+#     The real list is name, email, mobile. Nothing else. No credential, no
+#     practice type, no notes. So the machine cannot be handed a segment: it
+#     has to go and find one, which is what this layer does. It also checks
+#     the domain layer's guesses, because "clinician at a university" is a
+#     fact about the campus, not about the person on it.
+#
+#     Cost shape is the opposite of the domain pass. Domains amortise across
+#     everyone who shares an employer; people do not. So this runs only for
+#     the rows below, and never for the whole list.
+# ---------------------------------------------------------------------------
+PERSON_CACHE_PATH = "data/person_verdicts.json"
+
+# Settings from the domain pass that are hypotheses rather than answers, and
+# so get checked person by person. "trainee" is the dangerous one: writing to
+# a department chair as though they were two years into a doctorate is the
+# single most insulting thing this machine could do.
+PERSON_LOOKUP_SETTINGS = ("trainee",)
+
+# Verdict -> setting. None means suppress: researched, and the answer is no.
+PERSON_VERDICT_SETTINGS = {
+    "trainee": "trainee",
+    "faculty": None,            # employed by the institution, and not a trainee
+    "staff_clinician": None,    # the institution chose their EHR
+    "private_practice": "practice_owner",   # a side caseload they own: a buyer
+}
+PERSON_MIN_CONFIDENCE_TO_CONTACT = "high"
+
+# Titles expire. A doctoral student in 2019 is licensed by 2026, and the web
+# remembers them as they were. A verdict older than this is treated as
+# unproven rather than as true, and goes back on the research pile.
+PERSON_EVIDENCE_MAX_AGE_MONTHS = 12
+
+PERSON_MAX_SEARCHES = 4                # web searches per person, hard cap
+PERSON_RESEARCH_PROMPT = """Identify this specific person and decide what \
+they do today.
+
+  Name: {name}
+  Email domain: {domain}
+  Credential on file: {credential}
+
+A previous step established the domain and guessed "{hypothesis}" for this \
+person. Treat that as a question, not an answer. It came from the \
+organization, and organizations contain every career stage at once.
+
+Search for the person at that organization by name. Their credential, if one \
+is on file, is a strong disambiguator: there are many people with any given \
+name and few with that name and that licence at that institution.
+
+Choose exactly one verdict:
+
+- "trainee" if they are currently a student, intern, practicum placement, \
+resident, fellow, or accruing supervised hours toward licensure.
+
+- "faculty" if they hold an academic or supervisory appointment: professor of \
+any rank, lecturer, clinical supervisor, training director, program director. \
+These people are not trainees and are employed by the institution.
+
+- "staff_clinician" if they are employed to see clients at the institution: \
+counselling centre staff, a clinician in a campus health service.
+
+- "private_practice" if they run or work in a practice of their own, whether \
+or not they also hold an institutional role. Someone who teaches two days a \
+week and keeps a private caseload belongs here: they can buy.
+
+- "unclear" if the search does not settle it, or if you cannot tell which \
+person of that name you have found. Say unclear rather than guessing. A wrong \
+"trainee" insults a professor of thirty years.
+
+DATE YOUR EVIDENCE. This is the part that matters most, and the part a search \
+will happily let you get wrong. A page saying "doctoral candidate" is evidence \
+about the day it was published, not about today. Record evidence_date as the \
+publication or last-updated date of the source you actually relied on, not \
+today's date, and not the date you ran the search. If a source carries no \
+date you can establish, do not treat it as current: find one that does, or \
+return "unclear".
+
+Anything confirmed longer ago than {max_age_months} months is discarded \
+downstream regardless of how confident you are, so a precise old date is more \
+useful than a vague recent-sounding one.
+
+Also record the professional credential you find (MD, DO, PMHNP, PhD, PsyD, \
+LCSW, LMFT, LPC and so on) if the search shows it, because the list does not \
+carry one and the rest of the machine routes on it. Leave it empty rather \
+than inferring it from the job title.
+
+Set confidence honestly. "high" means the search showed you this person and \
+their current role directly, on a dated source. Anything below \
+{min_confidence} is treated as unclear and goes to a human.
+
+Finish by calling record_person exactly once."""
+
+
+# ---------------------------------------------------------------------------
 # 3. GENERATION
 # ---------------------------------------------------------------------------
 MODEL = "claude-opus-5"
@@ -192,6 +307,15 @@ EFFORT = "low"
 # audience actually cares about, as opposed to REFUSAL_RULES below, which is
 # what we believe they must never be sent.
 SEGMENT_BRIEF = {
+    "unspecified": (
+        "The list did not carry a credential for this person and research did "
+        "not find one, so you do not know whether they prescribe or whether "
+        "they do talk therapy. Do not pick one. The difference matters (one "
+        "worries about coding and audit exposure, the other about narrative "
+        "notes and evening paperwork) and guessing wrong is worse than saying "
+        "nothing. Write about the part of the work that is common to both: "
+        "documentation that follows you home. Let the setting carry the rest."
+    ),
     "prescriber": (
         "Prescribers (MD/DO/PMHNP) run short, high-volume med-management "
         "visits. Their pain is not narrative depth, it is reimbursement and "
@@ -212,6 +336,20 @@ SEGMENT_BRIEF = {
 # Per-setting framing: the other axis. SEGMENT is what the work is, SETTING is
 # who they answer to. It decides register and ask, not subject matter.
 SETTING_BRIEF = {
+    "institutional": (
+        "Employed at a hospital, health system, or academic medical center. "
+        "They cannot buy this and their employer already chose their "
+        "documentation system, so a pitch insults them and a discount is "
+        "meaningless. Write anyway, for one reason: clinicians leave "
+        "institutions for private practice all the time, and the person who "
+        "cannot buy this year picks their own tools the year after. So the "
+        "job of this email is to be worth answering, not to sell. Two things "
+        "are legitimately worth asking: whether they are staying put or "
+        "planning something of their own, and who at their organization "
+        "actually evaluates documentation tools. Say plainly that you know "
+        "they may not be able to choose this themselves. Being the vendor "
+        "who understood that is the entire play."
+    ),
     "solo": (
         "Solo clinicians, reached at a personal address (Gmail, iCloud, "
         "Proton, and the like). They are the practice: no admin, no billing "
@@ -260,14 +398,36 @@ inventing a reason is worse than asking for one.
 Recipient:
   Name: {name}
   Credential: {credential}
-  Practice: {practice_type}
+  What research found: {practice_type}
   Segment: {segment}
   Setting: {setting}
-  What we know: {notes}
+  Anything on file: {notes}
+
+That list is everything the machine has. The export carried a name, an email \
+address and a mobile number; the credential and the role were found by \
+searching the open web, not told to us. "Anything on file" is usually empty, \
+because usually there is nothing. So write from what is above and nothing \
+else. You do not know why they left, what they thought of the \
+product, how long they used it, or what their caseload looks like.
 
 Segment context: {segment_brief}
 
 Setting context: {setting_brief}
+
+Close by asking for a call, not for a reply. Why they stopped is usually more \
+nuanced than anyone types into an email, and the ask is easier to answer than \
+a blank reply. We hold a mobile number for them, ending {mobile_last4}.
+
+- Ask whether that is still the best number, and offer to work around their
+  schedule. One sentence, at the end, no build-up.
+- You may write the last four digits. You must NEVER write the full number.
+  They gave it to us and will not remember giving it to us, and quoting it
+  back at a clinician who spends their day on confidentiality reads as
+  surveillance. "Still the best number, ending {mobile_last4}?" is the most
+  specific you are allowed to be.
+- If {mobile_last4} is empty, skip the digits and just ask whether a call is
+  easier than email.
+- Ask. Do not assume. Never say you will call, only that you would like to.
 
 Rules:
 - Under 120 words.
@@ -276,7 +436,7 @@ Rules:
 - Never invent statistics, outcomes, or testimonials.
 - Never reference or invent any patient, case, or session content.
 - Never claim a prior conversation, request, or relationship. If it is not in
-  "What we know" above, it did not happen. No "you asked for", "as we
+  the recipient block above, it did not happen. No "you asked for", "as we
   discussed", "per your request", "following up on our call". That they once
   used the product is the only shared history you have.
 - Plain sign-off. No "Best regards, The JotPsych Team".
@@ -327,6 +487,20 @@ REFUSAL_RULES = [
 
     ("replacement_framing", "Suggests AI replaces the clinician — fastest way to lose this audience",
      r"\b(replace\w* (?:your|the) (?:judgment|clinician|therapist)|no longer need to think|does the thinking for you)\b", "block"),
+
+    # --- Privacy. ---
+    # We hold their mobile number because they gave it to us, and they will
+    # not remember giving it to us. Printing it back at a clinician who spends
+    # their day on confidentiality reads as surveillance, and produces "how
+    # did you get this" instead of "sure, Tuesday". The prompt already says
+    # not to. This makes it true every time instead of most times.
+    #
+    # Shaped to a real number rather than to "several digits in a row", so
+    # "ending 0142", "45-55 minute sessions" and "2026" all still pass. A
+    # looser digit-run pattern blocks dates and session lengths, and a gate
+    # with false positives is a gate people switch off.
+    ("phone_number", "Full phone number printed in the body",
+     r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b", "block"),
 
     # --- Mechanical failures. ---
     ("unfilled_template", "Unfilled placeholder made it into the output",
@@ -384,11 +558,39 @@ REFUSAL_RULES = [
 
 MAX_WORDS = 140
 
+# Columns the PROMPT is allowed to reference that the intake file may simply
+# not have. A minimal export (name, email, mobile) is the normal case, not an
+# error, so a missing column fills with an explicit absence instead of
+# stopping the run. A column that IS present but empty is handled the same way
+# in machine/generate.py. What this must never do is quietly substitute a
+# plausible value: "(not known)" is a fact, a guessed credential is a lie.
+MISSING_FIELD_DEFAULTS = {
+    "credential": "(not known)",
+    "practice_type": "(not known)",
+    "notes": "(nothing on file)",
+}
+
+# The mobile number is never printed in the body. See the phone_number refusal
+# rule: the email may ASK whether the number on file is current, and may use
+# the last four digits to show we hold it carefully, but the full number
+# quoted back at a behavioural health clinician reads as surveillance.
+MOBILE_FIELD = "mobile"
+
 
 # ---------------------------------------------------------------------------
 # 5. OUTBOUND
 # ---------------------------------------------------------------------------
-SUBJECT_TEMPLATE = "[machine] draft for {name}, {credential}"
+SUBJECT_TEMPLATE = "[machine] draft for {name}"
+
+# --- attribution: how a return traces back to the machine -------------------
+# Every send carries one token through three doors: a link they can click, a
+# Reply-To they can reply to, and a number they can text. All three resolve to
+# one row and one run, so "a dormant clinician came back" stops being a story
+# and becomes a lookup. See machine/attribution.py.
+ATTRIBUTION_TOKEN_CHARS = 12
+ATTRIBUTION_LINK_TEMPLATE = "https://jotpsych.com/welcome-back/{token}"
+ATTRIBUTION_LEDGER_PATH = "logs/attribution.jsonl"
+ATTRIBUTION_FOOTER = "If you want to pick it back up: {link}"
 
 # "file" always runs and needs no credentials.
 # "smtp" is the real outbound action. Both run when --send is passed;

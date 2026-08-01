@@ -69,49 +69,77 @@ _CONFIDENCE_ORDER = {"low": 0, "medium": 1, "high": 2}
 
 
 def resolve(domain, fallback_setting):
-    """Map a domain to (setting, should_contact, reason).
+    """Map a domain to {setting, should_contact, needs_review, reason}.
 
-    The setting is returned even when should_contact is False, so the run log
+    The setting comes back even when should_contact is False, so the run log
     and the review queue can say what the machine concluded rather than just
-    that it declined. The reason is written for the human reading
-    REVIEW_QUEUE.md: it distinguishes "researched, and the answer is no" from
-    "not researched yet", because those need different work.
+    that it declined.
+
+    needs_review is the difference between a skip that is FINISHED and a skip
+    that is WAITING. "Weill Cornell is an academic medical center" is finished:
+    nobody needs to look at it again. "Never researched" and "researched, still
+    not sure" are waiting, and they stay on the human's work order until
+    somebody settles them. Without the distinction the queue fills with
+    hundreds of correct, boring skips and the two that matter get lost.
     """
+    def verdict_out(setting, should_contact, needs_review, reason):
+        return {"setting": setting, "should_contact": should_contact,
+                "needs_review": needs_review, "reason": reason}
+
     record = lookup(domain)
     if record is None:
-        return fallback_setting, False, (
-            f"suppressed: {domain} has never been researched. "
-            f"Run tools/classify_domains.py, then rerun.")
+        return verdict_out(fallback_setting, False, True,
+                           f"suppressed pending review: {domain} has never been "
+                           f"researched. Run tools/classify_domains.py, then rerun.")
 
     verdict = record.get("verdict", "")
     confidence = record.get("confidence", "low")
     why = (record.get("why") or "").strip()
 
     if verdict not in config.DOMAIN_VERDICT_SETTINGS:
-        return fallback_setting, False, (
-            f"suppressed: {domain} came back {verdict!r}, which is not a "
-            f"verdict this machine acts on. Decide it by hand in "
-            f"{config.DOMAIN_CACHE_PATH}."
-            + (f" (research said: {why})" if why else ""))
+        return verdict_out(fallback_setting, False, True,
+                           f"suppressed pending review: {domain} came back "
+                           f"{verdict!r}, which is not a verdict this machine "
+                           f"acts on. Decide it by hand in "
+                           f"{config.DOMAIN_CACHE_PATH}."
+                           + (f" (research said: {why})" if why else ""))
 
     setting = config.DOMAIN_VERDICT_SETTINGS[verdict]
 
-    # Suppression needs no confidence bar. Declining to write to a domain the
-    # research merely suspects is a health system costs one email; the
-    # opposite mistake is the one that matters.
-    if setting is None:
-        return "institutional", False, (
-            f"suppressed: {domain} is a health system or medical organization, "
-            f"so nobody there can buy an EHR add-on. The touch is wasted and "
-            f"the send is noise." + (f" ({why})" if why else ""))
+    # The institution changes the message, not whether there is one. Employed
+    # clinicians move into private practice, and the one who cannot buy this
+    # year picks the tools next year, so they get SETTING_BRIEF["institutional"]
+    # rather than silence. Confidence does not gate this: the worst a wrong
+    # verdict can do now is pick the wrong register.
+    if setting == "institutional" and not config.SUPPRESS_INSTITUTIONAL:
+        return verdict_out("institutional", True, False,
+                           f"institutional ({domain}: {verdict})")
+
+    # Suppression needs no confidence bar to take effect: declining to write to
+    # a domain the research merely suspects is a health system costs one email,
+    # and the opposite mistake is the one that matters. But a suppression
+    # resting on less than full confidence is still an open question, so it
+    # goes on the work order rather than quietly disappearing.
+    if setting is None or setting == "institutional":
+        settled = _CONFIDENCE_ORDER.get(confidence, 0) >= _CONFIDENCE_ORDER["high"]
+        head = "suppressed" if settled else "suppressed pending review"
+        tail = "" if settled else (
+            f" Confidence was only {confidence}, so confirm it (or overrule it) "
+            f"in {config.DOMAIN_CACHE_PATH}.")
+        return verdict_out("institutional", False, not settled,
+                           f"{head}: {domain} is a health system or medical "
+                           f"organization, so nobody there can buy an EHR "
+                           f"add-on. The touch is wasted and the send is noise."
+                           + (f" ({why})" if why else "") + tail)
 
     floor = _CONFIDENCE_ORDER.get(config.DOMAIN_MIN_CONFIDENCE_TO_CONTACT, 2)
     if _CONFIDENCE_ORDER.get(confidence, 0) < floor:
-        return fallback_setting, False, (
-            f"suppressed: {domain} looks like {verdict} but the research was "
-            f"only {confidence} confidence, and contacting needs "
-            f"{config.DOMAIN_MIN_CONFIDENCE_TO_CONTACT}. "
-            f"({why or 'no rationale given'}) "
-            f"Confirm it by hand in {config.DOMAIN_CACHE_PATH}.")
+        return verdict_out(fallback_setting, False, True,
+                           f"suppressed pending review: {domain} looks like "
+                           f"{verdict} but the research was only {confidence} "
+                           f"confidence, and contacting needs "
+                           f"{config.DOMAIN_MIN_CONFIDENCE_TO_CONTACT}. "
+                           f"({why or 'no rationale given'}) Confirm it by hand "
+                           f"in {config.DOMAIN_CACHE_PATH}.")
 
-    return setting, True, f"{setting} ({domain}: {verdict})"
+    return verdict_out(setting, True, False, f"{setting} ({domain}: {verdict})")

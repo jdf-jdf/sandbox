@@ -1,13 +1,17 @@
 To: joannadflores@gmail.com
-Subject: [machine] draft for Aisha Mbeki, PMHNP
+Subject: [machine] draft for Aisha Mbeki
+Reply-To: joannadflores+88616f3452d5@gmail.com
 
 Aisha,
 
-You stopped using JotPsych, and the note we have on file says supervisor review was the gap. That was a real hole: if you can't see a clinician's note before it goes out, you're either reading everything after the fact or trusting the coding on 20-minute med checks you didn't sit in on.
+You tried JotPsych at Northloop and stopped, and I don't know why. That's the actual reason I'm writing. If it was the coding support (E/M levels that didn't hold up against your payer mix), or the note format, or something about rolling it out to other clinicians, I'd rather hear it plainly than guess.
 
-We've built review workflow since then. Before I describe it, I'd rather hear whether that was actually the reason you left, or just the part that made it into our records. If something else drove it, that's more useful to me.
+Med management days are the hard case: fifteen minute visits back to back, then an hour of cleanup after the last one. If we didn't shorten that for you, that's useful for us to know.
 
-Either way, happy to send what changed and let you decide.
+One sentence back is enough. If you'd rather look than write, I can show you what's changed since.
 
 Ravi
 JotPsych
+
+If you want to pick it back up: https://jotpsych.com/welcome-back/88616f3452d5
+

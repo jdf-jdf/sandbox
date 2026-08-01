@@ -4,20 +4,55 @@
       "input": "data/lapsed_clinicians.csv",
       "read": 33,
       "intake_rejected": 3,
-      "suppressed": 11,
-      "generated": 19,
-      "blocked": 1,
+      "suppressed": 12,
+      "generated": 18,
+      "blocked": 0,
       "flagged": 0,
       "sent": 18,
       "live": true,
       "run": 1,
-      "at": "2026-08-01T19:45:32+00:00"
+      "at": "2026-08-01T20:07:03+00:00"
+    },
+    {
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 12,
+      "generated": 18,
+      "blocked": 0,
+      "flagged": 0,
+      "sent": 18,
+      "live": true,
+      "run": 2,
+      "at": "2026-08-01T20:08:59+00:00"
+    },
+    {
+      "input": "data/lapsed_clinicians.csv",
+      "read": 33,
+      "intake_rejected": 3,
+      "suppressed": 12,
+      "generated": 18,
+      "blocked": 0,
+      "flagged": 0,
+      "sent": 18,
+      "live": true,
+      "run": 3,
+      "at": "2026-08-01T20:11:01+00:00"
+    },
+    {
+      "input": "data/gate_test.csv",
+      "read": 6,
+      "intake_rejected": 0,
+      "suppressed": 0,
+      "generated": 6,
+      "blocked": 0,
+      "flagged": 0,
+      "sent": 6,
+      "live": true,
+      "run": 4,
+      "at": "2026-08-01T20:13:16+00:00"
     }
   ],
-  "offending_phrases": {
-    "completely private": 1
-  },
-  "rule_hits": {
-    "compliance_overclaim": 1
-  }
+  "offending_phrases": {},
+  "rule_hits": {}
 }

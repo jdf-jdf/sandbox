@@ -1,15 +1,18 @@
 To: joannadflores@gmail.com
-Subject: [machine] draft for Amara Osei, PMHNP
+Subject: [machine] draft for Amara Osei
+Reply-To: joannadflores+9d60f3aca3f4@gmail.com
 
 Amara,
 
-You tried JotPsych in November 2024 and stopped after about three weeks. The note we have from that trial says the editor fought you on med-management templates, which is a real problem when a visit is fifteen minutes and the note has to carry an E/M level that holds up.
+You used JotPsych at some point and then stopped, and I don't know why. That's the part I'd like to hear, not guess at.
 
-Templates work differently now: you can set your own structure for med checks and it stays put instead of reverting.
+The version you'd see now is different in the places prescribers tend to care about: E/M level support against what you actually documented, and ICD-10 and CPT that hold up if a payer looks twice. Running solo, there's no biller to catch an undercoded 99214 before it goes out, and no one else staying late to fix it.
 
-I'd rather hear it from you than guess. Was the template friction the whole reason, or was something else going on (price, accuracy, the time it took to fix a note afterward)?
+If it was price, or accuracy, or it just didn't fit a 20 minute med check, I'd rather know than pitch you.
 
-A sentence back is plenty. Happy to send current pricing if that's the piece that matters.
+Still the best number, ending 0142? Happy to work around your schedule.
 
-Daniel
-JotPsych
+Dan
+
+If you want to pick it back up: https://jotpsych.com/welcome-back/9d60f3aca3f4
+

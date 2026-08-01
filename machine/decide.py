@@ -22,7 +22,7 @@ the whole list either goes out generic or gets suppressed at once.
 import re
 
 import config
-from machine import domains
+from machine import domains, people
 
 
 def _matches_rule(needle, haystack):
@@ -45,8 +45,17 @@ def _matches(email, patterns):
 def route(row):
     """Return a decision dict for one intake row.
 
-    Keys: segment, setting, should_contact, reason
+    Keys: segment, setting, should_contact, needs_review, reason
+
+    needs_review separates a skip that is finished from a skip that is
+    waiting on a person. Both stop the send; only one is work.
     """
+    # The real export is name, email and mobile: no credential column exists
+    # to route on. So the row is topped up from the person cache first, and
+    # everything below routes on the enriched row without caring whether the
+    # value was exported or researched. A value the CSV carries always wins.
+    row = people.enrich(row)
+
     field_a, field_b = config.ROUTE_FIELDS
     val_a = row.get(field_a, "")
     val_b = row.get(field_b, "")
@@ -61,30 +70,68 @@ def route(row):
         segment = name
         break
 
-    def out(setting, should_contact, reason):
+    # Tested on the VALUES, not the keys: enrich() guarantees the keys exist,
+    # so their presence proves nothing. All-blank means the export was thin and
+    # research turned nothing up, which is the normal case for a three-column
+    # list, and it is a different thing from a credential we cannot parse.
+    # Normalised here, before any return, so every path downstream reports the
+    # same segment: "unknown" leaking into a contactable decision costs the
+    # email its SEGMENT_BRIEF and nothing says so.
+    thin_export = not any(row.get(f, "").strip() for f in config.ROUTE_FIELDS)
+    if segment == config.DEFAULT_SEGMENT and thin_export:
+        segment = "unspecified"
+
+    def out(setting, should_contact, reason, needs_review=False):
         return {"segment": segment, "setting": setting,
-                "should_contact": should_contact, "reason": reason}
+                "should_contact": should_contact,
+                "needs_review": needs_review, "reason": reason}
 
     # --- suppression: the machine deciding NOT to act is still a decision,
     # and it is the decision that protects the brand. ---
     dnc = row.get("do_not_contact", "").strip().lower() in ("1", "true", "yes", "y")
     if config.SUPPRESS_IF_DO_NOT_CONTACT and dnc:
-        return out("institutional" if _matches(email, config.SUPPRESS_EMAIL_DOMAINS)
+        return out("institutional" if _matches(email, config.INSTITUTIONAL_EMAIL_DOMAINS)
                    else config.DEFAULT_SETTING, False,
                    "suppressed: do_not_contact flag set")
 
-    # Checked before the segment, because it does not matter what their
-    # credential is: nobody at a health system can buy an EHR add-on. The
-    # touch is wasted and the send is noise.
-    if _matches(email, config.SUPPRESS_EMAIL_DOMAINS):
-        return out("institutional", False,
-                   f"suppressed: {domains.domain_of(email)} is a known "
-                   f"institutional domain, nobody there can buy an EHR add-on")
+    # Checked before the segment, because where they work outranks what
+    # their credential is: an employed clinician gets the institutional email
+    # whether they prescribe or not.
+    if _matches(email, config.INSTITUTIONAL_EMAIL_DOMAINS):
+        if config.SUPPRESS_INSTITUTIONAL:
+            return out("institutional", False,
+                       f"suppressed: {domains.domain_of(email)} is a known "
+                       f"institutional domain, nobody there can buy an EHR add-on")
+        return out("institutional", True,
+                   f"routed to {segment} / institutional "
+                   f"({domains.domain_of(email)}, named in config)")
 
+    # Settled-by-domain cases are checked before the credential, because they
+    # do not need one: it does not matter what a Mayo Clinic employee is
+    # licensed as. Doing this first keeps rows that are FINISHED out of the
+    # human work queue, which is the difference between "one to two hours a
+    # month" and a queue that grows with the list.
+    if domains.needs_lookup(domains.domain_of(email)):
+        settled = domains.resolve(domains.domain_of(email), config.DEFAULT_SETTING)
+        if not settled["should_contact"] and not settled["needs_review"]:
+            return out(settled["setting"], False, settled["reason"])
+
+    # "The list has no credential column" and "the credential column says
+    # something we cannot parse" look identical by the time we get here, and
+    # they are not the same problem. The first is a thin export, which is the
+    # normal case and is handled by writing to the part of the job every
+    # clinician shares. The second is a row we genuinely cannot read, and that
+    # is what "send nothing rather than send generic" was written for.
+    # Still DEFAULT_SEGMENT here means the row DID carry a credential and
+    # nothing could read it, which is what "send nothing rather than send
+    # generic" was written for. The thin-export case was relabelled above and
+    # never reaches this.
     if config.SUPPRESS_UNKNOWN_SEGMENT and segment == config.DEFAULT_SEGMENT:
         return out(config.DEFAULT_SETTING, False,
-                   f"suppressed: could not classify {field_a} {val_a!r} "
-                   f"-- we send nothing rather than send generic")
+                   f"suppressed pending review: could not classify {field_a} "
+                   f"{val_a!r} -- we send nothing rather than send generic. "
+                   f"If this credential should route somewhere, add it to "
+                   f"config.SEGMENT_RULES.", needs_review=True)
 
     # --- setting ---
     if _matches(email, config.PERSONAL_EMAIL_DOMAINS):
@@ -99,10 +146,25 @@ def route(row):
     # tools/classify_domains.py and a human can overrule any line of it.
     domain = domains.domain_of(email)
     if domains.needs_lookup(domain):
-        setting, should_contact, reason = domains.resolve(domain, config.DEFAULT_SETTING)
-        if should_contact:
-            reason = f"routed to {segment} / {reason}"
-        return out(setting, should_contact, reason)
+        v = domains.resolve(domain, config.DEFAULT_SETTING)
+
+        # A domain verdict can be an answer or a hypothesis. "health system"
+        # is an answer: it settles everyone there. "training" is not, because
+        # a campus holds every career stage at once, and the trainee register
+        # sent to a department chair is the worst email this machine could
+        # write. Those get a second, per-person lookup.
+        if v["should_contact"] and people.needs_lookup(v["setting"]):
+            p = people.resolve(email, row.get(config.LABEL_FIELD, ""),
+                               v["setting"], config.DEFAULT_SETTING)
+            reason = (f"routed to {segment} / {p['reason']}"
+                      if p["should_contact"] else p["reason"])
+            return out(p["setting"], p["should_contact"], reason,
+                       needs_review=p["needs_review"])
+
+        reason = (f"routed to {segment} / {v['reason']}"
+                  if v["should_contact"] else v["reason"])
+        return out(v["setting"], v["should_contact"], reason,
+                   needs_review=v["needs_review"])
 
     return out(config.DEFAULT_SETTING, True,
                f"routed to {segment} / {config.DEFAULT_SETTING}")

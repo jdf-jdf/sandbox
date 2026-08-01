@@ -14,3 +14,12 @@ BRIEF.md
 
 # macOS finder droppings.
 .DS_Store
+
+# macOS
+.DS_Store
+
+# Claude Code worktrees
+.claude/worktrees/
+
+# Claude Code worktrees, not part of the deliverable.
+.claude/worktrees/

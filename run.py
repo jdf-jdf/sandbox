@@ -19,7 +19,8 @@ import os
 import sys
 
 import config
-from machine import decide, generate, intake, qc, review, send, state as state_mod
+from machine import (attribution, decide, generate, intake, people, qc, review,
+                     send, state as state_mod)
 
 
 def load_dotenv(path=".env"):
@@ -49,7 +50,8 @@ def main():
     st = state_mod.load()
     learned = state_mod.learned_constraints(st)
 
-    print(f"\n=== run {len(st.get('runs', [])) + 1} "
+    run_no = len(st.get("runs", [])) + 1
+    print(f"\n=== run {run_no} "
           f"| input: {args.input} "
           f"| mode: {'LIVE SEND' if args.send else 'dry'} ===")
     if learned:
@@ -75,6 +77,10 @@ def main():
 
     for row in rows:
         # --- 2. DECIDE ---------------------------------------------------
+        # Top the row up from the researched cache before anything reads it,
+        # so routing, the prompt and the gate all see one row. The real export
+        # is name/email/mobile; everything else was found, not given.
+        row = people.enrich(row)
         label = row.get(config.LABEL_FIELD, row[config.ID_FIELD])
         decision = decide.route(row)
         if not decision["should_contact"]:
@@ -108,12 +114,20 @@ def main():
                   f"which is not a column in {args.input}. Row has: {sorted(row)}")
             return 1
         to = os.environ.get("SEND_TO") or row[config.ADDRESS_FIELD]
+
+        # Stamped after the gate, never before: the gate judges the copy, and
+        # a tracking link the model might reword is not a tracking link.
+        tok = attribution.token(row, run_no)
+        text = attribution.stamp(text, tok)
+
         results = []
         for s in senders:
             try:
-                results.append(s.send(to, subject, text, row))
+                results.append(s.send(to, subject, text, row,
+                                      reply_to=attribution.reply_to(tok)))
             except Exception as e:  # noqa: BLE001
                 results.append(f"{s.name} FAILED: {e}")
+        attribution.record(row, decision, run_no, tok, results)
         sent_ok.append(row)
         flag = " (flagged)" if violations else ""
         print(f"[send]     {label:<24} OK    {'; '.join(results)}{flag} [{source}]")

@@ -80,7 +80,18 @@ def draft(row, decision, learned_constraints, attempts=3):
     # those rows), so this only ever touches optional ones.
     for k, v in fields.items():
         if not v and k not in config.REQUIRED_COLUMNS:
-            fields[k] = "(nothing on file)"
+            fields[k] = config.MISSING_FIELD_DEFAULTS.get(k, "(nothing on file)")
+    # Per-field wording matters more than it looks: "(nothing on file)" under
+    # Credential reads like an empty notes field, while "(not known)" reads as
+    # a fact about our knowledge. The model treats the second as a boundary and
+    # the first as an invitation.
+
+    # Derived, not carried: the last four digits of the mobile, so copy can
+    # name the number a reply would come from without printing the whole thing
+    # in an email that may be forwarded.
+    digits = "".join(c for c in str(row.get(config.MOBILE_FIELD, "")) if c.isdigit())
+    fields["mobile_last4"] = digits[-4:] if len(digits) >= 4 else ""
+
     fields.update({
         "segment": decision["segment"],
         "segment_brief": config.SEGMENT_BRIEF.get(decision["segment"], ""),
