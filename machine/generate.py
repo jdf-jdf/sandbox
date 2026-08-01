@@ -80,9 +80,25 @@ def draft(row, decision, learned_constraints, attempts=3):
             resp = client.messages.create(
                 model=config.MODEL,
                 max_tokens=config.MAX_TOKENS,
+                thinking={"type": "adaptive"},
+                output_config={"effort": config.EFFORT},
                 messages=[{"role": "user", "content": prompt}],
             )
-            return resp.content[0].text.strip(), "llm"
+
+            # The model can decline a request outright. That returns a normal
+            # 200 with an empty/partial body, so check before reading content
+            # or you get a confusing IndexError instead of a clear reason.
+            if resp.stop_reason == "refusal":
+                print(f"  ! model declined to draft for {row['name']}")
+                return _fallback(row, decision), "fallback"
+
+            # With thinking on, content[0] is a thinking block, not text --
+            # resp.content[0].text raises AttributeError. Find the text block.
+            text = next((b.text for b in resp.content if b.type == "text"), "")
+            if not text.strip():
+                raise ValueError("model returned no text block")
+
+            return text.strip(), "llm"
         except Exception as e:          # noqa: BLE001 -- deliberately broad
             last_err = e
             if i < attempts - 1:

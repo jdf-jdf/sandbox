@@ -47,8 +47,18 @@ SUPPRESS_UNKNOWN_SEGMENT = True  # we'd rather send nothing than send generic
 # ---------------------------------------------------------------------------
 # 3. GENERATION
 # ---------------------------------------------------------------------------
-MODEL = "claude-sonnet-5"
-MAX_TOKENS = 700
+MODEL = "claude-opus-5"
+
+# Opus 5 thinks by default, and MAX_TOKENS caps thinking + response text
+# TOGETHER. 700 was fine for a no-thinking model; with thinking on it can be
+# eaten entirely by reasoning, leaving a truncated or empty email. Hence the
+# headroom -- a 120-word email needs ~200 of these; the rest is slack.
+MAX_TOKENS = 2000
+
+# Drafting a short email is not a reasoning problem. "low" keeps thinking
+# (and cost) down without disabling it -- disabled thinking on Opus 5 has its
+# own failure modes. Raise to "medium" if the drafts read thin.
+EFFORT = "low"
 
 # Per-segment framing. This is where your READ lives on the positive side —
 # what you actually think these two audiences care about.
