@@ -46,14 +46,18 @@ handed a credential or a practice type, because JotPsych does not have them:
 it goes and finds them (see "Where the machine gets what it wasn't given").
 Hand it a richer CSV and any column it carries wins over anything researched.
 
-A second sample is included so the outputs visibly change:
+A second sample is included so the outputs visibly change. Same three columns,
+different people:
 
 ```bash
 python run.py --input data/clinicians_sample_b.csv
 ```
 
-Everything in `out/`, `quarantine/`, `logs/rejects.log`, `REVIEW_QUEUE.md`
-and `state.json` will differ on the next run.
+That one reads 8 and sends 6. The two it declines show both halves of the
+decision layer: `felix@aurandcounseling.com` is a do-not-contact flag, which is
+finished, and `sbhatt@cornell.edu` is a person the domain pass could only call
+`trainee`, which is work. Everything in `out/`, `quarantine/`,
+`logs/rejects.log`, `REVIEW_QUEUE.md` and `state.json` differs on the next run.
 
 **To point it at a different kind of record entirely** — tickets, applicants,
 accounts — set `ID_FIELD`, `LABEL_FIELD`, `ADDRESS_FIELD` and `ROUTE_FIELDS`
