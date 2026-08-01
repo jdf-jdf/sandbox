@@ -3,15 +3,15 @@
     {
       "input": "data/lapsed_clinicians.csv",
       "read": 33,
-      "intake_rejected": 3,
+      "intake_rejected": 2,
       "suppressed": 3,
-      "generated": 27,
+      "generated": 28,
       "blocked": 0,
       "flagged": 0,
-      "sent": 27,
-      "live": true,
+      "sent": 28,
+      "live": false,
       "run": 1,
-      "at": "2026-08-01T20:33:04+00:00"
+      "at": "2026-08-01T20:52:45+00:00"
     },
     {
       "input": "data/lapsed_clinicians.csv",
@@ -24,7 +24,7 @@
       "sent": 28,
       "live": false,
       "run": 2,
-      "at": "2026-08-01T20:40:06+00:00"
+      "at": "2026-08-01T20:55:22+00:00"
     },
     {
       "input": "data/lapsed_clinicians.csv",
@@ -37,7 +37,7 @@
       "sent": 28,
       "live": false,
       "run": 3,
-      "at": "2026-08-01T20:43:28+00:00"
+      "at": "2026-08-01T20:58:09+00:00"
     }
   ],
   "offending_phrases": {},

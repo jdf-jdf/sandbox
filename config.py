@@ -15,7 +15,13 @@ INTAKE_CSV = "data/lapsed_clinicians.csv"
 
 # Columns the machine needs. A row missing any of these is rejected at intake
 # rather than silently producing garbage downstream.
-REQUIRED_COLUMNS = ["id", "name", "email", "mobile"]
+REQUIRED_COLUMNS = ["id", "name", "email"]
+
+# `mobile` is deliberately NOT required. The email asks whether the number on
+# file is still current, so a row without one loses a closing line, not its
+# reason to exist. Rejecting an otherwise good clinician over a blank phone
+# column throws away a lead to protect a nicety. The prompt handles the empty
+# case: no digits, just an offer to call.
 
 # The machine does not assume what its rows are called. These are the only
 # places anything outside this file reaches into a row by a literal column
