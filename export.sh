@@ -35,5 +35,22 @@ echo "staged $(git diff --cached --name-only | wc -l | tr -d ' ') files, no hist
 echo
 echo "leftover working notes (should be nothing):"
 grep -rlniE "rubric|grader|prebrief|tonight'?s job" . 2>/dev/null || echo "  none"
+
+# The person cache is the one artifact here that can hold real personal data:
+# job titles, career stage and sourced URLs about named individuals. The
+# simulated version ships because the sample needs it to route. A researched
+# one must never leave the building, so refuse rather than warn.
+echo
+echo "person cache:"
+if [ ! -f data/person_verdicts.json ]; then
+  echo "  ok  absent"
+elif grep -q '"source": *"llm\+search"' data/person_verdicts.json; then
+  echo "  ! data/person_verdicts.json holds RESEARCHED records about real"
+  echo "    people. That is personal data and it must not be published."
+  echo "    Delete it, or replace it with a simulated cache, then re-export."
+  exit 1
+else
+  echo "  ok  simulated records only"
+fi
 echo
 echo "next:  cd $DEST && git commit -m '...' && git remote add origin <url> && git push -u origin main"
