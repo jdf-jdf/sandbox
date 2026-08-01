@@ -1,0 +1,51 @@
+{
+  "runs": [
+    {
+      "input": "data/clinicians.csv",
+      "read": 10,
+      "intake_rejected": 2,
+      "suppressed": 2,
+      "generated": 6,
+      "blocked": 1,
+      "flagged": 1,
+      "sent": 5,
+      "live": true,
+      "run": 1,
+      "at": "2026-08-01T19:24:31+00:00"
+    },
+    {
+      "input": "data/clinicians.csv",
+      "read": 10,
+      "intake_rejected": 2,
+      "suppressed": 2,
+      "generated": 6,
+      "blocked": 0,
+      "flagged": 2,
+      "sent": 6,
+      "live": true,
+      "run": 2,
+      "at": "2026-08-01T19:25:13+00:00"
+    },
+    {
+      "input": "data/clinicians.csv",
+      "read": 10,
+      "intake_rejected": 2,
+      "suppressed": 2,
+      "generated": 6,
+      "blocked": 0,
+      "flagged": 2,
+      "sent": 6,
+      "live": true,
+      "run": 3,
+      "at": "2026-08-01T19:25:58+00:00"
+    }
+  ],
+  "offending_phrases": {
+    "90% reduction": 1,
+    "30 hours a month": 1
+  },
+  "rule_hits": {
+    "fabricated_stat": 1,
+    "unsourced_quantity": 1
+  }
+}

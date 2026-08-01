@@ -7,6 +7,7 @@ writes an artifact to disk, and puts an actual email in an actual inbox.
 Senders share one interface, so swapping SMTP for a provider API is a new
 class here and a one-line change in build_senders(), not a change to run.py.
 """
+import html
 import os
 import smtplib
 import ssl
@@ -34,6 +35,22 @@ class FileSender:
         return f"wrote {path}"
 
 
+def _html_from_text(text):
+    """Render the QC-approved text as HTML, adding no words of its own.
+
+    The gate vets `text`. Deriving the markup from that same string -- rather
+    than generating it alongside -- keeps the gate authoritative over every
+    word that reaches an inbox. Escaping happens before the paragraph split
+    so a stray < in the copy can never become a tag.
+    """
+    paras = [p.strip() for p in text.split("\n\n") if p.strip()]
+    blocks = "\n".join(
+        "<p>{}</p>".format(html.escape(p).replace("\n", "<br>"))
+        for p in paras
+    )
+    return "<html><body>\n{}\n</body></html>".format(blocks)
+
+
 class SMTPSender:
     """Gmail over SMTP. Needs GMAIL_ADDRESS + GMAIL_APP_PASSWORD.
 
@@ -56,7 +73,9 @@ class SMTPSender:
         msg["From"] = self.addr
         msg["To"] = to
         msg["Subject"] = subject
-        msg.set_content(body)
+        msg.set_content(body)                       # plain-text fallback
+        msg.add_alternative(_html_from_text(body),  # the page
+                            subtype="html")
 
         ctx = ssl.create_default_context()
         with smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=30) as s:

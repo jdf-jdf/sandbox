@@ -78,9 +78,12 @@ EFFORT = "low"
 SEGMENT_BRIEF = {
     "prescriber": (
         "Prescribers (MD/DO/PMHNP) run short, high-volume med-management "
-        "visits. Their pain is volume and coding accuracy, not narrative "
-        "depth. They care about ICD-10/CPT correctness and getting out of "
-        "the office on time."
+        "visits. Their pain is not narrative depth, it is reimbursement and "
+        "audit exposure: an undercoded note loses money every day it goes "
+        "out, and an overcoded one invites clawback. They care about E/M and "
+        "ICD-10/CPT correctness against their actual payer mix, about prior "
+        "authorization, and about getting out of the office on time. They do "
+        "the ROI math themselves, so be specific or say nothing."
     ),
     "therapist": (
         "Therapists (PhD/PsyD/LCSW/LMFT/LPC) run 45-55 minute sessions and "
@@ -167,6 +170,14 @@ REFUSAL_RULES = [
 
     ("fabricated_stat", "Numeric claim the machine cannot source",
      r"\b\d{1,3}(\.\d+)?%\s*(of|more|less|fewer|increase|reduction|improvement)", "block"),
+
+    # fabricated_stat above only catches percentages. The time-saved claims
+    # this audience actually gets pitched ("30 hours per month") carry no
+    # percent sign and would sail through it. Scoped to a rate -- a duration
+    # per unit of time -- so describing a clinician's own day ("15-minute
+    # slots", "45-55 minute sessions") stays legal.
+    ("unsourced_quantity", "Time-saved claim with no attributable source",
+     r"\b\d{1,4}\+?\s*(?:hours?|hrs?|minutes?|mins?)\s*(?:a|an|per|each)\s+(?:day|week|month|year)\b", "block"),
 
     # --- AI tells. ---
     # The rules above catch output that is WRONG. These catch output that is
