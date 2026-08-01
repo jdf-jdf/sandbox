@@ -1,11 +1,14 @@
 """
 INTAKE -- reads something the machine did not author.
 
-The rubric is explicit: "a list pasted into the source code is not intake."
-So this reads a real file off disk. Swap the file, get different outputs.
+A list pasted into the source is not intake, because nothing outside the
+process can change it. This reads a real file off disk: swap the file, get
+different outputs, with no deploy.
 """
 import csv
 import os
+
+import config
 
 
 def read_rows(path, required_columns):
@@ -37,10 +40,17 @@ def read_rows(path, required_columns):
                 bad.append(row)
                 continue
 
-            if "@" not in row["email"] or "." not in row["email"].split("@")[-1]:
-                row["_reason"] = f"malformed email: {row['email']!r}"
-                bad.append(row)
-                continue
+            # Only validate the address if this machine actually has one to
+            # send to. A brief whose outbound isn't email (a Slack post, a
+            # row appended to a sheet) just drops ADDRESS_FIELD from
+            # REQUIRED_COLUMNS and this check stands down.
+            addr_field = config.ADDRESS_FIELD
+            if addr_field in required_columns:
+                addr = row.get(addr_field, "")
+                if "@" not in addr or "." not in addr.split("@")[-1]:
+                    row["_reason"] = f"malformed {addr_field}: {addr!r}"
+                    bad.append(row)
+                    continue
 
             good.append(row)
 

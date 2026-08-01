@@ -1,20 +1,32 @@
 """
-Everything you will want to change tomorrow lives in this file.
+Every knob this machine has.
 
-Read this top-to-bottom once tonight. Under the clock you should only be
-editing REFUSAL_RULES and PROMPT — the rest should just work.
+Behaviour is configured here, never in machine/. If you find yourself editing
+a file under machine/ to change what the machine says or who it contacts,
+something belongs in this file that isn't in it yet.
 """
 
 # ---------------------------------------------------------------------------
 # 1. INTAKE  -- the file the machine reads but did not author.
-#    Swapping this path (or overwriting the CSV) is how a grader changes
-#    the inputs and gets different outputs. Keep that true.
+#    Swapping this path (or overwriting the CSV) changes the inputs, and
+#    therefore the outputs. Nothing downstream is pinned to this file.
 # ---------------------------------------------------------------------------
 INTAKE_CSV = "data/clinicians.csv"
 
 # Columns the machine needs. A row missing any of these is rejected at intake
 # rather than silently producing garbage downstream.
 REQUIRED_COLUMNS = ["id", "name", "credential", "practice_type", "email"]
+
+# The machine does not assume what its rows are called. These are the only
+# places anything outside this file reaches into a row by a literal column
+# name, so pointing it at a different kind of record -- tickets, applicants,
+# accounts -- is these four lines and no code.
+ID_FIELD = "id"          # names the artifact: out/<id>.txt, quarantine/<id>.txt
+LABEL_FIELD = "name"     # what shows in logs and the review queue
+ADDRESS_FIELD = "email"  # where outbound goes, when SEND_TO is unset
+# What SEGMENT_RULES match against, in order. Two fields, matching the
+# two-part tuples below.
+ROUTE_FIELDS = ("credential", "practice_type")
 
 
 # ---------------------------------------------------------------------------
@@ -49,19 +61,20 @@ SUPPRESS_UNKNOWN_SEGMENT = True  # we'd rather send nothing than send generic
 # ---------------------------------------------------------------------------
 MODEL = "claude-opus-5"
 
-# Opus 5 thinks by default, and MAX_TOKENS caps thinking + response text
-# TOGETHER. 700 was fine for a no-thinking model; with thinking on it can be
-# eaten entirely by reasoning, leaving a truncated or empty email. Hence the
-# headroom -- a 120-word email needs ~200 of these; the rest is slack.
+# This model thinks by default, and MAX_TOKENS caps thinking and response text
+# TOGETHER. A tight budget can be consumed entirely by reasoning, leaving a
+# truncated or empty email. Hence the headroom: a 120-word email needs ~200 of
+# these and the rest is slack for the thinking block.
 MAX_TOKENS = 2000
 
-# Drafting a short email is not a reasoning problem. "low" keeps thinking
-# (and cost) down without disabling it -- disabled thinking on Opus 5 has its
-# own failure modes. Raise to "medium" if the drafts read thin.
+# Drafting a short email is not a reasoning problem. "low" keeps thinking (and
+# cost) down without disabling it, which has its own failure modes. Raise to
+# "medium" if the drafts read thin.
 EFFORT = "low"
 
-# Per-segment framing. This is where your READ lives on the positive side —
-# what you actually think these two audiences care about.
+# Per-segment framing: the positive half of the opinion. What we believe each
+# audience actually cares about, as opposed to REFUSAL_RULES below, which is
+# what we believe they must never be sent.
 SEGMENT_BRIEF = {
     "prescriber": (
         "Prescribers (MD/DO/PMHNP) run short, high-volume med-management "
@@ -77,6 +90,10 @@ SEGMENT_BRIEF = {
     ),
 }
 
+# Formatted against the WHOLE intake row plus {segment}, {segment_brief} and
+# {learned_constraints}. Any column in the CSV is therefore available here as
+# {column_name} with no code change. Referencing a column that doesn't exist
+# fails on the first row and names the missing column.
 PROMPT = """You are writing a single short outreach email on behalf of JotPsych, \
 an ambient AI scribe built specifically for behavioral health clinicians.
 
@@ -115,10 +132,9 @@ Output only the email body. No subject line, no preamble."""
 # ---------------------------------------------------------------------------
 # 4. QUALITY CONTROL  -- the refusal rules.
 #
-#    THIS IS THE HIGHEST-SCORING FILE IN THE REPO.
-#    The rubric's top box for "The read" is: a sharp opinion about what is
-#    off-brand, *built into what the machine refuses to send*. That is this
-#    list. Edit it tomorrow once you see the brief; the shape stays the same.
+#    This list is the machine's opinion about what is off-brand, written as
+#    code. It is deliberately specific: a filter nobody argued about is a
+#    filter that catches nothing.
 #
 #    Each rule: (id, human-readable reason, regex pattern, severity)
 #    severity "block" -> never sends, goes to quarantine
@@ -152,26 +168,26 @@ REFUSAL_RULES = [
     ("fabricated_stat", "Numeric claim the machine cannot source",
      r"\b\d{1,3}(\.\d+)?%\s*(of|more|less|fewer|increase|reduction|improvement)", "block"),
 
-    # --- AI tells, from the humanizer skill's pattern catalog. ---
-    # The ethics rules above catch output that is WRONG. These catch output
-    # that is RIGHT but reads like a machine wrote it -- which for a cold
-    # outreach email is its own kind of failure.
-    ("em_dash", "Em dash (absolute rule from the humanizer skill)",
+    # --- AI tells. ---
+    # The rules above catch output that is WRONG. These catch output that is
+    # RIGHT but reads like a machine wrote it, which for a cold email to a
+    # skeptical audience is its own kind of failure.
+    ("em_dash", "Em dash: the single most reliable tell in generated prose",
      r"—", "block"),
 
     # NOTE: \s+ rather than literal spaces throughout. Emails wrap, and a
     # pattern with a hard space silently misses the phrase every time it
     # happens to straddle a line break.
-    ("significance_inflation", "Puffs up importance instead of saying what the thing does (humanizer P1)",
+    ("significance_inflation", "Puffs up importance instead of saying what the thing does",
      r"\b(stands\s+as|serves\s+as\s+a|testament\s+to|pivotal|underscor\w+|plays?\s+a\s+(?:vital|crucial|key)\s+role|in\s+today'?s(?:\s+\w+){0,3}\s+(?:landscape|world|environment))\b", "block"),
 
     ("ai_vocab", "Vocabulary that reads as LLM-generated",
      r"\b(delv\w+|leverag\w+|robust|tapestry|myriad|realm|navigate\s+the|landscape\s+of)\b", "block"),
 
-    ("ing_tail", "Participle clause tacked on to fake depth (humanizer P3)",
+    ("ing_tail", "Participle clause tacked on to fake depth",
      r",\s+(?:highlighting|underscoring|emphasizing|reflecting|ensuring|fostering|showcasing|contributing to)\b", "flag"),
 
-    ("hedging", "Filler that delays the point (humanizer P22-P30)",
+    ("hedging", "Filler that delays the point",
      r"\b(it'?s\s+worth\s+noting|it'?s\s+important\s+to\s+note|that\s+said,|when\s+it\s+comes\s+to)\b", "flag"),
 
     ("not_just_but", "The 'not just X, but Y' construction",
@@ -191,8 +207,8 @@ MAX_WORDS = 140
 SUBJECT_TEMPLATE = "[machine] draft for {name}, {credential}"
 
 # "file" always runs and needs no credentials.
-# "smtp" is the real outbound action — Gmail to your own inbox.
-# Both run when you pass --send; file-only is the default so a dry run is safe.
+# "smtp" is the real outbound action. Both run when --send is passed;
+# file-only is the default so a dry run cannot email anyone by accident.
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
 
@@ -201,7 +217,6 @@ SMTP_PORT = 587
 # 6. STATE / LEARNING
 # ---------------------------------------------------------------------------
 STATE_PATH = "state.json"
-# How many of the worst-offending phrases get fed back into the next run's
-# prompt as explicit "never write this" constraints. This is the loop that
-# makes the machine measurably better each cycle.
+# How many of the worst-offending phrases are fed back into the next run's
+# prompt as explicit "never write this" constraints.
 LEARNED_CONSTRAINT_COUNT = 5

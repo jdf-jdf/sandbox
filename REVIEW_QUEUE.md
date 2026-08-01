@@ -1,24 +1,24 @@
 # Review queue
 
-_Generated 2026-08-01T05:59:55+00:00 by the last run. Overwritten every run._
+_Generated 2026-08-01T06:17:54+00:00 by the last run. Overwritten every run._
 
 **5 item(s) need a human.** Estimated time: 15 minutes.
 
 ## 1. Blocked before sending — decide keep or kill
 
-### Priya Raghunathan (LCSW) — line 4
+### Priya Raghunathan — line 4
 - **Tripped:** `phi_leak`
   - References patient/session content in a marketing asset — matched `a patient who`
 - **Draft:** `quarantine/c003.txt`
 - **Do:** read the draft. If the rule was right, nothing to do — the phrase is already banned for the next run. If it was a false positive, loosen that pattern in `config.REFUSAL_RULES`.
 
-### Tom Brennan (PMHNP) — line 5
+### Tom Brennan — line 5
 - **Tripped:** `fabricated_stat`
   - Numeric claim the machine cannot source — matched `90% reduction`
 - **Draft:** `quarantine/c004.txt`
 - **Do:** read the draft. If the rule was right, nothing to do — the phrase is already banned for the next run. If it was a false positive, loosen that pattern in `config.REFUSAL_RULES`.
 
-### Alicia Fontaine (LMFT) — line 6
+### Alicia Fontaine — line 6
 - **Tripped:** `hype`
   - Hype register — reads as tech marketing, not peer-to-peer — matched `revolutionary`
 - **Draft:** `quarantine/c005.txt`

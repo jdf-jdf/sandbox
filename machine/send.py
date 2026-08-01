@@ -1,14 +1,11 @@
 """
 OUTBOUND -- the action that lands outside the process.
 
-The rubric: "a rendering on screen is not an action." So we do two real
-things: write a file to disk, and put an actual email in an actual inbox.
+A rendering on screen is not an action, so the machine does two real things:
+writes an artifact to disk, and puts an actual email in an actual inbox.
 
-Sending to your own address is an explicitly approved stub
-("send to your own inbox... Stubbing is fine, absence is not").
-
-Senders share one interface so you can swap SMTP for the Gmail API tomorrow
-without touching run.py.
+Senders share one interface, so swapping SMTP for a provider API is a new
+class here and a one-line change in build_senders(), not a change to run.py.
 """
 import os
 import smtplib
@@ -19,7 +16,11 @@ import config
 
 
 class FileSender:
-    """Always available, no credentials. Writes the artifact to out/."""
+    """Always available, no credentials. Writes the artifact to out/.
+
+    Runs on every send, including dry runs, so there is a durable record of
+    what the machine produced even when the email path is unavailable.
+    """
     name = "file"
 
     def __init__(self, outdir="out"):
@@ -27,7 +28,7 @@ class FileSender:
         os.makedirs(outdir, exist_ok=True)
 
     def send(self, to, subject, body, row):
-        path = os.path.join(self.outdir, f"{row['id']}.txt")
+        path = os.path.join(self.outdir, f"{row[config.ID_FIELD]}.txt")
         with open(path, "w", encoding="utf-8") as f:
             f.write(f"To: {to}\nSubject: {subject}\n\n{body}\n")
         return f"wrote {path}"
@@ -36,9 +37,8 @@ class FileSender:
 class SMTPSender:
     """Gmail over SMTP. Needs GMAIL_ADDRESS + GMAIL_APP_PASSWORD.
 
-    The app password is NOT your Google password. Set one up at
+    The app password is not the account password. Generate one at
     myaccount.google.com -> Security -> 2-Step Verification -> App passwords.
-    Do this tonight, not tomorrow.
     """
     name = "smtp"
 
@@ -69,9 +69,9 @@ class SMTPSender:
 class GmailAPISender:
     """Placeholder for the upgrade path.
 
-    The rubric's top box mentions "real APIs/MCPs". If you have slack time at
-    2:15 tomorrow, fill this in and swap it into build_senders(). If you don't,
-    SMTP scores the same 'meets the bar' box -- do not spend clock here first.
+    SMTP is the live sender. Moving to the Gmail API means filling this in and
+    adding it in build_senders(); nothing else in the machine changes. Left
+    unimplemented on purpose rather than half-wired.
     """
     name = "gmail_api"
 

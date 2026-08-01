@@ -1,11 +1,12 @@
 """
-GENERATION -- the LLM call, wrapped so it cannot take the machine down.
+GENERATION -- the model call, wrapped so it cannot take the machine down.
 
-Two things matter here under a clock:
-  1. Retries, so one flaky call doesn't kill a run.
-  2. A template fallback, so the loop still CLOSES if the API is down or you
-     ran out of credit. A closed loop on fallback text scores; a broken run
-     scores nothing. You can always say "LLM path stubbed" in the README.
+Two defences, because an outage here should degrade the output rather than
+stop the loop:
+  1. Retries with backoff, so one flaky call doesn't kill a run.
+  2. A template fallback, so the machine still completes its cycle when the
+     API is unreachable. Degraded text that ships beats no text at all, and
+     the run log makes it obvious which path produced each draft.
 """
 import os
 import time
@@ -31,21 +32,27 @@ def _get_client():
 
 
 def _fallback(row, decision):
-    """Deterministic template. Not good writing -- it exists so the loop
-    never breaks. If you see this in out/, your API path failed.
+    """Deterministic template. Not good writing: it exists so the loop never
+    breaks. Its presence in out/ means the model path failed for that row.
 
-    Note it echoes the `notes` column straight into the body. That is
-    deliberate: it is exactly the naive behaviour the QC gate exists to
-    catch, so a no-API-key run still demonstrates the gate firing on the
-    seeded rows instead of producing a suspiciously clean log.
+    It echoes the raw intake fields straight into the body, which is the
+    naive behaviour the QC gate exists to catch. That is deliberate -- the
+    degraded path is held to the same gate as the good one, and trips it.
     """
+    # Reads the row generically. The safety net must not itself depend on the
+    # clinician schema, or it breaks in exactly the situation it exists for.
+    label = row.get(config.LABEL_FIELD, "there")
+    detail = ", ".join(
+        f"{k}: {v}" for k, v in row.items()
+        if v and not k.startswith("_") and k not in
+        (config.ID_FIELD, config.LABEL_FIELD, config.ADDRESS_FIELD)
+    )
     return (
-        f"Hi {row['name']},\n\n"
+        f"Hi {label},\n\n"
         f"[FALLBACK TEMPLATE -- LLM unavailable at generation time]\n\n"
-        f"You're a {row['credential']} working in {row['practice_type']}. "
-        f"Documentation is the part of that work that follows you home. "
+        f"Documentation is the part of the work that follows you home. "
         f"JotPsych writes the note from the session so the evening is yours.\n\n"
-        f"What we have on file: {row.get('notes', '') or '(nothing)'}\n\n"
+        f"What we have on file: {detail or '(nothing)'}\n\n"
         f"-- \n"
     )
 
@@ -64,15 +71,31 @@ def draft(row, decision, learned_constraints, attempts=3):
             + "\n".join(f"- {c}" for c in learned_constraints)
         )
 
-    prompt = config.PROMPT.format(
-        name=row["name"],
-        credential=row["credential"],
-        practice_type=row["practice_type"],
-        segment=decision["segment"],
-        notes=row.get("notes", "") or "(nothing on file)",
-        segment_brief=config.SEGMENT_BRIEF.get(decision["segment"], ""),
-        learned_constraints=constraint_block,
-    )
+    # Format against the WHOLE row rather than a hand-listed set of fields, so
+    # adding a column to the CSV and referencing it in config.PROMPT needs no
+    # change here.
+    fields = dict(row)
+    # An empty optional cell reads better to the model as an explicit absence
+    # than as a blank hole. Required fields are never empty (intake rejects
+    # those rows), so this only ever touches optional ones.
+    for k, v in fields.items():
+        if not v and k not in config.REQUIRED_COLUMNS:
+            fields[k] = "(nothing on file)"
+    fields.update({
+        "segment": decision["segment"],
+        "segment_brief": config.SEGMENT_BRIEF.get(decision["segment"], ""),
+        "learned_constraints": constraint_block,
+    })
+
+    try:
+        prompt = config.PROMPT.format(**fields)
+    except KeyError as e:
+        # Fail loud and name the column. A silent half-filled prompt is much
+        # worse than stopping here.
+        raise KeyError(
+            f"config.PROMPT references {{{e.args[0]}}} but the intake row has "
+            f"no such column. Row has: {sorted(row)}"
+        ) from None
 
     last_err = None
     for i in range(attempts):
@@ -89,10 +112,10 @@ def draft(row, decision, learned_constraints, attempts=3):
             # 200 with an empty/partial body, so check before reading content
             # or you get a confusing IndexError instead of a clear reason.
             if resp.stop_reason == "refusal":
-                print(f"  ! model declined to draft for {row['name']}")
+                print(f"  ! model declined to draft for {row.get(config.LABEL_FIELD, '?')}")
                 return _fallback(row, decision), "fallback"
 
-            # With thinking on, content[0] is a thinking block, not text --
+            # With thinking on, content[0] is a thinking block, not text, so
             # resp.content[0].text raises AttributeError. Find the text block.
             text = next((b.text for b in resp.content if b.type == "text"), "")
             if not text.strip():

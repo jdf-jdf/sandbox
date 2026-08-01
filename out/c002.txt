@@ -5,9 +5,9 @@ Hi Marcus Oyelaran,
 
 [FALLBACK TEMPLATE -- LLM unavailable at generation time]
 
-You're a MD working in group psychiatry practice. Documentation is the part of that work that follows you home. JotPsych writes the note from the session so the evening is yours.
+Documentation is the part of the work that follows you home. JotPsych writes the note from the session so the evening is yours.
 
-What we have on file: Med management, 15-minute slots. Cares mainly about CPT coding accuracy.
+What we have on file: credential: MD, practice_type: group psychiatry practice, notes: Med management, 15-minute slots. Cares mainly about CPT coding accuracy.
 
 -- 
 

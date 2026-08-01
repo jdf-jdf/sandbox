@@ -1,3 +1,3 @@
-# Only one real dependency. Everything else is stdlib on purpose:
-# fewer installs = fewer ways to lose 20 minutes tomorrow.
+# One real dependency. Everything else is stdlib on purpose: each install is
+# another thing that can fail on a machine that isn't this one.
 anthropic>=0.40.0

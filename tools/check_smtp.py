@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-TONIGHT'S JOB #1. Run this until it says SENT.
+Preflight: prove the outbound email path works before running the machine.
 
     python tools/check_smtp.py
 
-Gmail app passwords are the single most common way to lose 40 minutes on
-the day. Find out now, not at 1:15 tomorrow.
+Distinguishes a bad credential from an unreachable network, because the two
+have completely different fixes and the raw exceptions do not say which.
 """
 import os
 import socket
@@ -44,17 +44,19 @@ try:
         s.starttls(context=ctx)
         s.login(addr, pw)
         s.send_message(msg)
-    print(f"SENT -> {to}. Go check the inbox now; don't assume.")
+    print(f"SENT -> {to}. Confirm it arrived; a clean exit only proves the")
+    print("      handoff to Gmail succeeded, not that the message landed.")
 except smtplib.SMTPAuthenticationError:
     print("FAIL (CREDENTIAL): Gmail rejected the login.")
-    print("      Almost always: you used your Google password, not an APP password.")
-    print("      Also revoked automatically if you changed your Google password.")
+    print("      Almost always an account password used in place of an app")
+    print("      password. App passwords are also revoked automatically when")
+    print("      the account password changes.")
     print("      myaccount.google.com/apppasswords")
     sys.exit(1)
 except (OSError, socket.timeout) as e:
-    # Errno 97 / timeouts mean the network never reached Gmail. The password
-    # is untested, not wrong. Common in locked-down containers and on
-    # corporate wifi that blocks port 587 outbound.
+    # Errno 97 and timeouts mean the connection never reached Gmail, so the
+    # credential is untested rather than wrong. Common in locked-down
+    # containers and on networks that block outbound 587.
     print(f"FAIL (NETWORK): could not reach smtp.gmail.com:587 -- {type(e).__name__}: {e}")
     print("      This says nothing about your credential; the connection never got there.")
     print("      Try a different network, or tether to your phone.")

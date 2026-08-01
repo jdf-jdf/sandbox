@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Wipe all generated evidence so a fresh sequence of runs is clean.
-# Run this once tomorrow before your three real runs -- you want the
-# rejection-rate trend to start at run 1, not run 7.
+# Wipe all generated output so the next sequence of runs starts clean.
+# The rejection-rate trend in state.json is cumulative, so a fresh sequence
+# has to start from an empty state or the trend mixes unrelated runs.
 set -euo pipefail
 cd "$(dirname "$0")"
 rm -rf out quarantine logs state.json REVIEW_QUEUE.md

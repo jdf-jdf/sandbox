@@ -1,15 +1,15 @@
 """
-STATE / LEARNING -- the part almost everyone skips.
+STATE / LEARNING -- metrics and memory across runs.
 
-The rubric wants "metrics and memory": the machine measures itself, and
-something inside it improves each cycle. This is the cheapest honest version:
+The machine measures itself and something inside it changes each cycle:
 
   run 1 -> QC rejects some drafts -> the offending phrases are remembered
-  run 2 -> those phrases are injected into the prompt as hard constraints
+  run 2 -> those phrases enter the next prompt as hard constraints
   run 3 -> rejection rate is measurably lower
 
-That drop across runs IS your evidence. You cannot fake it after the fact,
-which is exactly why you must leave time to run the machine three times.
+The drop across runs is the only honest evidence that the loop is closed,
+and it cannot be reconstructed after the fact -- it is either in state.json
+or it never happened.
 """
 import json
 import os

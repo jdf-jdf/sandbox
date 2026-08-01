@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-TONIGHT'S JOB #2.
+Preflight: prove the model path works before running the machine.
 
     pip install -r requirements.txt
     python tools/check_llm.py
 
 Confirms the key is set, the SDK imports, the model id is valid, and the
-account actually has credit. "Key is set" is not the same as "key works".
+account has credit. "Key is set" is not the same as "key works", and the
+machine silently falls back to a template when it isn't.
 """
 import os
 import sys
@@ -29,8 +30,8 @@ except ImportError:
 
 try:
     client = anthropic.Anthropic()
-    # Mirrors the real call in machine/generate.py on purpose -- a preflight
-    # that exercises a different code path isn't a preflight.
+    # Mirrors the real call in machine/generate.py on purpose: a preflight
+    # that exercises a different code path is not a preflight.
     r = client.messages.create(
         model=config.MODEL,
         max_tokens=200,

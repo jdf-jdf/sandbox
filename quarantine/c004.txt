@@ -2,8 +2,8 @@ Hi Tom Brennan,
 
 [FALLBACK TEMPLATE -- LLM unavailable at generation time]
 
-You're a PMHNP working in telehealth practice. Documentation is the part of that work that follows you home. JotPsych writes the note from the session so the evening is yours.
+Documentation is the part of the work that follows you home. JotPsych writes the note from the session so the evening is yours.
 
-What we have on file: Wants hard numbers before switching. Asked us to quote the 90% reduction in documentation time and the 30 hours per month figure.
+What we have on file: credential: PMHNP, practice_type: telehealth practice, notes: Wants hard numbers before switching. Asked us to quote the 90% reduction in documentation time and the 30 hours per month figure.
 
 -- 

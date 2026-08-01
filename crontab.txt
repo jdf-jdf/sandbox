@@ -1,12 +1,13 @@
-# THE TRIGGER -- "a trigger that is not you".
+# THE TRIGGER. Nobody presses anything.
 #
 # Install with:   crontab crontab.txt
 # Verify with:    crontab -l
 # Watch it fire:  tail -f logs/cron.log
 #
-# Every weekday at 08:00. Change the path to wherever this repo lives.
+# Every weekday at 08:00. The path must be absolute: cron does not run from
+# your shell's working directory and does not inherit your PATH.
 0 8 * * 1-5 /ABSOLUTE/PATH/TO/repo/run.sh
 
-# For the demo, prove it fires without waiting a day -- run every minute,
-# let it fire twice, then comment it back out and commit logs/cron.log:
+# To watch it fire without waiting a day, swap in the line below, let it run
+# twice, then restore the schedule above:
 # * * * * * /ABSOLUTE/PATH/TO/repo/run.sh

@@ -7,7 +7,7 @@ THE MACHINE. One entrypoint, one pass, the whole loop.
       -> generate
         -> QC gate (refuses to send what is off-brand)
           -> outbound (file on disk + a real email)
-            -> state (measures itself, and improves next cycle)
+            -> state (measures itself, and constrains the next cycle)
 
 Usage:
   python run.py              # dry: writes to out/, sends no email
@@ -23,7 +23,7 @@ from machine import decide, generate, intake, qc, review, send, state as state_m
 
 
 def load_dotenv(path=".env"):
-    """Tiny .env loader so there's no dependency to install tomorrow."""
+    """Tiny .env loader, so reading config needs no third-party dependency."""
     if not os.path.exists(path):
         return
     with open(path, encoding="utf-8") as f:
@@ -40,7 +40,7 @@ def main():
     ap.add_argument("--send", action="store_true",
                     help="actually email via SMTP (default: files only)")
     ap.add_argument("--input", default=config.INTAKE_CSV,
-                    help="intake CSV -- swap this to change the outputs")
+                    help="intake CSV; swap this to change the outputs")
     args = ap.parse_args()
 
     load_dotenv()
@@ -75,10 +75,11 @@ def main():
 
     for row in rows:
         # --- 2. DECIDE ---------------------------------------------------
+        label = row.get(config.LABEL_FIELD, row[config.ID_FIELD])
         decision = decide.route(row)
         if not decision["should_contact"]:
             suppressed.append({"row": row, "decision": decision})
-            print(f"[decide]   {row['name']:<24} SKIP  {decision['reason']}")
+            print(f"[decide]   {label:<24} SKIP  {decision['reason']}")
             continue
 
         # --- 3. GENERATE -------------------------------------------------
@@ -89,19 +90,24 @@ def main():
         all_violations.extend(violations)
 
         if blocked:
-            with open(f"quarantine/{row['id']}.txt", "w", encoding="utf-8") as f:
+            with open(f"quarantine/{row[config.ID_FIELD]}.txt", "w", encoding="utf-8") as f:
                 f.write(text)
             quarantined.append({"row": row, "violations": violations, "text": text})
             names = ", ".join(v["rule"] for v in violations if v["severity"] == "block")
-            print(f"[QC]       {row['name']:<24} BLOCK {names}")
+            print(f"[QC]       {label:<24} BLOCK {names}")
             continue
 
         if violations:
             flagged.append({"row": row, "violations": violations})
 
         # --- 5. OUTBOUND -------------------------------------------------
-        subject = config.SUBJECT_TEMPLATE.format(**row)
-        to = os.environ.get("SEND_TO") or row["email"]
+        try:
+            subject = config.SUBJECT_TEMPLATE.format(**row)
+        except KeyError as e:
+            print(f"! config.SUBJECT_TEMPLATE references {{{e.args[0]}}}, "
+                  f"which is not a column in {args.input}. Row has: {sorted(row)}")
+            return 1
+        to = os.environ.get("SEND_TO") or row[config.ADDRESS_FIELD]
         results = []
         for s in senders:
             try:
@@ -110,7 +116,7 @@ def main():
                 results.append(f"{s.name} FAILED: {e}")
         sent_ok.append(row)
         flag = " (flagged)" if violations else ""
-        print(f"[send]     {row['name']:<24} OK    {'; '.join(results)}{flag} [{source}]")
+        print(f"[send]     {label:<24} OK    {'; '.join(results)}{flag} [{source}]")
 
     # --- 6. STATE / LEARNING --------------------------------------------
     metrics = {

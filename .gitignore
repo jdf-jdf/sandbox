@@ -4,6 +4,10 @@ __pycache__/
 .venv/
 venv/
 
-# NOTE: out/, logs/ and state.json are deliberately NOT ignored.
-# They are your evidence. The grader should see what the machine produced
-# and what it caught without having to run anything.
+# Working notes, not part of the deliverable.
+PREP.md
+BRIEF.md
+
+# out/, quarantine/, logs/ and state.json are deliberately NOT ignored.
+# They are the machine's output and its audit trail; a reader should be able
+# to see what it produced and what it stopped without running anything.

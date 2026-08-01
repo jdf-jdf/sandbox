@@ -1,8 +1,8 @@
 """
 DECISION -- what the machine works out on its own, before any AI runs.
 
-Every decision made deterministically here is a decision the LLM cannot get
-wrong. Push as much as you can up into this layer.
+Every decision made deterministically here is one the model cannot get wrong,
+so this layer stays as fat as it can and generation stays as thin as it can.
 """
 import config
 
@@ -12,14 +12,15 @@ def route(row):
 
     Keys: segment, should_contact, reason
     """
-    cred = row.get("credential", "")
-    practice = row.get("practice_type", "")
+    field_a, field_b = config.ROUTE_FIELDS
+    val_a = row.get(field_a, "")
+    val_b = row.get(field_b, "")
 
     segment = config.DEFAULT_SEGMENT
-    for (cred_match, practice_match), name in config.SEGMENT_RULES:
-        if cred_match and cred_match.lower() not in cred.lower():
+    for (match_a, match_b), name in config.SEGMENT_RULES:
+        if match_a and match_a.lower() not in val_a.lower():
             continue
-        if practice_match and practice_match.lower() not in practice.lower():
+        if match_b and match_b.lower() not in val_b.lower():
             continue
         segment = name
         break
@@ -33,7 +34,7 @@ def route(row):
 
     if config.SUPPRESS_UNKNOWN_SEGMENT and segment == config.DEFAULT_SEGMENT:
         return {"segment": segment, "should_contact": False,
-                "reason": f"suppressed: could not classify credential {cred!r} "
+                "reason": f"suppressed: could not classify {field_a} {val_a!r} "
                           f"-- we send nothing rather than send generic"}
 
     return {"segment": segment, "should_contact": True,

@@ -1,10 +1,10 @@
 """
 QUALITY CONTROL -- the gate between "generated" and "sent".
 
-The rubric wants proof: "the machine catches bad output before it sends,
-AND YOU SHOW US WHAT IT CAUGHT." So every check writes a record, and the
-sample data is seeded with rows engineered to trip these rules. An empty
-rejects log proves nothing.
+Every check writes a record, whether it fires or not, because a filter with
+no audit trail is indistinguishable from no filter. The sample data includes
+rows engineered to trip these rules, so the trail is never empty on a fresh
+checkout.
 """
 import re
 
@@ -35,11 +35,12 @@ def check(text, row, decision):
             "severity": "flag", "evidence": f"{words} words",
         })
 
-    first_name = row["name"].split()[0] if row.get("name") else ""
+    label = row.get(config.LABEL_FIELD, "")
+    first_name = label.split()[0] if label else ""
     if first_name and first_name.lower() not in text.lower():
         violations.append({
             "rule": "no_personalization",
-            "reason": "recipient's name never appears in the body",
+            "reason": f"recipient's {config.LABEL_FIELD} never appears in the body",
             "severity": "flag", "evidence": first_name,
         })
 
