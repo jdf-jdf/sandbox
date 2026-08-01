@@ -26,21 +26,19 @@ It runs on a schedule. Nobody presses anything.
 The export is three columns: a name, an email address, and a mobile number.
 That is all a signup ever gave us.
 
-Nothing in those three columns tells you the thing that decides what to write.
-A psychiatrist doing fifteen-minute medication checks and a therapist doing
-fifty-minute sessions have almost nothing in common in their working day, and
-an email that does not know which one it is talking to reads as a mail merge,
-because it is one. Whether someone owns their practice, works for a hospital,
-or is still in training changes the message just as much, and none of that is
-in the file either.
+A second sample is included so the outputs visibly change. Same three columns,
+different people:
 
 So the machine's first real act is to go and find out. It researches the
 employer behind each email address, then researches the individual person where
 the employer's answer is not enough on its own. Both answers get saved, so the
 same question is never paid for twice.
 
-That research is the difference between three columns and a segmented list. It
-is also the part that makes the copy possible.
+That one reads 8 and sends 6. The two it declines show both halves of the
+decision layer: `felix@aurandcounseling.com` is a do-not-contact flag, which is
+finished, and `sbhatt@cornell.edu` is a person the domain pass could only call
+`trainee`, which is work. Everything in `out/`, `quarantine/`,
+`logs/rejects.log`, `REVIEW_QUEUE.md` and `state.json` differs on the next run.
 
 ## The marketing call we made
 
