@@ -1,0 +1,13 @@
+To: dana.whitfield@example.com
+Subject: [machine] draft for Dana Whitfield, PsyD
+
+Hi Dana Whitfield,
+
+[FALLBACK TEMPLATE -- LLM unavailable at generation time]
+
+You're a PsyD working in solo private practice. Documentation is the part of that work that follows you home. JotPsych writes the note from the session so the evening is yours.
+
+What we have on file: Runs 22 sessions a week. Said her notes take until 9pm most nights.
+
+-- 
+

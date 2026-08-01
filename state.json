@@ -1,0 +1,40 @@
+{
+  "runs": [
+    {
+      "input": "data/clinicians.csv",
+      "read": 10,
+      "intake_rejected": 2,
+      "suppressed": 2,
+      "generated": 6,
+      "blocked": 3,
+      "flagged": 0,
+      "sent": 3,
+      "live": false,
+      "run": 1,
+      "at": "2026-08-01T04:41:00+00:00"
+    },
+    {
+      "input": "data/clinicians.csv",
+      "read": 10,
+      "intake_rejected": 2,
+      "suppressed": 2,
+      "generated": 6,
+      "blocked": 3,
+      "flagged": 0,
+      "sent": 3,
+      "live": false,
+      "run": 2,
+      "at": "2026-08-01T04:41:00+00:00"
+    }
+  ],
+  "offending_phrases": {
+    "a patient who": 2,
+    "90% reduction": 2,
+    "revolutionary": 2
+  },
+  "rule_hits": {
+    "phi_leak": 2,
+    "fabricated_stat": 2,
+    "hype": 2
+  }
+}

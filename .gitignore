@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# NOTE: out/, logs/ and state.json are deliberately NOT ignored.
+# They are your evidence. The grader should see what the machine produced
+# and what it caught without having to run anything.

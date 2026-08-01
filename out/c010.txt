@@ -1,0 +1,13 @@
+To: jabramowitz@example.com
+Subject: [machine] draft for Joel Abramowitz, LCSW
+
+Hi Joel Abramowitz,
+
+[FALLBACK TEMPLATE -- LLM unavailable at generation time]
+
+You're a LCSW working in integrated primary care. Documentation is the part of that work that follows you home. JotPsych writes the note from the session so the evening is yours.
+
+What we have on file: Splits time between a clinic and a small private caseload.
+
+-- 
+

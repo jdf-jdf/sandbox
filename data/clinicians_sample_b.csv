@@ -1,0 +1,4 @@
+id,name,credential,practice_type,email,do_not_contact,notes
+b001,Yusuf Adeyemi,MD,inpatient psychiatry,yadeyemi@example.com,,"Hospital-based. Skeptical that an ambient scribe handles interruptions."
+b002,Nora Kilbride,LMFT,family therapy practice,nkilbride@example.com,,"Two-clinician practice. Does her own billing on Sundays."
+b003,Hana Petrov,PhD,neuropsych assessment,hpetrov@example.com,,"Long assessment reports, not session notes. Different workflow entirely."

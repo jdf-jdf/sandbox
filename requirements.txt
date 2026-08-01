@@ -1,0 +1,3 @@
+# Only one real dependency. Everything else is stdlib on purpose:
+# fewer installs = fewer ways to lose 20 minutes tomorrow.
+anthropic>=0.40.0
